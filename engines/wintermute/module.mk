@@ -82,6 +82,7 @@ MODULE_OBJS := \
 	FontGlyphCache.o \
 	MathUtil.o \
 	PathUtil.o \
+	PlatformSDL.o \
 	StringUtil.o \
 	SysClass.o \
 	SysClassRegistry.o \
