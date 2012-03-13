@@ -1,6 +1,7 @@
 MODULE := engines/wintermute
  
 MODULE_OBJS := \
+	scriptables/ScEngine.o \
 	scriptables/ScScript.o \
 	scriptables/ScStack.o \
 	scriptables/ScValue.o \
@@ -8,6 +9,7 @@ MODULE_OBJS := \
 	scriptables/SXDate.o \
 	scriptables/SXMath.o \
 	scriptables/SXMemBuffer.o \
+	scriptables/SXStore.o \
 	AdActor.o \
 	AdActorDir.o \
 	AdEntity.o \
@@ -84,6 +86,7 @@ MODULE_OBJS := \
 	SysClassRegistry.o \
 	SysInstance.o \
 	tinyxml.o \
+	tinystr.o \
 	UIButton.o \
 	UIEdit.o \
 	UIEntity.o \
