@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	scriptables/SXMath.o \
 	scriptables/SXMemBuffer.o \
 	scriptables/SXStore.o \
+	scriptables/SXString.o \
 	AdActor.o \
 	AdActorDir.o \
 	AdEntity.o \
