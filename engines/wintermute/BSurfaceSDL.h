@@ -63,6 +63,7 @@ public:
 	    static int DLL_CALLCONV SeekProc(fi_handle handle, long offset, int origin);
 	    static long DLL_CALLCONV TellProc(fi_handle handle);*/
 
+	bool _isTransparent;
 private:
 //	SDL_Texture *_texture;
 	Graphics::Surface *_surface;

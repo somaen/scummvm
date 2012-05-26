@@ -58,7 +58,7 @@ bool TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int
 	    srcImage.pixels = _data;
 	*/
 	if (pPartRect) {
-		srcImage.pixels = &pixels[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
+		srcImage.pixels = &((char*)pixels)[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
 		srcImage.w = pPartRect->right - pPartRect->left;
 		srcImage.h = pPartRect->bottom - pPartRect->top;
 

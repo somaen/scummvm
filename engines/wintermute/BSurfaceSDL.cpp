@@ -73,8 +73,10 @@ HRESULT CBSurfaceSDL::Create(const char *Filename, bool default_ck, byte ck_red,
 
 	if (strFileName.hasSuffix(".png")) {
 		imgDecoder = new Graphics::PNGDecoder();
+		_isTransparent = true;
 	} else if (strFileName.hasSuffix(".bmp")) {
 		imgDecoder = new Graphics::BitmapDecoder();
+		_isTransparent = false;
 	} else {
 		error("CBSurfaceSDL::Create : Unsupported fileformat %s", Filename);
 	}
