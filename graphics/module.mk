@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	scaler/thumbnail_intern.o \
 	sjis.o \
 	surface.o \
+	transparentSurface.o \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \

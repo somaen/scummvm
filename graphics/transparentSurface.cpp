@@ -29,7 +29,7 @@
 
 namespace Graphics {
 
-bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
+bool TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
 	int ca = (color >> 24) & 0xff;
 
 	// Check if we need to draw anything at all
@@ -49,16 +49,16 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	}
 
 	// Create an encapsulating surface for the data
-	Graphics::Surface srcImage;
+	Graphics::TransparentSurface srcImage(*this, false);
 	// TODO: Is the data really in the screen format?
-	srcImage.format = g_system->getScreenFormat();
-	srcImage.pitch = _width * 4;
-	srcImage.w = _width;
-	srcImage.h = _height;
-	srcImage.pixels = _data;
-
+	/*  srcImage.format = g_system->getScreenFormat();
+	    srcImage.pitch = _width * 4;
+	    srcImage.w = _width;
+	    srcImage.h = _height;
+	    srcImage.pixels = _data;
+	*/
 	if (pPartRect) {
-		srcImage.pixels = &_data[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
+		srcImage.pixels = &pixels[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
 		srcImage.w = pPartRect->right - pPartRect->left;
 		srcImage.h = pPartRect->bottom - pPartRect->top;
 
@@ -86,10 +86,10 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	byte *savedPixels = NULL;
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
-		img = imgScaled = scale(srcImage, width, height);
+		img = imgScaled = srcImage.scale(width, height);
 		savedPixels = (byte *)img->pixels;
 	} else {
-		img = &srcImage;
+		img = this;
 	}
 
 	// Handle off-screen clipping
@@ -105,26 +105,26 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 		posX = 0;
 	}
 
-	img->w = CLIP((int)img->w, 0, (int)MAX((int)_backSurface->w - posX, 0));
-	img->h = CLIP((int)img->h, 0, (int)MAX((int)_backSurface->h - posY, 0));
+	img->w = CLIP((int)img->w, 0, (int)MAX((int)target.w - posX, 0));
+	img->h = CLIP((int)img->h, 0, (int)MAX((int)target.h - posY, 0));
 
 	if ((img->w > 0) && (img->h > 0)) {
 		int xp = 0, yp = 0;
 
 		int inStep = 4;
 		int inoStep = img->pitch;
-		if (flipping & Image::FLIP_V) {
+		if (flipping & TransparentSurface::FLIP_V) {
 			inStep = -inStep;
 			xp = img->w - 1;
 		}
 
-		if (flipping & Image::FLIP_H) {
+		if (flipping & TransparentSurface::FLIP_H) {
 			inoStep = -inoStep;
 			yp = img->h - 1;
 		}
 
 		byte *ino = (byte *)img->getBasePtr(xp, yp);
-		byte *outo = (byte *)_backSurface->getBasePtr(posX, posY);
+		byte *outo = (byte *)target.getBasePtr(posX, posY);
 		byte *in, *out;
 
 		for (int i = 0; i < img->h; i++) {
@@ -137,6 +137,10 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 				int r = (pix >> 16) & 0xff;
 				int a = (pix >> 24) & 0xff;
 				in += inStep;
+
+				if (hasColourKey && (r == ck_r && g == ck_b && g == ck_g)) {
+					a = 0;
+				}
 
 				if (ca != 255) {
 					a = a * ca >> 8;
@@ -236,12 +240,12 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 #endif
 				}
 			}
-			outo += _backSurface->pitch;
+			outo += target.pitch;
 			ino += inoStep;
 		}
 
-		g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY,
-		                           img->w, img->h);
+		//g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY,
+		//                         img->w, img->h);
 	}
 
 	if (imgScaled) {
@@ -259,21 +263,21 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
  * @param scaleFactor   Scale amount. Must be between 0 and 1.0 (but not zero)
  * @remarks Caller is responsible for freeing the returned surface
  */
-Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(xSize, ySize, srcImage.format);
+Graphics::TransparentSurface *TransparentSurface::scale(int xSize, int ySize) const {
+	Graphics::TransparentSurface *s = new Graphics::TransparentSurface();
+	s->create(xSize, ySize, this->format);
 
-	int *horizUsage = scaleLine(xSize, srcImage.w);
-	int *vertUsage = scaleLine(ySize, srcImage.h);
+	int *horizUsage = scaleLine(xSize, this->w);
+	int *vertUsage = scaleLine(ySize, this->h);
 
 	// Loop to create scaled version
 	for (int yp = 0; yp < ySize; ++yp) {
-		const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
+		const byte *srcP = (const byte *)this->getBasePtr(0, vertUsage[yp]);
 		byte *destP = (byte *)s->getBasePtr(0, yp);
 
 		for (int xp = 0; xp < xSize; ++xp) {
-			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.format.bytesPerPixel);
-			for (int byteCtr = 0; byteCtr < srcImage.format.bytesPerPixel; ++byteCtr) {
+			const byte *tempSrcP = srcP + (horizUsage[xp] * this->format.bytesPerPixel);
+			for (int byteCtr = 0; byteCtr < this->format.bytesPerPixel; ++byteCtr) {
 				*destP++ = *tempSrcP++;
 			}
 		}
@@ -289,7 +293,7 @@ Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int x
  * Returns an array indicating which pixels of a source image horizontally or vertically get
  * included in a scaled image
  */
-int *RenderedImage::scaleLine(int size, int srcSize) {
+int *TransparentSurface::scaleLine(int size, int srcSize) {
 	int scale = 100 * size / srcSize;
 	assert(scale > 0);
 	int *v = new int[size];

@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef GRAPHICS_SURFACE_H
-#define GRAPHICS_SURFACE_H
+#ifndef GRAPHICS_TRANSPARENTSURFACE_H
+#define GRAPHICS_TRANSPARENTSURFACE_H
 
 #include "graphics/surface.h"
 
@@ -43,10 +43,33 @@ namespace Graphics {
  * A transparent graphics surface, which implements alpha blitting.
  */
 struct TransparentSurface : public Surface {
+	bool hasColourKey;
+	char ck_r, ck_b, ck_g;
 	TransparentSurface() : Surface() {
+		hasColourKey = false;
 	}
-	TransparentSurface(const Surface &surf) : Surface() {
-		copyFrom(surf);
+	TransparentSurface(const Surface &surf, bool copyData = false) : Surface() {
+		hasColourKey = false;
+		if (copyData) {
+			copyFrom(surf);
+		} else {
+			w = surf.w;
+			h = surf.h;
+			pitch = surf.pitch;
+			format = surf.format;
+			pixels = surf.pixels;
+		}
+	}
+
+	void setColourKey(char r, char g, char b) {
+		ck_r = r;
+		ck_b = b;
+		ck_g = g;
+		hasColourKey = true;
+	}
+
+	void disableColourKey() {
+		hasColourKey = false;
 	}
 
 	// Enums
@@ -65,7 +88,7 @@ struct TransparentSurface : public Surface {
 	    /// The image will be flipped at the horizontal and vertical axis.
 	    FLIP_VH = FLIP_H | FLIP_V
 	};
-	
+
 	/**
 	 @brief renders the surface to another surface
 	 @param pDest a pointer to the target image. In most cases this is the framebuffer.
@@ -95,12 +118,12 @@ struct TransparentSurface : public Surface {
 	 */
 
 	bool blit(Graphics::Surface &target, int posX = 0, int posY = 0,
-	                  int flipping = FLIP_NONE,
-	                  Common::Rect *pPartRect = NULL,
-	                  uint color = BS_ARGB(255, 255, 255, 255),
-	                  int width = -1, int height = -1) = 0;
+	          int flipping = FLIP_NONE,
+	          Common::Rect *pPartRect = NULL,
+	          uint color = BS_ARGB(255, 255, 255, 255),
+	          int width = -1, int height = -1);
 
-	Graphics::TransparentSurface *scale(const Graphics::Surface &srcImage, int xSize, int ySize) const;
+	Graphics::TransparentSurface *scale(int xSize, int ySize) const;
 private:
 	static int *scaleLine(int size, int srcSize);
 };
@@ -110,12 +133,12 @@ private:
  *
  * This deleter assures Surface::free is called on deletion.
  */
-struct SharedPtrSurfaceDeleter {
-	void operator()(Surface *ptr) {
-		ptr->free();
-		delete ptr;
-	}
-};
+/*struct SharedPtrTransparentSurfaceDeleter {
+    void operator()(TransparentSurface *ptr) {
+        ptr->free();
+        delete ptr;
+    }
+};*/
 
 
 } // End of namespace Graphics
