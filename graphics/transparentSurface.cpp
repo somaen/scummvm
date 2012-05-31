@@ -263,6 +263,30 @@ Graphics::TransparentSurface *TransparentSurface::scale(int xSize, int ySize) co
 }
 
 /**
+ * Writes a color key to the alpha channel of the surface
+ * @param rKey	the red component of the color key
+ * @param gKey	the green component of the color key
+ * @param bKey	the blue component of the color key
+ * @param overwriteAlpha if true, all other alpha will be set fully opaque
+ */
+void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha) {
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			uint32 pix = ((uint32*)pixels)[i * w + j];
+			uint8 r,g,b,a;
+			format.colorToARGB(pix, a, r, g, b);
+			if (r == rKey && g == gKey && b == bKey) {
+				a = 0;
+				((uint32*)pixels)[i * w + j] = format.ARGBToColor(a, r, g, b);
+			} else if (overwriteAlpha) {
+				a = 255;
+				((uint32*)pixels)[i * w + j] = format.ARGBToColor(a, r, g, b);
+			}
+		}
+	}
+}
+
+/**
  * Returns an array indicating which pixels of a source image horizontally or vertically get
  * included in a scaled image
  */

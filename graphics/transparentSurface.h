@@ -99,7 +99,7 @@ struct TransparentSurface : public Surface {
 	          Common::Rect *pPartRect = NULL,
 	          uint color = BS_ARGB(255, 255, 255, 255),
 	          int width = -1, int height = -1);
-
+	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 	Graphics::TransparentSurface *scale(int xSize, int ySize) const;
 private:
 	static int *scaleLine(int size, int srcSize);
