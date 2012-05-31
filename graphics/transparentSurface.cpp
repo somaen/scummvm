@@ -29,12 +29,31 @@
 
 namespace Graphics {
 
-bool TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
+TransparentSurface::TransparentSurface() : Surface() {}
+
+TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface() {
+	if (copyData) {
+		copyFrom(surf);
+	} else {
+		w = surf.w;
+		h = surf.h;
+		pitch = surf.pitch;
+		format = surf.format;
+		pixels = surf.pixels;
+	}
+}
+
+Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
 	int ca = (color >> 24) & 0xff;
 
+	Common::Rect retSize;
+	retSize.top = 0;
+	retSize.left = 0;
+	retSize.setWidth(0);
+	retSize.setHeight(0);
 	// Check if we need to draw anything at all
 	if (ca == 0)
-		return true;
+		return retSize;
 
 	int cr = (color >> 16) & 0xff;
 	int cg = (color >> 8) & 0xff;
@@ -51,16 +70,14 @@ bool TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int
 	// Create an encapsulating surface for the data
 	Graphics::TransparentSurface srcImage(*this, false);
 	// TODO: Is the data really in the screen format?
-	/*  srcImage.format = g_system->getScreenFormat();
-	    srcImage.pitch = _width * 4;
-	    srcImage.w = _width;
-	    srcImage.h = _height;
-	    srcImage.pixels = _data;
-	*/
+	if (format.bytesPerPixel != 4) {
+		error("TransparentSurface can only blit 32 bpp images");
+	}
+
 	if (pPartRect) {
 		srcImage.pixels = &((char*)pixels)[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
-		srcImage.w = pPartRect->right - pPartRect->left;
-		srcImage.h = pPartRect->bottom - pPartRect->top;
+		srcImage.w = pPartRect->width();
+		srcImage.h = pPartRect->height();
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
 		      pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
@@ -89,7 +106,7 @@ bool TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int
 		img = imgScaled = srcImage.scale(width, height);
 		savedPixels = (byte *)img->pixels;
 	} else {
-		img = this;
+		img = &srcImage;
 	}
 
 	// Handle off-screen clipping
@@ -132,15 +149,13 @@ bool TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int
 			in = ino;
 			for (int j = 0; j < img->w; j++) {
 				uint32 pix = *(uint32 *)in;
-				int b = (pix >> 0) & 0xff;
-				int g = (pix >> 8) & 0xff;
-				int r = (pix >> 16) & 0xff;
-				int a = (pix >> 24) & 0xff;
+				uint32 o_pix = *(uint32 *) out;
+				int b = (pix >> img->format.bShift) & 0xff;
+				int g = (pix >> img->format.gShift) & 0xff;
+				int r = (pix >> img->format.rShift) & 0xff;
+				int a = (pix >> img->format.aShift) & 0xff;
+				int o_b, o_g, o_r, o_a; 
 				in += inStep;
-
-				if (hasColourKey && (r == ck_r && g == ck_b && g == ck_g)) {
-					a = 0;
-				}
 
 				if (ca != 255) {
 					a = a * ca >> 8;
@@ -151,101 +166,57 @@ bool TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int
 					out += 4;
 					break;
 				case 255: // Full opacity
-#if defined(SCUMM_LITTLE_ENDIAN)
 					if (cb != 255)
-						*out++ = (b * cb) >> 8;
+						o_b = (b * cb) >> 8;
 					else
-						*out++ = b;
-
+						o_b = b;
+					
 					if (cg != 255)
-						*out++ = (g * cg) >> 8;
+						o_g = (g * cg) >> 8;
 					else
-						*out++ = g;
-
+						o_g = g;
+					
 					if (cr != 255)
-						*out++ = (r * cr) >> 8;
+						o_r = (r * cr) >> 8;
 					else
-						*out++ = r;
-
-					*out++ = a;
-#else
-					*out++ = a;
-
-					if (cr != 255)
-						*out++ = (r * cr) >> 8;
-					else
-						*out++ = r;
-
-					if (cg != 255)
-						*out++ = (g * cg) >> 8;
-					else
-						*out++ = g;
-
-					if (cb != 255)
-						*out++ = (b * cb) >> 8;
-					else
-						*out++ = b;
-#endif
+						o_r = r;
+					o_a = a;
+					*(uint32*)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
+					out+=4;
 					break;
 
 				default: // alpha blending
-#if defined(SCUMM_LITTLE_ENDIAN)
+					o_a = 255;
+					o_b = (o_pix >> target.format.bShift) & 0xff;
+					o_g = (o_pix >> target.format.gShift) & 0xff;
+					o_r = (o_pix >> target.format.rShift) & 0xff;
 					if (cb == 0)
-						*out = 0;
+						o_b = 0;
 					else if (cb != 255)
-						*out += ((b - *out) * a * cb) >> 16;
+						o_b += ((b - o_b) * a * cb) >> 16;
 					else
-						*out += ((b - *out) * a) >> 8;
-					out++;
+						o_b += ((b - o_b) * a) >> 8;
 					if (cg == 0)
-						*out = 0;
+						o_g = 0;
 					else if (cg != 255)
-						*out += ((g - *out) * a * cg) >> 16;
+						o_g += ((g - o_g) * a * cg) >> 16;
 					else
-						*out += ((g - *out) * a) >> 8;
-					out++;
+						o_g += ((g - o_g) * a) >> 8;
 					if (cr == 0)
-						*out = 0;
+						o_r = 0;
 					else if (cr != 255)
-						*out += ((r - *out) * a * cr) >> 16;
+						o_r += ((r - o_r) * a * cr) >> 16;
 					else
-						*out += ((r - *out) * a) >> 8;
-					out++;
-					*out = 255;
-					out++;
-#else
-					*out = 255;
-					out++;
-					if (cr == 0)
-						*out = 0;
-					else if (cr != 255)
-						*out += ((r - *out) * a * cr) >> 16;
-					else
-						*out += ((r - *out) * a) >> 8;
-					out++;
-					if (cg == 0)
-						*out = 0;
-					else if (cg != 255)
-						*out += ((g - *out) * a * cg) >> 16;
-					else
-						*out += ((g - *out) * a) >> 8;
-					out++;
-					if (cb == 0)
-						*out = 0;
-					else if (cb != 255)
-						*out += ((b - *out) * a * cb) >> 16;
-					else
-						*out += ((b - *out) * a) >> 8;
-					out++;
-#endif
+						o_r += ((r - o_r) * a) >> 8;
+					*(uint32*)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
+					out+=4;
 				}
 			}
 			outo += target.pitch;
 			ino += inoStep;
 		}
 
-		//g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY,
-		//                         img->w, img->h);
+		//g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, img->w, img->h);
 	}
 
 	if (imgScaled) {
@@ -254,7 +225,9 @@ bool TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int
 		delete imgScaled;
 	}
 
-	return true;
+	retSize.setWidth(img->w);
+	retSize.setHeight(img->h);
+	return retSize;
 }
 
 /**

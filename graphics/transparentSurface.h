@@ -43,34 +43,11 @@ namespace Graphics {
  * A transparent graphics surface, which implements alpha blitting.
  */
 struct TransparentSurface : public Surface {
-	bool hasColourKey;
-	char ck_r, ck_b, ck_g;
-	TransparentSurface() : Surface() {
-		hasColourKey = false;
-	}
-	TransparentSurface(const Surface &surf, bool copyData = false) : Surface() {
-		hasColourKey = false;
-		if (copyData) {
-			copyFrom(surf);
-		} else {
-			w = surf.w;
-			h = surf.h;
-			pitch = surf.pitch;
-			format = surf.format;
-			pixels = surf.pixels;
-		}
-	}
+	TransparentSurface();
+	TransparentSurface(const Surface &surf, bool copyData = false);
 
-	void setColourKey(char r, char g, char b) {
-		ck_r = r;
-		ck_b = b;
-		ck_g = g;
-		hasColourKey = true;
-	}
-
-	void disableColourKey() {
-		hasColourKey = false;
-	}
+	void setColorKey(char r, char g, char b);
+	void disableColorKey();
 
 	// Enums
 	/**
@@ -117,7 +94,7 @@ struct TransparentSurface : public Surface {
 	 @return returns false if the rendering failed.
 	 */
 
-	bool blit(Graphics::Surface &target, int posX = 0, int posY = 0,
+	Common::Rect blit(Graphics::Surface &target, int posX = 0, int posY = 0,
 	          int flipping = FLIP_NONE,
 	          Common::Rect *pPartRect = NULL,
 	          uint color = BS_ARGB(255, 255, 255, 255),
