@@ -144,16 +144,26 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
 		byte *in, *out;
 
+		int bShift = img->format.bShift;
+		int gShift = img->format.gShift;
+		int rShift = img->format.rShift;
+		int aShift = img->format.aShift;
+		
+		int bShiftTarget = target.format.bShift;
+		int gShiftTarget = target.format.gShift;
+		int rShiftTarget = target.format.rShift;
+		int aShiftTarget = target.format.aShift;
+
 		for (int i = 0; i < img->h; i++) {
 			out = outo;
 			in = ino;
 			for (int j = 0; j < img->w; j++) {
 				uint32 pix = *(uint32 *)in;
 				uint32 o_pix = *(uint32 *) out;
-				int b = (pix >> img->format.bShift) & 0xff;
-				int g = (pix >> img->format.gShift) & 0xff;
-				int r = (pix >> img->format.rShift) & 0xff;
-				int a = (pix >> img->format.aShift) & 0xff;
+				int b = (pix >> bShift) & 0xff;
+				int g = (pix >> gShift) & 0xff;
+				int r = (pix >> rShift) & 0xff;
+				int a = (pix >> aShift) & 0xff;
 				int o_b, o_g, o_r, o_a; 
 				in += inStep;
 
@@ -187,9 +197,9 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 				default: // alpha blending
 					o_a = 255;
-					o_b = (o_pix >> target.format.bShift) & 0xff;
-					o_g = (o_pix >> target.format.gShift) & 0xff;
-					o_r = (o_pix >> target.format.rShift) & 0xff;
+					o_b = (o_pix >> bShiftTarget) & 0xff;
+					o_g = (o_pix >> gShiftTarget) & 0xff;
+					o_r = (o_pix >> rShiftTarget) & 0xff;
 					if (cb == 0)
 						o_b = 0;
 					else if (cb != 255)
@@ -215,8 +225,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 			outo += target.pitch;
 			ino += inoStep;
 		}
-
-		//g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, img->w, img->h);
 	}
 
 	if (imgScaled) {
