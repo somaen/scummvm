@@ -75,7 +75,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	}
 
 	if (pPartRect) {
-		srcImage.pixels = &((char*)pixels)[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
+		srcImage.pixels = &((char *)pixels)[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
 
@@ -148,7 +148,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		int gShift = img->format.gShift;
 		int rShift = img->format.rShift;
 		int aShift = img->format.aShift;
-		
+
 		int bShiftTarget = target.format.bShift;
 		int gShiftTarget = target.format.gShift;
 		int rShiftTarget = target.format.rShift;
@@ -164,7 +164,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 				int g = (pix >> gShift) & 0xff;
 				int r = (pix >> rShift) & 0xff;
 				int a = (pix >> aShift) & 0xff;
-				int o_b, o_g, o_r, o_a; 
+				int o_b, o_g, o_r, o_a;
 				in += inStep;
 
 				if (ca != 255) {
@@ -180,19 +180,19 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 						o_b = (b * cb) >> 8;
 					else
 						o_b = b;
-					
+
 					if (cg != 255)
 						o_g = (g * cg) >> 8;
 					else
 						o_g = g;
-					
+
 					if (cr != 255)
 						o_r = (r * cr) >> 8;
 					else
 						o_r = r;
 					o_a = a;
-					*(uint32*)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-					out+=4;
+					*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
+					out += 4;
 					break;
 
 				default: // alpha blending
@@ -218,8 +218,8 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 						o_r += ((r - o_r) * a * cr) >> 16;
 					else
 						o_r += ((r - o_r) * a) >> 8;
-					*(uint32*)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
-					out+=4;
+					*(uint32 *)out = target.format.ARGBToColor(o_a, o_r, o_g, o_b);
+					out += 4;
 				}
 			}
 			outo += target.pitch;
@@ -272,23 +272,23 @@ Graphics::TransparentSurface *TransparentSurface::scale(int xSize, int ySize) co
 
 /**
  * Writes a color key to the alpha channel of the surface
- * @param rKey	the red component of the color key
- * @param gKey	the green component of the color key
- * @param bKey	the blue component of the color key
+ * @param rKey  the red component of the color key
+ * @param gKey  the green component of the color key
+ * @param bKey  the blue component of the color key
  * @param overwriteAlpha if true, all other alpha will be set fully opaque
  */
 void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha) {
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
-			uint32 pix = ((uint32*)pixels)[i * w + j];
-			uint8 r,g,b,a;
+			uint32 pix = ((uint32 *)pixels)[i * w + j];
+			uint8 r, g, b, a;
 			format.colorToARGB(pix, a, r, g, b);
 			if (r == rKey && g == gKey && b == bKey) {
 				a = 0;
-				((uint32*)pixels)[i * w + j] = format.ARGBToColor(a, r, g, b);
+				((uint32 *)pixels)[i * w + j] = format.ARGBToColor(a, r, g, b);
 			} else if (overwriteAlpha) {
 				a = 255;
-				((uint32*)pixels)[i * w + j] = format.ARGBToColor(a, r, g, b);
+				((uint32 *)pixels)[i * w + j] = format.ARGBToColor(a, r, g, b);
 			}
 		}
 	}

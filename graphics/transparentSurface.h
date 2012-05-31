@@ -95,10 +95,10 @@ struct TransparentSurface : public Surface {
 	 */
 
 	Common::Rect blit(Graphics::Surface &target, int posX = 0, int posY = 0,
-	          int flipping = FLIP_NONE,
-	          Common::Rect *pPartRect = NULL,
-	          uint color = BS_ARGB(255, 255, 255, 255),
-	          int width = -1, int height = -1);
+	                  int flipping = FLIP_NONE,
+	                  Common::Rect *pPartRect = NULL,
+	                  uint color = BS_ARGB(255, 255, 255, 255),
+	                  int width = -1, int height = -1);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 	Graphics::TransparentSurface *scale(int xSize, int ySize) const;
 private:
