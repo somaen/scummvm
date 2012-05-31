@@ -39,7 +39,7 @@
 #include "sword25/gfx/image/renderedimage.h"
 
 #include "common/system.h"
-
+#include "graphics/transparentSurface.h"
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------
@@ -220,7 +220,17 @@ uint RenderedImage::getPixel(int x, int y) {
 // -----------------------------------------------------------------------------
 
 bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
-	int ca = (color >> 24) & 0xff;
+	// Create an encapsulating surface for the data
+	Graphics::TransparentSurface srcImage;
+	// TODO: Is the data really in the screen format?
+	srcImage.format = g_system->getScreenFormat();
+	srcImage.pitch = _width * 4;
+	srcImage.w = _width;
+	srcImage.h = _height;
+	srcImage.pixels = _data;
+	
+	Common::Rect drawSize = srcImage.blit(*_backSurface, posX, posY, flipping, pPartRect, color, width, height);
+/*	int ca = (color >> 24) & 0xff;
 
 	// Check if we need to draw anything at all
 	if (ca == 0)
@@ -439,7 +449,17 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 		imgScaled->free();
 		delete imgScaled;
 	}
-
+*/
+	if (posX < 0) {
+		posX = 0;
+	}
+	if (posY < 0) {
+		posY = 0;
+	}
+	if (drawSize.width() == 0 || drawSize.height() == 0) {
+		return false;
+	}
+	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(posX, posY), _backSurface->pitch, posX, posY, drawSize.width(), drawSize.height());
 	return true;
 }
 
