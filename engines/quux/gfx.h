@@ -20,12 +20,9 @@
  *
  */
 
-#ifndef QUUX_H
-#define QUUX_H
 
-#include "common/random.h"
-#include "engines/engine.h"
-#include "gui/debugger.h"
+#ifndef QUUX_GFX_H
+#define QUUX_GFX_H
 
 namespace Graphics {
 	class Surface;
@@ -33,47 +30,18 @@ namespace Graphics {
 
 namespace Quux {
 
-class Console;
-
-// our engine debug channels
-enum {
-	kQuuxDebugExample = 1 << 0,
-	kQuuxDebugExample2 = 1 << 1,
-    kQuuxDebugInit = 1 << 2,
-    kQuuxDebugGFX = 1 << 3
-                         // next new channel must be 1 << 2 (4)
-                         // the current limitation is 32 debug channels (1 << 31 is the last one)
-};
-
-class QuuxGFX;
-class QuuxEngine : public Engine {
+class QuuxGFX {
 public:
-	QuuxEngine(OSystem *syst);
-	~QuuxEngine();
-
-	virtual Common::Error run();
-
-private:
+	QuuxGFX();
+	~QuuxGFX();
+	void drawImageAt(int32 x, int32 y);
+	void clearScreen();
 	void init();
-	void mainLoop();
-	void leftClick(int x, int y);
-	void rightClick(int x, int y);
-
-	QuuxGFX *_gfx;
-	Console *_console;
-
-	// We need random numbers
-	Common::RandomSource *_rnd;
-};
-
-// Example console class
-class Console : public GUI::Debugger {
-public:
-	Console(QuuxEngine *vm) {}
-	virtual ~Console(void) {}
+private:
+	Graphics::Surface *_image;
 };
 
 } // End of namespace Quux
 
-#endif
 
+#endif
