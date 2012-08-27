@@ -3,7 +3,8 @@ MODULE := engines/quux
 MODULE_OBJS := \
  	detection.o \
 	quux.o \
-	gfx.o
+	gfx.o \
+	sound.o 
 	 
 MODULE_DIRS += \
 		engines/quux

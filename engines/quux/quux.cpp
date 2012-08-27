@@ -35,6 +35,7 @@
 
 #include "quux/quux.h"
 #include "quux/gfx.h"
+#include "quux/sound.h"
 
 namespace Quux {
 
@@ -57,6 +58,7 @@ QuuxEngine::QuuxEngine(OSystem *syst)
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("quux");
 	_gfx = NULL;
+	_sound = NULL;
 
 	debug("QuuxEngine::QuuxEngine");
 }
@@ -67,6 +69,7 @@ QuuxEngine::~QuuxEngine() {
 	// Dispose your resources here
 	delete _rnd;
 	delete _gfx;
+	delete _sound;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -118,6 +121,8 @@ Common::Error QuuxEngine::run() {
 void QuuxEngine::init() {
 	_gfx = new QuuxGFX();
 	_gfx->init();
+
+	_sound = new QuuxSound();
 }
 
 void QuuxEngine::leftClick(int x, int y) {
@@ -129,6 +134,8 @@ void QuuxEngine::rightClick(int x, int y) {
 }
 
 void QuuxEngine::mainLoop() {
+	_sound->playIfAvailable("example.mp3");
+
 	while (true) {
 		// Handle any events
 		Common::Event event;
@@ -137,18 +144,18 @@ void QuuxEngine::mainLoop() {
 			_eventMan->pollEvent(event);
 			switch (event.type) {
 				// Events are similar to SDL's events, see common/events.h
-				case Common::EVENT_LBUTTONDOWN:
-					leftClick(event.mouse.x, event.mouse.y);
-					break;
-				case Common::EVENT_RBUTTONDOWN:
-					rightClick(event.mouse.x, event.mouse.y);
-				case Common::EVENT_QUIT:
-				case Common::EVENT_RTL:
-					// Return-To-Launcher-specifics happen here, if you
-					// support RTL.
-					return;
-				default:
-					break;
+			case Common::EVENT_LBUTTONDOWN:
+				leftClick(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				rightClick(event.mouse.x, event.mouse.y);
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+				// Return-To-Launcher-specifics happen here, if you
+				// support RTL.
+				return;
+			default:
+				break;
 			}
 		}
 		// It's a good idea to cap your framerate, additional logic for finding your current FPS

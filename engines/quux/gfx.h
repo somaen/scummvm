@@ -25,7 +25,7 @@
 #define QUUX_GFX_H
 
 namespace Graphics {
-	class Surface;
+class Surface;
 }
 
 namespace Quux {

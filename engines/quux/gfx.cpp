@@ -48,7 +48,7 @@ QuuxGFX::~QuuxGFX() {
 
 void QuuxGFX::init() {
 	// Load an example PNG, for additional decoders see graphics/decoders/
-	
+
 	// Files are accessed through SearchMan, first check that it exists
 	// to avoid allocating all the other objects if that is not the case.
 	if (SearchMan.hasFile("example.png")) {
@@ -56,14 +56,14 @@ void QuuxGFX::init() {
 		// formats, you might want to use a pointer to the superclass
 		// Graphics::Decoder instead.
 		Graphics::PNGDecoder pngDecoder;
-		
+
 		// Then get a stream for the actual file, note that ScummVM-streams
 		// are NOT the same as STL-streams.
 		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("example.png");
-		
+
 		// Load the actual image
 		pngDecoder.loadStream(*stream);
-		
+
 		// Then copy the image-data to a Surface that we own
 		// Note: PNGDecoder MIGHT not return the expected format,
 		// for instance 1 Bpp images are returned as 1 Bpp images with a palette.
@@ -71,7 +71,7 @@ void QuuxGFX::init() {
 		// you should use convertTo() instead of copyFrom()
 		_image = new Graphics::Surface();
 		_image->copyFrom(*pngDecoder.getSurface());
-		
+
 		// Finally dispose of the stream
 		delete stream;
 	}
@@ -81,13 +81,13 @@ void QuuxGFX::init() {
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->initSize(640, 480, &format);
 	g_system->endGFXTransaction();
-	
+
 	// Then set the screen-color, in this case it isn't really necessary
 	// as black would be the case in most situations anyhow, this is mostly here
 	// as an example, if for instance you want the clear-color to be white.
 	uint32 black = g_system->getScreenFormat().ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	g_system->fillScreen(black);
-	
+
 	// Don't forget to call update-screen, much like you would need to
 	// remember swapping buffers when doing double-buffered OpenGL.
 	g_system->updateScreen();
@@ -100,18 +100,18 @@ void QuuxGFX::drawImageAt(int32 x, int32 y) {
 	}
 	int height = _image->h;
 	int width = _image->w;
-	
+
 	// Avoid drawing outside the screen-area, by cropping.
 	if (y + height >= g_system->getHeight()) {
 		height = g_system->getHeight() - y;
 		debugC(1, kQuuxDebugGFX, "Cropped width");
 	}
-	
+
 	if (x + width >= g_system->getWidth()) {
 		width = g_system->getWidth() - x;
 		debugC(1, kQuuxDebugGFX, "Cropped height");
 	}
-	
+
 	// Fill the screen with black again
 	uint32 black = g_system->getScreenFormat().ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	g_system->fillScreen(black);
@@ -119,7 +119,7 @@ void QuuxGFX::drawImageAt(int32 x, int32 y) {
 	// Copy the image-data to the screen (note that no actual update is done yet)
 	g_system->copyRectToScreen(_image->pixels, _image->pitch, x, y, width, height);
 	debugC(1, kQuuxDebugGFX, "Copied %d x %d to pos %d %d", width, height, x, y);
-	
+
 	// Updates only happen after THIS call.
 	g_system->updateScreen();
 }
