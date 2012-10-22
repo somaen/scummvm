@@ -67,6 +67,11 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 			_surface = temp;
 		}
 		if (_rotation) {
+			TransparentSurface src(*_surface, false);
+			Graphics::Surface *temp = src.rotate(rotation);
+			_surface->free();
+			delete _surface;
+			_surface = temp;
 			warning("TODO: Rotate surface %f", _rotation);
 		}
 	} else {

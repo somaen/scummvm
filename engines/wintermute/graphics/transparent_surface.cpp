@@ -23,6 +23,7 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/rect.h"
+#include "common/math.h"
 #include "common/textconsole.h"
 #include "graphics/primitives.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
@@ -380,6 +381,75 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	retSize.setWidth(img->w);
 	retSize.setHeight(img->h);
 	return retSize;
+}
+
+// http://en.wikipedia.org/wiki/Rotation_matrix
+void rotateByMatrix(int16 &x, int16 &y, float *matrix) {
+	float finalX = matrix[0] * x + matrix[1] * y;
+	float finalY = -matrix[1] * x + matrix[0] * y;
+	x = finalX;
+	y = finalY;
+}
+
+void rotateByMatrix(Common::Point &p, float *matrix) {
+	rotateByMatrix(p.x, p.y, matrix);
+}
+
+TransparentSurface *TransparentSurface::rotate(uint32 degrees) const {
+	degrees = degrees % 360;
+	float radians = Common::deg2rad(degrees);
+	// Row-major
+	float matrix[2];
+	matrix[0] = cos(radians);
+	matrix[1] = -sin(radians);
+
+	Common::Point upperLeft(0, h);
+	Common::Point upperRight(w, h);
+	Common::Point lowerLeft(0, 0);
+	Common::Point lowerRight(w, 0);
+
+	rotateByMatrix(upperLeft, matrix);
+	rotateByMatrix(upperRight, matrix);
+	rotateByMatrix(lowerLeft, matrix);
+	rotateByMatrix(lowerRight, matrix);
+
+	int minX = MIN(MIN(upperLeft.x, lowerLeft.x), MIN(upperRight.x, lowerRight.x));
+	int maxX = MAX(MAX(upperLeft.x, lowerLeft.x), MAX(upperRight.x, lowerRight.x));
+	int minY = MIN(MIN(upperLeft.y, lowerLeft.y), MIN(upperRight.y, lowerRight.y));
+	int maxY = MAX(MAX(upperLeft.y, lowerLeft.y), MAX(upperRight.y, lowerRight.y));
+
+	int offsetX = 0;
+	if (minX < 0) {
+		offsetX = -minX;
+	}
+
+	int offsetY = 0;
+	if (minY < 0) {
+		offsetY = -minY;
+	}
+
+	int16 targetX = 0;
+	int16 targetY = 0;
+	TransparentSurface *rotatedSurface = new TransparentSurface();
+	rotatedSurface->create(maxX + offsetX + 1, maxY + offsetY + 1, format);
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			targetX = j;
+			targetY = i;
+
+			rotateByMatrix(targetX, targetY, matrix);
+			targetX += offsetX;
+			targetY += offsetY;
+			
+			if (targetX >= 0 && targetY >= 0 ) {
+				void *target = rotatedSurface->getBasePtr(targetX, targetY);
+				const void *source = getBasePtr(j, i);
+				memcpy(target, source, format.bytesPerPixel);
+			}
+		}
+	}
+
+	return rotatedSurface;
 }
 
 TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
