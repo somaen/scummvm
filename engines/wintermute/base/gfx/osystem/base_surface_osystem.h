@@ -88,6 +88,7 @@ private:
 	void genAlphaMask(Graphics::Surface *surface);
 	uint32 getPixelAt(Graphics::Surface *surface, int x, int y);
 
+	float _rotation;
 	bool _hasAlpha;
 	void *_lockPixels;
 	int _lockPitch;

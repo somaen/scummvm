@@ -39,8 +39,8 @@ class BaseSurfaceOSystem;
 class RenderTicket {
 	Graphics::Surface *_surface;
 public:
-	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false, bool disableAlpha = false);
-	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0) {}
+	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false, float rotation = 0.0f, bool disableAlpha = false);
+	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0), _rotation(0.0f) {}
 	~RenderTicket();
 	const Graphics::Surface *getSurface() { return _surface; }
 	Common::Rect _srcRect;
@@ -52,6 +52,7 @@ public:
 	bool _wantsDraw;
 	uint32 _drawNum;
 	uint32 _colorMod;
+	float _rotation;
 
 	BaseSurfaceOSystem *_owner;
 	bool operator==(RenderTicket &a);
@@ -98,7 +99,7 @@ public:
 		return _ratioY;
 	}
 
-	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false);
+	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, float rotation = 0.0f, bool disableAlpha = false);
 	BaseSurface *createSurface();
 private:
 	void addDirtyRect(const Common::Rect &rect);

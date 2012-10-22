@@ -337,6 +337,7 @@ bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, flo
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	_rotation = rotate;
 	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
 }
 
@@ -409,7 +410,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
 	}
 
-	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY, !hasAlpha);
+	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY, _rotation, !hasAlpha);
 
 	return STATUS_OK;
 }

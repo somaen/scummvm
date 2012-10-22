@@ -40,8 +40,8 @@
 
 namespace Wintermute {
 
-RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) : _owner(owner),
-	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _hasAlpha(!disableAlpha) {
+RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, float rotation, bool disableAlpha) : _owner(owner),
+	_srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(true), _rotation(rotation), _hasAlpha(!disableAlpha) {
 	_colorMod = 0;
 	_mirror = TransparentSurface::FLIP_NONE;
 	if (mirrorX) {
@@ -65,6 +65,9 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 			_surface->free();
 			delete _surface;
 			_surface = temp;
+		}
+		if (_rotation) {
+			warning("TODO: Rotate surface %f", _rotation);
 		}
 	} else {
 		_surface = NULL;
@@ -306,14 +309,14 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 	return _renderSurface->format;
 }
 
-void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) {
+void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, float rotation, bool disableAlpha) {
 	// Skip rects that are completely outside the screen:
 	if ((dstRect->left < 0 && dstRect->right < 0) || (dstRect->top < 0 && dstRect->bottom < 0)) {
 		return;
 	}
 
 	if (owner) { // Fade-tickets are owner-less
-		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
+		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY, rotation, disableAlpha);
 		compare._colorMod = _colorMod;
 		RenderQueueIterator it;
 		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
@@ -328,7 +331,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 			}
 		}
 	}
-	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
+	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY, rotation, disableAlpha);
 	ticket->_colorMod = _colorMod;
 	if (!_disableDirtyRects) {
 		drawFromTicket(ticket);
