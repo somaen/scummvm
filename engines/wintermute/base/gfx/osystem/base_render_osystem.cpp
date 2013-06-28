@@ -35,9 +35,10 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "common/system.h"
-#include "engines/wintermute/graphics/transparent_surface.h"
 #include "common/queue.h"
 #include "common/config-manager.h"
+#include "engines/wintermute/graphics/transparent_surface.h"
+
 
 #define DIRTY_RECT_LIMIT 800
 
@@ -256,7 +257,6 @@ void BaseRenderOSystem::fade(uint16 alpha) {
 	return fadeToColor(0, 0, 0, dwAlpha);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect) {
 	Common::Rect fillRect;
@@ -286,7 +286,7 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect
 	Common::Rect sizeRect(fillRect);
 	sizeRect.translate(-fillRect.top, -fillRect.left);
 	surf.fillRect(fillRect, col);
-	drawSurface(nullptr, &surf, &sizeRect, &fillRect, false, false);
+	drawSurface(nullptr, &surf, &sizeRect, &fillRect, TransformStruct());
 	surf.free();
 
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
@@ -298,16 +298,18 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 	return _renderSurface->format;
 }
 
-void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) {
+void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct transform) { 
+
 	if (_tempDisableDirtyRects || _disableDirtyRects) {
-		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
-		ticket->_colorMod = _colorMod;
+		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
+		ticket->_transform._rgbaMod = _colorMod;
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
 		_previousTicket = ticket;
 		drawFromSurface(ticket);
 		return;
 	}
+
 	// Start searching from the beginning for the first and second items (since it's empty the first time around
 	// then keep incrementing the start-position, to avoid comparing against already used tickets.
 	if (_drawNum == 0 || _drawNum == 1) {
@@ -320,12 +322,12 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	}
 
 	if (owner) { // Fade-tickets are owner-less
-		RenderTicket compare(owner, nullptr, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
+		RenderTicket compare(owner, NULL, srcRect, dstRect, transform);
+		
 		compare._batchNum = _batchNum;
 		if (_spriteBatch) {
 			_batchNum++;
 		}
-		compare._colorMod = _colorMod;
 		RenderQueueIterator it;
 		// Avoid calling end() and operator* every time, when potentially going through
 		// LOTS of tickets.
@@ -334,7 +336,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		for (it = _lastAddedTicket; it != endIterator; ++it) {
 			compareTicket = *it;
 			if (*(compareTicket) == compare && compareTicket->_isValid) {
-				compareTicket->_colorMod = _colorMod;
 				if (_disableDirtyRects) {
 					drawFromSurface(compareTicket);
 				} else {
@@ -344,13 +345,12 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 				if (_renderQueue.size() > DIRTY_RECT_LIMIT) {
 					drawTickets();
 					_tempDisableDirtyRects = 3;
-				}
+				} 
 				return;
 			}
 		}
 	}
-	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
-	ticket->_colorMod = _colorMod;
+	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
 	if (!_disableDirtyRects) {
 		drawFromTicket(ticket);
 		_previousTicket = ticket;
@@ -390,7 +390,7 @@ void BaseRenderOSystem::repeatLastDraw(int offsetX, int offsetY, int numTimesX, 
 				dstRect.translate(offsetX, 0);
 			}
 			for (int j = (i == 0 ? 1 : 0); j < numTimesX; j++) {
-				drawSurface(origTicket->_owner, origTicket->getSurface(), &srcRect, &dstRect, false, false);
+				drawSurface(origTicket->_owner, origTicket->getSurface(), &srcRect, &dstRect, TransformStruct()); 
 				dstRect.translate(offsetX, 0);
 			}
 			dstRect.left = initLeft;
@@ -535,7 +535,6 @@ void BaseRenderOSystem::drawTickets() {
 			// convert from screen-coords to surface-coords.
 			dstClip.translate(-offsetX, -offsetY);
 
-			_colorMod = ticket->_colorMod;
 			drawFromSurface(ticket, &pos, &dstClip);
 			_needsFlip = true;
 		}
