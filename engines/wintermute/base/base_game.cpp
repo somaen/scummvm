@@ -461,7 +461,6 @@ bool BaseGame::initialize3() { // renderer is initialized
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseGame::DEBUG_DebugEnable(const char *filename) {
 	_debugDebugMode = true;

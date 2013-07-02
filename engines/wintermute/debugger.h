@@ -24,20 +24,54 @@
 #define WINTERMUTE_DEBUGGER_H
 
 #include "gui/debugger.h"
+// #include "common/error.h"
+#include "engines/wintermute/base/scriptables/script.h"
+//#include "engines/wintermute/base/scriptables/script_engine.h"
+//#include "engines/wintermute/adapter.h"
+// #include "engines/wintermute/base/base_engine.h"
 
 namespace Wintermute {
-
 class WintermuteEngine;
+class Adapter;
 class Console : public GUI::Debugger {
 public:
-	Console(WintermuteEngine *vm);
+	Console(WintermuteEngine *vm); // WintermuteEngine *vm);
 	virtual ~Console();
-	
 	bool Cmd_ShowFps(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
+	bool Cmd_Step(int argc, const char **argv);
+	bool Cmd_StepInto(int argc, const char **argv);
+	bool Cmd_StepOver(int argc, const char **argv);
+	bool Cmd_Continue(int argc, const char **argv);
+	bool Cmd_Watch(int argc, const char **argv);
+	/** 
+	 * Add a breakpoint.
+	 */
+	bool Cmd_AddBreakpoint(int argc, const char **argv);
+	bool Cmd_RemoveBreakpoint(int argc, const char **argv);
+	/** 
+	 * List all scripts running ATM. 
+	 * Also, which line are they on and if they have any breakpoints.
+	 */
+	bool Cmd_Top(int argc, const char **argv);
+	/** 
+	 * List all breakpoints set. 
+	 */
+	bool Cmd_ListBreakpoints(int argc, const char **argv);
+	bool Cmd_ListWatches(int argc, const char **argv);
+	bool listWatches();
+	bool listBreakpoints();
+
+	// For use by the Adapter
+	void notifyBreakpoint(const char *filename, int line);
+	void notifyStep(const char *filename, int line);
+	void notifyWatch(const char *filename, const char *symbol, const char *newValue);
+	// void notifyWatch(const char *filename, const char *symbol);
+
 private:
 	WintermuteEngine *_engineRef;
 };
+
 
 }
 
