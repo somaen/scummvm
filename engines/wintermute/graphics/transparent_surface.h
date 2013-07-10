@@ -25,7 +25,7 @@
 #include "graphics/surface.h"
 #include "engines/wintermute/graphics/transform_struct.h"
 
-#define FAST_TRANSFORM 0
+#define ENABLE_BILINEAR 0
 
 
 /*
