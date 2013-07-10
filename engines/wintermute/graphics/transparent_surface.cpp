@@ -93,13 +93,13 @@ void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, i
 				Q22 = READ_UINT32((const byte *)src->getBasePtr(x2 + srcRect.left, y2 + srcRect.top));
 			}
 
-			unsigned char *Q11s = (unsigned char *)&Q11;
-			unsigned char *Q12s = (unsigned char *)&Q12;
-			unsigned char *Q21s = (unsigned char *)&Q21;
-			unsigned char *Q22s = (unsigned char *)&Q22;
+			byte *Q11s = (byte *)&Q11;
+			byte *Q12s = (byte *)&Q12;
+			byte *Q21s = (byte *)&Q21;
+			byte *Q22s = (byte *)&Q22;
 
 			uint32 color;
-			unsigned char *dest = (unsigned char *)&color;
+			byte *dest = (byte *)&color;
 			
 			float q11x = (x2 - projX);
 			float q11y = (y2 - projY);
