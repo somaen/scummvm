@@ -110,7 +110,7 @@ void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, i
 			float q22x = (projX - x1);
 			float q22y = (projY - y1);
 
-			if (x1 == x2 && y1 == y2 ) {
+			if (x1 == x2 && y1 == y2) {
 				for (int c = 0; c < 4; c++) {
 					dest[c]	= ((float)Q11s[c]);
 				}

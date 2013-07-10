@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/graphics/transform_tools.h"
 #include "common/textconsole.h"
