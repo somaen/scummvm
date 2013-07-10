@@ -66,7 +66,7 @@ public:
 	bool mirrorX() const;
 	bool mirrorY() const;
 
-	bool operator== (const TransformStruct &compare) const {
+	bool operator==(const TransformStruct &compare) const {
 		return (compare._angle == _angle &&
 				compare._flip == _flip &&
 				compare._zoom == _zoom  &&
@@ -77,7 +77,7 @@ public:
 				);
 	}
  
-	bool operator!= (const TransformStruct &compare) const {
+	bool operator!=(const TransformStruct &compare) const {
 		return !(compare == *this);
 	}
 };
