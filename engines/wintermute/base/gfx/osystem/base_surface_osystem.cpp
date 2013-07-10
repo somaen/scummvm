@@ -321,26 +321,26 @@ bool BaseSurfaceOSystem::endPixelOp() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, NULL, TransformStruct(100, mirrorX, mirrorY));
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(100, mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, NULL, TransformStruct(100,  blendMode, alpha, mirrorX, mirrorY)); 
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(100,  blendMode, alpha, mirrorX, mirrorY)); 
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, NULL,  TransformStruct(100, 100, 0, 0, 0, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
+	return drawSprite(x, y, &rect, nullptr,  TransformStruct(100, 100, 0, 0, 0, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, NULL, TransformStruct(zoomX, zoomY, blendMode, alpha, mirrorX, mirrorY));
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(zoomX, zoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 
@@ -349,17 +349,17 @@ bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, flo
 	_rotation = 0;
 	TransformStruct transform;
 	if (transparent) {
-		transform = TransformStruct (zoomX, zoomY, 0, 0, 0, blendMode, alpha,  mirrorX, mirrorY);
+		transform = TransformStruct(zoomX, zoomY, 0, 0, 0, blendMode, alpha,  mirrorX, mirrorY);
 	} else {
-		transform = TransformStruct (zoomX, zoomY, mirrorX, mirrorY);
+		transform = TransformStruct(zoomX, zoomY, mirrorX, mirrorY);
 	}
-	return drawSprite(x, y, &rect,NULL, transform);
+	return drawSprite(x, y, &rect, nullptr, transform);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, TransformStruct transform) {
-	_rotation = (uint32) transform._angle;
+	_rotation = (uint32)transform._angle;
 	if (transform._angle < 0.0f) {
 		warning("Negative rotation: %f %d", transform._angle, _rotation);
 		_rotation = (uint32)(360.0f + transform._angle);
