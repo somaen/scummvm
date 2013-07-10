@@ -117,11 +117,11 @@ TransformStruct::TransformStruct() {
 }
 
 bool TransformStruct::mirrorX() const {
-	return (bool) (_flip & TransparentSurface::FLIP_H);
+	return (bool)(_flip & TransparentSurface::FLIP_H);
 }
 
 bool TransformStruct::mirrorY() const {
-	return (bool) (_flip & TransparentSurface::FLIP_V);
+	return (bool)(_flip & TransparentSurface::FLIP_V);
 }
 
 }
