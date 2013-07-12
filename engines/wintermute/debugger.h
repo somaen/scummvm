@@ -24,11 +24,8 @@
 #define WINTERMUTE_DEBUGGER_H
 
 #include "gui/debugger.h"
-// #include "common/error.h"
 #include "engines/wintermute/base/scriptables/script.h"
-//#include "engines/wintermute/base/scriptables/script_engine.h"
-//#include "engines/wintermute/adapter.h"
-// #include "engines/wintermute/base/base_engine.h"
+#define DEFAULT_SOURCE_PADDING 5
 
 namespace Wintermute {
 class WintermuteEngine;
@@ -56,6 +53,7 @@ public:
 	bool Cmd_Top(int argc, const char **argv);
 	bool Cmd_Info(int argc, const char **argv);
 	bool Cmd_List(int argc, const char **argv);
+	void printSource(int n = DEFAULT_SOURCE_PADDING);
 	// For use by the Adapter
 	void notifyBreakpoint(const char *filename, int line);
 	void notifyStep(const char *filename, int line);
