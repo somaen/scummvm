@@ -52,7 +52,6 @@ void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int 
 }
 
 void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
-
 			int srcW = srcRect.width();
 			int srcH = srcRect.height();
 			int dstW = dstRect.width();
@@ -60,7 +59,6 @@ void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, i
 
 			assert(dstX >= 0 && dstX < dstW);
 			assert(dstY >= 0 && dstY < dstH);
-
 
 			float x1 = floor(projX);
 			float x2 = ceil(projX);
