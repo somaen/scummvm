@@ -39,7 +39,7 @@ struct Point32 {
 	Point32 operator+(const Point32 &delta) const {	return Point32(x + delta.x, y + delta.y);	}
 	Point32 operator-(const Point32 &delta) const {	return Point32(x - delta.x, y - delta.y);	}
 
-	Point32& operator+=(const Point32 &delta) {
+	Point32 &operator+=(const Point32 &delta) {
 		x += delta.x;
 		y += delta.y;
 		return *this;
