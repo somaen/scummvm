@@ -45,7 +45,7 @@ void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int 
 			if (projX >= srcW || projX < 0 || projY >= srcH || projY < 0) { 
 				color = 0;
 			} else {
-				color = READ_UINT32((const byte *)src->getBasePtr(projX, projY));
+				color = READ_UINT32((const byte *)src->getBasePtr((int)projX, (int)projY));
 			}
 
  			WRITE_UINT32((byte *)dst->getBasePtr(dstX, dstY), color);
