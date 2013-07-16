@@ -26,14 +26,15 @@
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/dctypes.h"
 
-const float kDefaultZoomX = 100.0;
-const float kDefaultZoomY = 100.0;
+
+const uint32 kDefaultZoomX = 100;
+const uint32 kDefaultZoomY = 100;
 const uint32 kDefaultRgbaMod = 0xFFFFFFFF;
 const int32 kDefaultHotspotX = 0;
 const int32 kDefaultHotspotY = 0;
 const int32 kDefaultOffsetX = 0;
 const int32 kDefaultOffsetY = 0;
-const int32 kDefaultAngle = 0;
+const uint32 kDefaultAngle = 0;
 	
 namespace Wintermute {
 /** 

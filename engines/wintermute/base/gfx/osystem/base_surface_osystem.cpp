@@ -338,14 +338,14 @@ bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 al
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, int32 zoomX, int32 zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr, TransformStruct(zoomX, zoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, int32 zoomX, int32 zoomY, uint32 alpha, bool transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	TransformStruct transform;
 	if (transparent) {
@@ -361,9 +361,9 @@ bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, flo
 bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const TransformStruct &transform) {
 	_rotation = (uint32)transform._angle;
 	if (transform._angle < 0.0f) {
-		warning("Negative rotation: %f %d", transform._angle, _rotation);
+		warning("Negative rotation: %d %d", transform._angle, _rotation);
 		_rotation = (uint32)(360.0f + transform._angle);
-		warning("Negative post rotation: %f %d", transform._angle, _rotation);
+		warning("Negative post rotation: %d %d", transform._angle, _rotation);
 	}
 	return drawSprite(x, y, &rect, &newRect, transform);
 }
@@ -423,12 +423,13 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	// But no checking is in place for that yet.
 
 	// TODO: Optimize by not doing alpha-blits if we lack or disable alpha
-	bool hasAlpha;
+
+	bool hasAlpha = false;
+
 	if (_hasAlpha && !transform._alphaDisable) {
 		hasAlpha = true;
-	} else {
-		hasAlpha = false;
-	}
+	}      
+	
 	if (transform._alphaDisable) {
 		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
 	}
