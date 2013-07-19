@@ -58,8 +58,8 @@ public:
 	 * List all breakpoints set. 
 	 */
 	bool Cmd_ListBreakpoints(int argc, const char **argv);
-	bool Cmd_ListWatches(int argc, const char **argv);
-	bool listWatches();
+	bool Cmd_WatchList(int argc, const char **argv);
+	bool Cmd_List(int argc, const char **argv);
 	bool listBreakpoints();
 
 	// For use by the Adapter
