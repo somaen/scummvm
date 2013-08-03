@@ -61,12 +61,14 @@ struct BreakpointInfo {
 	Common::String _filename;
 	int _line;
 	int _hits;
+	bool _enabled;
 };
 
 struct WatchInfo {
 	Common::String _filename;
 	Common::String _symbol;
 	int _hits;
+	bool _enabled;
 };
 
 class DebuggerAdapter {
@@ -83,6 +85,8 @@ public:
 	int isBreakpointLegal(const char *filename, int line);
 	int removeWatch(int id);
 	int removeBreakpoint(int id);
+	int disableBreakpoint(int id);
+	int enableBreakpoint(int id);
 	BaseArray<BreakpointInfo> getBreakpoints();
 	BaseArray<WatchInfo> getWatchlist();
 	int stepOver();

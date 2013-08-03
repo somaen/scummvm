@@ -205,6 +205,27 @@ int DebuggerAdapter::removeBreakpoint(int id) {
 	}
 }
 
+int DebuggerAdapter::disableBreakpoint(int id) {
+	// TODO: Check blah.
+	assert(SCENGINE);
+
+	if (SCENGINE->disableBreakpoint(id)) {
+		return OK;
+	} else {
+		return NO_SUCH_BREAKPOINT;
+	}
+}
+
+int DebuggerAdapter::enableBreakpoint(int id) {
+	// TODO: Check blah.
+	assert(SCENGINE);
+
+	if (SCENGINE->enableBreakpoint(id)) {
+		return OK;
+	} else {
+		return NO_SUCH_BREAKPOINT;
+	}
+}
 int DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
 	// TODO: Check if file exists, check if symbol exists
 	assert(SCENGINE);
