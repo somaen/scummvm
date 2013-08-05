@@ -265,18 +265,30 @@ bool DebuggerAdapter::triggerWatch(ScScript *script, const char *symbol) {
 int DebuggerAdapter::stepOver() {
 	if (!_lastScript) return NOT_ALLOWED;
 	_lastScript->_step = _lastDepth;
+	// Reset
+	_lastScript = nullptr;
+	_lastLine = NULL;
+	_lastDepth = NULL;
 	return OK;
 }
 
 int DebuggerAdapter::stepInto() {
 	if (!_lastScript) return NOT_ALLOWED;
 	_lastScript->_step = _lastDepth + 1;
+	// Reset
+	_lastScript = nullptr;
+	_lastLine = NULL;
+	_lastDepth = NULL;
 	return OK;
 }
 
 int DebuggerAdapter::stepContinue() {
 	if (!_lastScript) return NOT_ALLOWED;
 	_lastScript->_step = -2;
+	// Reset
+	_lastScript = nullptr;
+	_lastLine = NULL;
+	_lastDepth = NULL;
 	return OK;
 }
 
@@ -289,6 +301,10 @@ void DebuggerAdapter::reset() {
 int DebuggerAdapter::stepFinish() {
 	if (!_lastScript) return NOT_ALLOWED;
 	_lastScript->_step = _lastDepth - 1;
+	// Reset
+	_lastScript = nullptr;
+	_lastLine = NULL;
+	_lastDepth = NULL;
 	return OK;
 }
 
