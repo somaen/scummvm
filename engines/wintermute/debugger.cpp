@@ -165,7 +165,7 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Usage: %s [watch|breakpoints]\n", argv[0]);
 	}
-	
+
 }
 
 
@@ -234,7 +234,7 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 
 bool Console::Cmd_Finish(int argc, const char **argv) {
 	if (argc == 1) {
-		
+
 		int error = ADAPTER->stepFinish();
 		if (error == OK) {
 			return false;
@@ -395,10 +395,23 @@ void Console::printSource(int n) {
 	BaseArray<Common::String> strings = ADAPTER->_lastSource->getSurroundingLines(ADAPTER->getLastLine(), n, perror);
 	if (error != 0) {
 		DebugPrintf("Error retrieving source file\n");
-	} 
+	}
 	for (int i = 0; i < strings.size(); i++) {
 		DebugPrintf(strings[i].c_str());
 		DebugPrintf("\n");
 	}
+}
+
+void Console::warning(Common::String command, int warning_level, Common::String message) {
+	Common::String level;
+	switch (warning_level) {
+	case NOTICE:
+		level = Common::String("NOTICE");
+	case WARNING:
+		level = Common::String("WARNING");
+	default:
+		level = Common::String("ERROR");
+	}
+	DebugPrintf("%s %s: %s", level.c_str(), command.c_str(), message.c_str());
 }
 } // end of namespace Wintermute
