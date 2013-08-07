@@ -77,6 +77,9 @@ Common::Error NeverhoodEngine::run() {
 	_gameState.sceneNum = 0;
 	_gameState.which = 0;
 
+	// Assign default values to the config manager, in case settings are missing
+	ConfMan.registerDefault("originalsaveload", "false");
+
 	_staticData = new StaticData();
 	_staticData->load("neverhood.dat");
 	_gameVars = new GameVars();
@@ -120,9 +123,10 @@ Common::Error NeverhoodEngine::run() {
 		(*navigationList)[5].middleFlag = 1;
 	}
 	
-	if (ConfMan.hasKey("save_slot"))
-		loadGameState(ConfMan.getInt("save_slot"));
-	else
+	if (ConfMan.hasKey("save_slot")) {
+		if (loadGameState(ConfMan.getInt("save_slot")).getCode() != Common::kNoError)
+			_gameModule->startup();
+	} else
 		_gameModule->startup();
 	
 	mainLoop();

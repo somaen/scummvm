@@ -31,7 +31,9 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "common/tokenizer.h"
 #include "common/memstream.h"
+#include "engines/wintermute/debugger_adapter.h"
 
 namespace Wintermute {
 
@@ -51,7 +53,6 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_engine = engine;
 
 	_globals = nullptr;
-
 	_scopeStack = nullptr;
 	_callStack  = nullptr;
 	_thisStack  = nullptr;
@@ -91,8 +92,11 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 
 	_unbreakable = false;
 	_parentScript = nullptr;
+	
+	_adapter = _gameRef->_adapter; // HACK
 
 	_tracingMode = false;
+	_step = kDefaultStep;
 }
 
 
@@ -318,6 +322,21 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 	_engine = original->_engine;
 	_parentScript = original;
 
+
+	// TODO: Factor this out?
+	/*
+	for (uint i = 0; i < _engine->_breakpoints.size(); i++) {
+		if (!strcmp(_engine->_breakpoints[i]._filename.c_str(), _filename))
+			_breakpoints.add(_engine->_breakpoints[i]);
+	}
+	*/
+	for (uint i = 0; i < _engine->_watchlist.size(); i++) {
+		if (!strcmp(_engine->_watchlist[i]._filename.c_str(), _filename))
+			_watchlist.add(_engine->_watchlist[i]);
+	}
+
+	_step = kDefaultStep;
+
 	return STATUS_OK;
 }
 
@@ -516,10 +535,12 @@ bool ScScript::executeInstruction() {
 	//ScValue* op = new ScValue(_gameRef);
 	_operand->cleanup();
 
-	ScValue *op1;
+	ScValue *op1; 
 	ScValue *op2;
 
 	uint32 inst = getDWORD();
+	
+
 	switch (inst) {
 
 	case II_DEF_VAR:
@@ -1081,6 +1102,41 @@ bool ScScript::executeInstruction() {
 		if (newLine != _currentLine) {
 			_currentLine = newLine;
 		}
+		if (1) { // TODO: If debugger...
+			
+			for (uint j = 0; j < _engine->_breakpoints.size(); j++) {
+				if (_engine->_breakpoints[j]._line == _currentLine &&
+					!strcmp(_engine->_breakpoints[j]._filename.c_str(), _filename) &&
+					_engine->_breakpoints[j]._enabled
+					) { 
+					_engine->_breakpoints[j]._hits++;
+					_adapter->triggerBreakpoint(this);
+					// _gameRef->_debugger->breakpoint(this);
+				}
+			}
+		}
+
+		if (1) { // TODO: If debugger...	
+			if (_callStack->_sP <= _step) {
+				_adapter->triggerStep(this);
+			}
+		}
+	
+		if (1) { // TODO: If debugger...
+			if (1) { // TODO: If watch
+				// TODO: Watch inheritance!
+				for (uint i = 0; i < _watchlist.size(); i++) {
+					if (ScValue::compare(resolveName(_watchlist[i]._symbol.c_str()), _watchlist[i]._lastvalue) &&
+						_watchlist[i]._enabled) {
+						// _gameRef->_debugger->watch(this, (char *)_watchlist[i]._symbol.c_str());
+						_adapter->triggerWatch(this, _watchlist[i]._symbol.c_str());
+						// TODO: This is sometimes spuriouosly called when no change is apparent. Investigate.
+						_watchlist[i]._lastvalue->copy(resolveName(_watchlist[i]._symbol.c_str()));
+					}
+				}
+			}
+		}
+
 		break;
 
 	}
@@ -1119,7 +1175,7 @@ uint32 ScScript::getMethodPos(const Common::String &name) const {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *ScScript::getVar(char *name) {
+ScValue *ScScript::getVar(const char *name) {
 	ScValue *ret = nullptr;
 
 	// scope locals
@@ -1456,12 +1512,36 @@ void ScScript::afterLoad() {
 
 		_buffer = new byte [_bufferSize];
 		memcpy(_buffer, buffer, _bufferSize);
-
 		delete _scriptStream;
 		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 
 		initTables();
 	}
+}
+
+////////////////////////////////////////////////
+ScValue *ScScript::resolveName(const char *name) {
+	// TODO: Polish this. Edge cases?
+	Common::String strName = Common::String(name);
+	strName.trim();
+	Common::StringTokenizer st = Common::StringTokenizer(strName.c_str(), ".");
+	
+	Common::String varName;
+	ScValue *value; 
+
+	varName = st.nextToken();
+	value = getVar(const_cast<char *>(varName.c_str()));
+
+	while(!st.empty() && (value->isNative() || value->isObject())) {
+		value = value->getProp(st.nextToken().c_str());
+	}
+
+	return value;
+
+}
+
+int32 ScScript::getCallDepth() {
+	return _callStack->_sP;
 }
 
 } // end of namespace Wintermute

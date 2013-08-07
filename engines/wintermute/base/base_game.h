@@ -34,7 +34,9 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/debugger.h"
 #include "common/events.h"
+#include "gui/debugger.h"
 
 namespace Wintermute {
 
@@ -82,8 +84,9 @@ public:
 	bool isLeftDoubleClick();
 	bool isRightDoubleClick();
 
+	Wintermute::DebuggerAdapter* _adapter;
 	bool _autorunDisabled;
-
+	
 	uint32 _lastMiniUpdate;
 	bool _miniUpdateEnabled;
 

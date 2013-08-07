@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -24,20 +24,59 @@
 #define WINTERMUTE_DEBUGGER_H
 
 #include "gui/debugger.h"
+#include "engines/wintermute/base/scriptables/script.h"
+#define DEFAULT_SOURCE_PADDING 5
 
 namespace Wintermute {
-
 class WintermuteEngine;
+class Adapter;
+enum WarningLevel {
+	NOTICE,
+	WARNING,
+	ERROR
+};
+
 class Console : public GUI::Debugger {
 public:
-	Console(WintermuteEngine *vm);
+	Console(WintermuteEngine *vm); // WintermuteEngine *vm);
 	virtual ~Console();
-	
 	bool Cmd_ShowFps(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
+	bool Cmd_Step(int argc, const char **argv);
+	bool Cmd_StepInto(int argc, const char **argv);
+	bool Cmd_StepOver(int argc, const char **argv);
+	bool Cmd_Continue(int argc, const char **argv);
+	bool Cmd_Finish(int argc, const char **argv);
+	bool Cmd_Watch(int argc, const char **argv);
+	bool Cmd_Print(int argc, const char **argv);
+	bool Cmd_Set(int argc, const char **argv);
+	bool Cmd_SetType(int argc, const char **argv);
+	/**
+	 * Add a breakpoint.
+	 */
+	bool Cmd_AddBreakpoint(int argc, const char **argv);
+	bool Cmd_RemoveBreakpoint(int argc, const char **argv);
+	bool Cmd_EnableBreakpoint(int argc, const char **argv);
+	bool Cmd_DisableBreakpoint(int argc, const char **argv);
+	/**
+	 * List all scripts running ATM.
+	 * Also, which line are they on and if they have any breakpoints.
+	 */
+	bool Cmd_Top(int argc, const char **argv);
+	bool Cmd_Info(int argc, const char **argv);
+	bool Cmd_List(int argc, const char **argv);
+	bool Cmd_DumpRes(int argc, const char **argv);
+	void printSource(int n = DEFAULT_SOURCE_PADDING);
+	void debugWarning(const Common::String &command, int warning_level, const Common::String &message);
+	// For use by the Adapter
+	void notifyBreakpoint(const char *filename, int line);
+	void notifyStep(const char *filename, int line);
+	void notifyWatch(const char *filename, const char *symbol, const char *newValue);
+
 private:
 	WintermuteEngine *_engineRef;
 };
+
 
 }
 
