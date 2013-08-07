@@ -817,4 +817,10 @@ bool BaseSprite::killAllSounds() {
 	return STATUS_OK;
 }
 
+
+////////////////////////
+Common::String BaseSprite::debuggerToString() {
+	return Common::String::format("%p: Sprite \"%s\"", (void *)this, getName());
+}
+
 } // end of namespace Wintermute

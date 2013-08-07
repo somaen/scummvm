@@ -521,13 +521,14 @@ static LpItem getItemData(uint32 nOrdItem) {
 		dat += dim;
 	}
 
-	// Check if we've got to the end of the file
 	int i = READ_LE_UINT16(dat);
-	if (i != 0xABCD)
-		return NULL;
 
 	globalUnlock(hDat);
 	globalFree(hDat);
+
+	// Check if we've got to the end of the file
+	if (i != 0xABCD)
+		return NULL;
 
 	return ret;
 }
@@ -1875,13 +1876,10 @@ MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...) {
  * @remarks		This is the specialised version of the original single mpalQuery
  * method that needs to run within a co-routine context.
  */
-void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...) {
+void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet) {
 	CORO_BEGIN_CONTEXT;
 		uint32 dwRet;
 	CORO_END_CONTEXT(_ctx);
-
-	va_list v;
-	va_start(v, dwRet);
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -1908,8 +1906,6 @@ void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...) {
 	}
 
 	CORO_END_CODE;
-
-	va_end(v);
 }
 
 /**

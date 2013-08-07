@@ -30,7 +30,7 @@ Module2400::Module2400(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->addMusic(0x202D1010, 0xB110382D);
 
 	if (which < 0)
-		createScene(_vm->gameState().sceneNum, _vm->gameState().which);
+		createScene(_vm->gameState().sceneNum, -1);
 	else
 		createScene(0, 0);
 
@@ -41,7 +41,7 @@ Module2400::~Module2400() {
 }
 
 void Module2400::createScene(int sceneNum, int which) {
-	debug("Module2400::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module2400::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:

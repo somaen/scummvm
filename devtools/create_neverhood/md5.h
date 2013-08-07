@@ -20,33 +20,22 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
+#ifndef COMMON_MD5_H
+#define COMMON_MD5_H
 
-#include "engines/wintermute/math/math_util.h"
-#include "common/scummsys.h"
+#include "util.h"
 
-namespace Wintermute {
+typedef struct {
+	uint32 total[2];
+	uint32 state[4];
+	uint8 buffer[64];
+} md5_context;
 
-//////////////////////////////////////////////////////////////////////////
-float MathUtil::round(float val) {
-	float result = floor(val);
-	if (val - result >= 0.5f) {
-		result += 1.0;
-	}
-	return result;
-}
+void md5_starts(md5_context *ctx);
+void md5_update(md5_context *ctx, const uint8 *input, uint32 length);
+void md5_finish(md5_context *ctx, uint8 digest[16]);
 
-//////////////////////////////////////////////////////////////////////////
-float MathUtil::roundUp(float val) {
-	float result = floor(val);
-	if (val - result > 0) {
-		result += 1.0;
-	}
-	return result;
-}
+bool md5_file(const char *name, uint8 digest[16], uint32 length = 0);
+void md5_buffer(byte *buf, uint32 len, uint8 digest[16]);
 
-} // end of namespace Wintermute
+#endif

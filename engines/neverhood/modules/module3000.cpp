@@ -49,7 +49,7 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
 
-	if (_isWallBroken) {
+	if (!_isWallBroken) {
 		_vm->_soundMan->setSoundVolume(0x90F0D1C3, 0);
 		_vm->_soundMan->playSoundLooping(0x90F0D1C3);
 	}
@@ -75,13 +75,14 @@ Module3000::~Module3000() {
 void Module3000::createScene(int sceneNum, int which) {
 	static const byte kNavigationTypes05[] = {3, 0};
 	static const byte kNavigationTypes06[] = {5};
-	debug("Module3000::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module3000::createScene(%d, %d)", sceneNum, which);
 	_vm->gameState().sceneNum = sceneNum;
+	_isWallBroken = getGlobalVar(V_WALL_BROKEN) != 0;
 	switch (_vm->gameState().sceneNum) {
 	case 1:
 		if (!getGlobalVar(V_BOLT_DOOR_OPEN)) {
 			createNavigationScene(0x004B7C80, which);
-		} else if (getGlobalVar(V_WALL_BROKEN)) {
+		} else if (_isWallBroken) {
 			createNavigationScene(0x004B7CE0, which);
 		} else {
 			createNavigationScene(0x004B7CB0, which);
@@ -89,11 +90,11 @@ void Module3000::createScene(int sceneNum, int which) {
 		break;
 	case 2:
 		_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
-		if (_isWallBroken) {
+		if (!_isWallBroken) {
 			_soundVolume = 90;
 			_vm->_soundMan->setSoundVolume(0x90F0D1C3, 90);
 		}
-		if (getGlobalVar(V_WALL_BROKEN)) {
+		if (_isWallBroken) {
 			createNavigationScene(0x004B7D58, which);
 		} else {
 			createNavigationScene(0x004B7D10, which);
@@ -102,7 +103,7 @@ void Module3000::createScene(int sceneNum, int which) {
 	case 3:
 		if (getGlobalVar(V_STAIRS_DOWN))
 			createNavigationScene(0x004B7E60, which);
-		else if (getGlobalVar(V_WALL_BROKEN))
+		else if (_isWallBroken)
 			createNavigationScene(0x004B7DA0, which);
 		else
 			createNavigationScene(0x004B7E00, which);
@@ -150,12 +151,12 @@ void Module3000::createScene(int sceneNum, int which) {
 	// NOTE: Newly introduced sceneNums
 	case 1001:
 		if (!getGlobalVar(V_BOLT_DOOR_OPEN))
-			if (getGlobalVar(V_WALL_BROKEN))
+			if (_isWallBroken)
 				createSmackerScene(0x00940021, true, true, false);
 			else
 				createSmackerScene(0x01140021, true, true, false);
 		else
-			if (getGlobalVar(V_WALL_BROKEN))
+			if (_isWallBroken)
 				createSmackerScene(0x001011B1, true, true, false);
 			else
 				createSmackerScene(0x001021B1, true, true, false);
@@ -299,7 +300,7 @@ void Module3000::updateScene() {
 					} else if (frameNumber == 10) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
+					if (!_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else
@@ -313,7 +314,7 @@ void Module3000::updateScene() {
 			if (navigationScene()->isWalkingForward()) {
 				uint32 frameNumber = navigationScene()->getFrameNumber();
 				int navigationIndex = navigationScene()->getNavigationIndex();
-				if (_isWallBroken && _soundVolume > 1 && frameNumber % 2) {
+				if (!_isWallBroken && _soundVolume > 1 && frameNumber % 2) {
 					_soundVolume--;
 					_vm->_soundMan->setSoundVolume(0x90F0D1C3, _soundVolume);
 				}
@@ -338,7 +339,7 @@ void Module3000::updateScene() {
 					if (frameNumber == 40) {
 						_vm->_soundMan->playTwoSounds(0x81293110, 0x40030A51, 0xC862CA15, 0);
 					}
-					if (_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
+					if (!_isWallBroken && _soundVolume < 90 && frameNumber % 2) {
 						if (frameNumber == 0)
 							_soundVolume = 40;
 						else
@@ -786,8 +787,8 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 	}
 
-	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009CannonScopeVideos[_cannonTargetStatus], false, _keepVideo));
-	_smackerPlayer->setDrawPos(89, 37);
+	_cannonSmackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009CannonScopeVideos[_cannonTargetStatus], false, _keepVideo));
+	_cannonSmackerPlayer->setDrawPos(89, 37);
 	_palette->usePalette(); // Use it again since the SmackerPlayer overrides the usage
 
 	insertStaticSprite(0x8540252C, 400);
@@ -807,42 +808,39 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene3009::handleMessage);
 	SetUpdateHandler(&Scene3009::update);
+}
 
-	// DEBUG Enable to set the correct code
-#if 0	
-	for (int i = 0; i < 6; i++)
-		setSubVar(VA_CURR_CANNON_SYMBOLS, i, _correctSymbols[i]);
-	sendMessage(this, 0x2003, 0);
-#endif   
+Scene3009::~Scene3009() {
+}
 
+void Scene3009::openSmacker(uint32 fileHash, bool keepLastFrame) {
+	_cannonSmackerPlayer->open(fileHash, keepLastFrame);
+	//_vm->_screen->setSmackerDecoder(_cannonSmackerPlayer->getSmackerDecoder());
+	_palette->usePalette();
 }
 
 void Scene3009::update() {
 	Scene::update();
 	
-	if (!_keepVideo && _smackerPlayer->isDone() && _cannonTargetStatus <= kCTSCount) {
+	if (!_keepVideo && _cannonSmackerPlayer->isDone() && _cannonTargetStatus <= kCTSCount) {
 		switch (_cannonTargetStatus) {
 		case kCTSNull:
 		case kCTSLowerCannon:
-			_smackerPlayer->open(0x340A0049, true);
-			_palette->usePalette();
+			openSmacker(0x340A0049, true);
 			_keepVideo = true;
 			break;
 		case kCTSRightRobotNoTarget:
-			_smackerPlayer->open(0x0082080D, true);
-			_palette->usePalette();
+			openSmacker(0x0082080D, true);
 			_keepVideo = true;
 			_isTurning = false;
 			break;
 		case kCTSRightRobotIsTarget:
-			_smackerPlayer->open(0x0282080D, true);
-			_palette->usePalette();
+			openSmacker(0x0282080D, true);
 			_keepVideo = true;
 			_isTurning = false;
 			break;
 		case kCTSRightNoRobot:
-			_smackerPlayer->open(0x0882080D, true);
-			_palette->usePalette();
+			openSmacker(0x0882080D, true);
 			_keepVideo = true;
 			_isTurning = false;
 			break;
@@ -851,12 +849,11 @@ void Scene3009::update() {
 		case kCTSLeftNoRobot:
 			if (_moveCannonLeftFirst) {
 				if (_cannonTargetStatus == kCTSLeftRobotNoTarget)
-					_smackerPlayer->open(0x110A000F, false);
+					openSmacker(0x110A000F, false);
 				else if (_cannonTargetStatus == kCTSLeftRobotIsTarget)				
-					_smackerPlayer->open(0x500B004F, false);
+					openSmacker(0x500B004F, false);
 				else if (_cannonTargetStatus == kCTSLeftNoRobot)				
-					_smackerPlayer->open(0x100B010E, false);
-				_palette->usePalette();
+					openSmacker(0x100B010E, false);
 				_moveCannonLeftFirst = false;
 				_asHorizontalIndicator->stMoveLeft();
 			} else {
@@ -955,15 +952,14 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 				// Cannon is at the right position
 				if (!getGlobalVar(V_ROBOT_TARGET)) {
 					_cannonTargetStatus = kCTSLeftRobotNoTarget;
-					_smackerPlayer->open(0x108A000F, false);
+					openSmacker(0x108A000F, false);
 				} else if (!getGlobalVar(V_ROBOT_HIT)) {
 					_cannonTargetStatus = kCTSLeftRobotIsTarget;
-					_smackerPlayer->open(0x500B002F, false);
+					openSmacker(0x500B002F, false);
 				} else {
 					_cannonTargetStatus = kCTSLeftNoRobot;
-					_smackerPlayer->open(0x100B008E, false);
+					openSmacker(0x100B008E, false);
 				}
-				_palette->usePalette();
 				_moveCannonLeftFirst = true;
 				_isTurning = true;
 				_keepVideo = false;
@@ -1223,13 +1219,6 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _countdown(0), _doorUnlocked(false), _checkUnlocked(false) {
 	
 	int initCountdown = 0;
-
-	// DEBUG Enable to activate all buttons
-#if 0	
-	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[0], 1);
-	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[1], 1);
-	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[2], 1);
-#endif	
 
 	setBackground(0x80802626);
 	setPalette(0x80802626);

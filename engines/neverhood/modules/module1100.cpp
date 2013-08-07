@@ -64,7 +64,8 @@ Module1100::~Module1100() {
 void Module1100::createScene(int sceneNum, int which) {
 	static const uint32 kSmackerFileHashList06[] = {0x10880805, 0x1088081D, 0};
 	static const uint32 kSmackerFileHashList07[] = {0x00290321, 0x01881000, 0};
-	debug("Module1100::createScene(%d, %d)", sceneNum, which);
+	static const byte kNavigationTypes02[] = {1, 0, 4, 1};
+	debug(1, "Module1100::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:
@@ -80,9 +81,9 @@ void Module1100::createScene(int sceneNum, int which) {
 	case 2:
 		_vm->gameState().sceneNum = 2;
 		if (getGlobalVar(V_ROBOT_TARGET)) {
-			createNavigationScene(0x004B84F0, which);
+			createNavigationScene(0x004B84F0, which, kNavigationTypes02);
 		} else {
-			createNavigationScene(0x004B8490, which);
+			createNavigationScene(0x004B8490, which, kNavigationTypes02);
 		}
 		break;
 	case 3:
@@ -465,7 +466,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 					_backgroundIndex = 15;
 					SetUpdateHandler(&Scene1105::upClosePanel);
 				} else
-					_isPanelOpen = true;
+					_isClosePanelDone = true;
 				_leaveResult = 0;
 			}
 		}
@@ -625,13 +626,6 @@ void Scene1105::upClosePanel() {
 }
 
 void Scene1105::update() {
-
-	// DEBUG: Show the correct code
-	debug("(%d, %d) (%d, %d) (%d, %d)", 
-		getSubVar(VA_GOOD_DICE_NUMBERS, 0), getSubVar(VA_CURR_DICE_NUMBERS, 0),
-		getSubVar(VA_GOOD_DICE_NUMBERS, 1), getSubVar(VA_CURR_DICE_NUMBERS, 1),
-		getSubVar(VA_GOOD_DICE_NUMBERS, 2), getSubVar(VA_CURR_DICE_NUMBERS, 2));
-
 	Scene::update();
 	if (_countdown != 0 && (--_countdown == 0))
 		createObjects();

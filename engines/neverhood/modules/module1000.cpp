@@ -27,8 +27,6 @@ namespace Neverhood {
 Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	debug("Create Module1000(%d)", which);
-
 	_musicFileHash = getGlobalVar(V_ENTRANCE_OPEN) ? 0x81106480 : 0x00103144;		
 
 	_vm->_soundMan->addMusic(0x03294419, 0x061880C6);
@@ -48,7 +46,7 @@ Module1000::~Module1000() {
 }
 
 void Module1000::createScene(int sceneNum, int which) {
-	debug("Module1000::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module1000::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:

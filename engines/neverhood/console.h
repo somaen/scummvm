@@ -20,33 +20,28 @@
  *
  */
 
-/*
- * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
- * Copyright (c) 2011 Jan Nedoma
- */
+#ifndef NEVERHOOD_CONSOLE_H
+#define NEVERHOOD_CONSOLE_H
 
-#include "engines/wintermute/math/math_util.h"
-#include "common/scummsys.h"
+#include "gui/debugger.h"
 
-namespace Wintermute {
+namespace Neverhood {
 
-//////////////////////////////////////////////////////////////////////////
-float MathUtil::round(float val) {
-	float result = floor(val);
-	if (val - result >= 0.5f) {
-		result += 1.0;
-	}
-	return result;
-}
+class NeverhoodEngine;
 
-//////////////////////////////////////////////////////////////////////////
-float MathUtil::roundUp(float val) {
-	float result = floor(val);
-	if (val - result > 0) {
-		result += 1.0;
-	}
-	return result;
-}
+class Console : public GUI::Debugger {
+public:
+	Console(NeverhoodEngine *vm);
+	virtual ~Console(void);
 
-} // end of namespace Wintermute
+private:
+	NeverhoodEngine *_vm;
+
+	bool Cmd_Room(int argc, const char **argv);
+	bool Cmd_Surfaces(int argc, const char **argv);
+	bool Cmd_Cheat(int argc, const char **argv);
+	bool Cmd_Dumpvars(int argc, const char **argv);
+};
+
+} // End of namespace Neverhood
+#endif

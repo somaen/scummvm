@@ -72,13 +72,25 @@ public:
 			_filename = filename;
 		}
 
-		~CScBreakpoint() {
-			_lines.clear();
+		Common::String _filename;
+		int _line; 
+		int _hits;
+		int _enabled;
+	};
+
+	class CScWatch {
+	public:
+		CScWatch(const char *filename) {
+			_filename = filename;
 		}
 
 		Common::String _filename;
-		BaseArray<int> _lines;
+		Common::String _symbol;
+		ScValue* _lastvalue; 
+		int _hits;
+		int _enabled;
 	};
+
 
 public:
 	bool clearGlobals(bool includingNatives = false);
@@ -101,8 +113,26 @@ public:
 	ScValue *_globals;
 	ScScript *runScript(const char *filename, BaseScriptHolder *owner = nullptr);
 	static const bool _compilerAvailable = false;
-
+	BaseArray<CScBreakpoint> _breakpoints;
+	BaseArray<CScWatch> _watchlist;
 	ScEngine(BaseGame *inGame);
+
+	bool addBreakpoint(const char *filename, int line);
+	bool removeBreakpoint(uint id);
+	bool enableBreakpoint(uint id);
+	bool disableBreakpoint(uint id);
+	int incrementBreakpoint(uint id);
+	int resetBreakpoint(uint id);
+	bool refreshBreakpoints();
+
+	bool addWatch(const char *filename, const char *name);
+	bool removeWatch(uint id);
+	bool enableWatch(uint id);
+	bool disableWatch(uint id);
+	int incrementWatch(uint id);
+	int resetWatch(uint id);
+	bool refreshWatchlist();
+
 	virtual ~ScEngine();
 	static byte *loadFile(void *data, char *filename, uint32 *size);
 	static void closeFile(void *data, byte *buffer);

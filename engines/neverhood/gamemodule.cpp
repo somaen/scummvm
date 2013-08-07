@@ -194,21 +194,6 @@ void GameModule::initMemoryPuzzle() {
 				tileSymbolIndex = 0;
 		}
 		setSubVar(VA_IS_PUZZLE_INIT, 0xC8606803, 1);
-
-		// DEBUG Enable to autosolve all tiles and leave only two matching tiles open
-#if 0		
-		for (int i = 0; i < 48; i++)
-			setSubVar(VA_IS_TILE_MATCH, i, 1);
-		int debugIndex = 0;
-		setSubVar(VA_IS_TILE_MATCH, debugIndex, 0);
-		for (int i = 0; i < 48; i++) {
-			if (i != debugIndex && getSubVar(VA_TILE_SYMBOLS, i) == getSubVar(VA_TILE_SYMBOLS, debugIndex)) {
-				setSubVar(VA_IS_TILE_MATCH, i, 0);
-				break;
-			}
-		}
-#endif		
-
 	}
 }
 
@@ -426,6 +411,8 @@ void GameModule::checkRequests() {
 	}
 	if (_restoreGameRequested) {
 		_restoreGameRequested = false;
+		_vm->_audioResourceMan->stopAllSounds();
+		_vm->_soundMan->stopAllSounds();
 		delete _childObject;
 		delete _prevChildObject;
 		_childObject = NULL;
@@ -438,8 +425,11 @@ void GameModule::checkRequests() {
 }
 
 void GameModule::createModule(int moduleNum, int which) {
-	debug("GameModule::createModule(%d, %d)", moduleNum, which);
+	debug(1, "GameModule::createModule(%d, %d)", moduleNum, which);
 	_moduleNum = moduleNum;
+
+	delete _childObject;
+
 	switch (_moduleNum) {
 	case 1000:
 		setGlobalVar(V_MODULE_NAME, 0x03294419);
@@ -539,7 +529,7 @@ void GameModule::createModule(int moduleNum, int which) {
 }
 
 void GameModule::createModuleByHash(uint32 nameHash) {
-	debug("GameModule::createModuleByHash(%08X)", nameHash);
+	debug(1, "GameModule::createModuleByHash(%08X)", nameHash);
 	switch (nameHash) {
 	case 0x03294419:
 		createModule(1000, -1);
@@ -684,7 +674,7 @@ void GameModule::updateModule() {
 			createModule(2300, 1);
 			break;
 		case 2300:
-		debug("module 23000 _moduleResult : %d", _moduleResult);
+		debug(1, "module 23000 _moduleResult : %d", _moduleResult);
 			if (_moduleResult == 2)
 				createModule(1200, 0);
 			else if (_moduleResult == 0)
@@ -796,6 +786,7 @@ void GameModule::openMainMenu() {
 		createModule(1000, 0);
 	}
 	_vm->_screen->saveParams();
+	_vm->_screen->update();
 	_mainMenuRequested = false;
 	createMenuModule();
 }

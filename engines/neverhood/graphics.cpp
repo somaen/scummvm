@@ -26,9 +26,9 @@
 
 namespace Neverhood {
 
-BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height)
+BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, Common::String name)
 	: _vm(vm), _priority(priority), _visible(true), _transparent(true),
-	_clipRects(NULL), _clipRectsCount(0), _version(0) {
+	_clipRects(NULL), _clipRectsCount(0), _version(0), _name(name) {
 	
 	_drawRect.x = 0;
 	_drawRect.y = 0;
@@ -130,7 +130,7 @@ void BaseSurface::copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, N
 // ShadowSurface
 
 ShadowSurface::ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, BaseSurface *shadowSurface)
-	: BaseSurface(vm, priority, width, height), _shadowSurface(shadowSurface) {
+	: BaseSurface(vm, priority, width, height, "shadow"), _shadowSurface(shadowSurface) {
 	// Empty
 }
 
@@ -143,7 +143,7 @@ void ShadowSurface::draw() {
 // FontSurface
 
 FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
-	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows), _charsPerRow(charsPerRow), _numRows(numRows),
+	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
 	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(NULL) {
 	
 	_tracking = new NPointArray();
@@ -152,7 +152,7 @@ FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsP
 }
 
 FontSurface::FontSurface(NeverhoodEngine *vm, uint32 fileHash, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
-	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows), _charsPerRow(charsPerRow), _numRows(numRows),
+	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
 	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(NULL) {
 	
 	SpriteResource fontSpriteResource(_vm);
@@ -343,7 +343,7 @@ void unpackSpriteNormal(const byte *source, int width, int height, byte *dest, i
 int calcDistance(int16 x1, int16 y1, int16 x2, int16 y2) {
 	const int16 deltaX = ABS(x1 - x2);
 	const int16 deltaY = ABS(y1 - y2);
-	return sqrt((double)(deltaX * deltaX + deltaY * deltaY));
+	return (int)sqrt((double)(deltaX * deltaX + deltaY * deltaY));
 }
 
 } // End of namespace Neverhood

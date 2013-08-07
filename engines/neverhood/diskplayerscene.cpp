@@ -354,9 +354,7 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	insertPuzzleMouse(0x000408A8, 20, 620);
 	showMouse(false);
 
-	_diskSmackerPlayer = new SmackerPlayer(_vm, this, 0x08288103, false, true);
-	addEntity(_diskSmackerPlayer);
-	addSurface(_diskSmackerPlayer->getSurface());
+	_diskSmackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x08288103, false, true));
 	_diskSmackerPlayer->setDrawPos(154, 86);
 	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 
@@ -473,36 +471,34 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 	return 0;
 }
 
-void DiskplayerScene::stop() {
-	_diskSmackerPlayer->open(0x08288103, true);
+void DiskplayerScene::openSmacker(uint32 fileHash, bool keepLastFrame) {
+	_diskSmackerPlayer->open(fileHash, keepLastFrame);
 	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
+}
+
+void DiskplayerScene::stop() {
+	openSmacker(0x08288103, true);
 	_ssPlayButton->release();
 	_updateStatus = kUSStopped;
 	_diskSlots[_diskIndex]->activate();
 }
 
 void DiskplayerScene::tuneIn() {
-	_diskSmackerPlayer->open(0x900001C1, false);
-	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
-	_palette->usePalette();
+	openSmacker(0x900001C1, false);
 	_ssPlayButton->release();
 	_updateStatus = kUSTuningIn;
 	_diskSlots[_diskIndex]->activate();
 }
 
 void DiskplayerScene::playDisk() {
-	_diskSmackerPlayer->open(kDiskplayerSmackerFileHashes[_diskIndex], false);
-	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
-	_palette->usePalette();
+	openSmacker(kDiskplayerSmackerFileHashes[_diskIndex], false);
 	_updateStatus = kUSPlaying;
 	_diskSlots[_diskIndex]->play();
 }
 
 void DiskplayerScene::playStatic() {
-	_diskSmackerPlayer->open(0x90000101, false);
-	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
-	_palette->usePalette();
+	openSmacker(0x90000101, false);
 	_ssPlayButton->release();
 	_updateStatus = kUSPlaying;
 	_diskSlots[_diskIndex]->activate();

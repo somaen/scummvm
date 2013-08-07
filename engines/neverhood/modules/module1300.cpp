@@ -109,7 +109,7 @@ Module1300::~Module1300() {
 }
 
 void Module1300::createScene(int sceneNum, int which) {
-	debug("Module1300::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module1300::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 1:
@@ -1711,6 +1711,7 @@ Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule)
 void Scene1317::update() {
 	if (_smackerFileHash) {
 		_smackerPlayer->open(_smackerFileHash, _keepLastSmackerFrame);
+		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 		_smackerFileHash = 0;
 	}
 	Scene::update();
@@ -1733,6 +1734,7 @@ void Scene1317::upChooseKing() {
 			
 	if (_smackerFileHash) {
 		_smackerPlayer->open(_smackerFileHash, _keepLastSmackerFrame);
+		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 		_smackerFileHash = 0;
 	}
 

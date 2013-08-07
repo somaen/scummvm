@@ -58,7 +58,7 @@ Module2800::~Module2800() {
 }
 
 void Module2800::createScene(int sceneNum, int which) {
-	debug("Module2800::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module2800::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:
@@ -616,10 +616,6 @@ void Scene2802::update() {
 	if (prevTuneStatus != _currTuneStatus)
 		changeTuneStatus(prevTuneStatus, _currTuneStatus);
 		
-	//DEBUG>>>
-	//debug("_currRadioMusicIndex = %d; V_GOOD_RADIO_MUSIC_INDEX = %d", _currRadioMusicIndex, getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX));
-	//DEBUG<<<
-
 	if (getGlobalVar(V_RADIO_MOVE_DISH_VIDEO) && prevTuneStatus != _currTuneStatus && _currRadioMusicIndex != 0) {
 		setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 0);
 		leaveScene(1);
@@ -1929,8 +1925,6 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 
-	which = 3;
-
 	SetMessageHandler(&Scene2806::handleMessage);
 	SetUpdateHandler(&Scene2806::update);
 	
@@ -2445,18 +2439,6 @@ uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 void Scene2808::update() {
-
-	// DEBUG>>> Show correct values
-	#if 1
-	debug("---------------");
-	if (_testTubeSetNum == 0)
-		debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
-	else
-		debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2));
-	debug("%03d %03d %03d", _asTestTubes[0]->getFillLevel(), _asTestTubes[1]->getFillLevel(), _asTestTubes[2]->getFillLevel());
-	#endif
-	// DEBUG<<<
-	
 	Scene::update();
 	if (_countdown != 0 && (--_countdown) == 0) {
 		leaveScene(_leaveResult);
