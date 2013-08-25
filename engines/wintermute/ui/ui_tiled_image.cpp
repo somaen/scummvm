@@ -43,7 +43,9 @@ IMPLEMENT_PERSISTENT(UITiledImage, false)
 //////////////////////////////////////////////////////////////////////////
 UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 	_image = nullptr;
-
+	_cache = nullptr;
+	_width = 0;
+	_height = 0;
 	BasePlatform::setRectEmpty(&_upLeft);
 	BasePlatform::setRectEmpty(&_upMiddle);
 	BasePlatform::setRectEmpty(&_upRight);
@@ -77,42 +79,63 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 
 	int col, row;
 
-	_gameRef->_renderer->startSpriteBatch();
+	assert (width != 0);
+	assert (height != 0);
 
-	// top left/right
-	_image->_surface->displayTrans(x,                                                       y, _upLeft);
-	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y, _upRight);
+	if (_cache == nullptr || width != _width || height != _height) {
+		_gameRef->_renderer->startSpriteBatch(true, width, height);
+		
+		int x = 0; 
+		int y = 0;
+		_width = width;
+		_height = height;
+		// top left/right
+		_image->_surface->displayTrans(x,                                                       y, _upLeft);
+		_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y, _upRight);
 
-	// bottom left/right
-	_image->_surface->displayTrans(x,                                                       y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downLeft);
-	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downRight);
+		// bottom left/right
+		_image->_surface->displayTrans(x,                                                       y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downLeft);
+		_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downRight);
 
-	// left/right
-	int yyy = y + (_upMiddle.bottom - _upMiddle.top);
-	for (row = 0; row < nuRows; row++) {
-		_image->_surface->displayTrans(x,                                                       yyy, _middleLeft);
-		_image->_surface->displayTrans(x + (_middleLeft.right - _middleLeft.left) + nuColumns * tileWidth, yyy, _middleRight);
-		yyy += tileWidth;
+		// left/right
+		int yyy = y + (_upMiddle.bottom - _upMiddle.top);
+		for (row = 0; row < nuRows; row++) {
+			_image->_surface->displayTrans(x,                                                       yyy, _middleLeft);
+			_image->_surface->displayTrans(x + (_middleLeft.right - _middleLeft.left) + nuColumns * tileWidth, yyy, _middleRight);
+			yyy += tileWidth;
+		}
+
+		// top/bottom
+		int xxx = x + (_upLeft.right - _upLeft.left);
+		for (col = 0; col < nuColumns; col++) {
+			_image->_surface->displayTrans(xxx, y, _upMiddle);
+			_image->_surface->displayTrans(xxx, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downMiddle);
+			xxx += tileWidth;
+		}
+
+		// tiles
+		if (nuRows > 0 && nuColumns > 0) {
+			yyy = y + (_upMiddle.bottom - _upMiddle.top);
+			xxx = x + (_upLeft.right - _upLeft.left);
+
+			for (row = 0; row < nuRows; row++) {
+				for (col = 0; col < nuColumns; col++) {
+					_image->_surface->displayTrans(xxx + col * _middleMiddle.width(), yyy + row * _middleMiddle.height(), _middleMiddle);
+				}
+			}
+		}
+
+		_gameRef->_renderer->endSpriteBatch(false);
+		_cache = _gameRef->_renderer->getAuxSurface();
 	}
 
-	// top/bottom
-	int xxx = x + (_upLeft.right - _upLeft.left);
-	for (col = 0; col < nuColumns; col++) {
-		_image->_surface->displayTrans(xxx, y, _upMiddle);
-		_image->_surface->displayTrans(xxx, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downMiddle);
-		xxx += tileWidth;
-	}
-
-	// tiles
-	if (nuRows > 0 && nuColumns > 0) {
-		yyy = y + (_upMiddle.bottom - _upMiddle.top);
-		xxx = x + (_upLeft.right - _upLeft.left);
-		_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
-		_image->_surface->repeatLastDisplayOp(tileWidth, tileWidth, nuColumns, nuRows);
-	}
-
-	_gameRef->_renderer->endSpriteBatch();
-
+	Rect32 dst;
+	dst.top = 0;
+	dst.left = 0;
+	dst.setWidth(width);
+	dst.setHeight(height);
+	_cache->displayTrans(x, y, dst);
+	
 	return STATUS_OK;
 }
 

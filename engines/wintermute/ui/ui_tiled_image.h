@@ -33,6 +33,8 @@
 #include "engines/wintermute/ui/ui_object.h"
 #include "common/rect.h"
 
+#include "engines/wintermute/base/gfx/base_surface.h"
+
 namespace Wintermute {
 class BaseSubFrame;
 class UITiledImage : public BaseObject {
@@ -57,6 +59,9 @@ private:
 	Rect32 _downLeft;
 	Rect32 _downMiddle;
 	Rect32 _downRight;
+	BaseSurface *_cache;
+	int _width;
+	int _height;
 };
 
 } // End of namespace Wintermute

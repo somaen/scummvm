@@ -67,6 +67,9 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
 	}
+
+	_swapped = false;
+	_auxSurface = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,6 +87,8 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 	delete _renderSurface;
 	_blankSurface->free();
 	delete _blankSurface;
+
+	_swapped = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -285,13 +290,19 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 
 void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) { 
 
-	if (_tempDisableDirtyRects || _disableDirtyRects) {
+	if (_tempDisableDirtyRects || _disableDirtyRects || _swapped) {
 		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
 		ticket->_transform._rgbaMod = _colorMod;
 		ticket->_wantsDraw = true;
-		_renderQueue.push_back(ticket);
-		_previousTicket = ticket;
-		drawFromSurface(ticket);
+		if (!_swapped) {
+			_renderQueue.push_back(ticket);
+			_previousTicket = ticket;
+			drawFromSurface(ticket);
+		} else {
+			ticket->_transform._blendMode = BLEND_ADDITIVE;
+			drawFromSurface(ticket);
+			delete ticket;
+		}
 		return;
 	}
 
@@ -683,16 +694,43 @@ void BaseRenderOSystem::endSaveLoad() {
 	g_system->updateScreen();
 }
 
-bool BaseRenderOSystem::startSpriteBatch() {
+bool BaseRenderOSystem::startSpriteBatch(bool swap, int width, int height) {
+	if (swap) {
+		_swapped = true;
+		_auxSurface = _renderSurface;
+		_renderSurface = new Graphics::Surface();
+		_renderSurface->create(width, height, _auxSurface->format);
+		Common::Rect r;
+		r.top = 0;
+		r.left = 0;
+		r.setWidth(width);
+		r.setHeight(height);
+		_renderSurface->fillRect(r, 0);
+	}
 	_spriteBatch = true;
 	_batchNum = 1;
 	return STATUS_OK;
 }
 
-bool BaseRenderOSystem::endSpriteBatch() {
+bool BaseRenderOSystem::endSpriteBatch(bool swap) {
+	if (_swapped) {
+		_swapped = false;
+		Graphics::Surface *temp;
+		temp = _renderSurface;
+		_renderSurface = _auxSurface;
+		_auxSurface = temp;
+	}
 	_spriteBatch = false;
 	_batchNum = 0;
 	return STATUS_OK;
+}
+
+BaseSurface *BaseRenderOSystem::getAuxSurface() {
+	assert(_auxSurface != nullptr);
+	BaseSurfaceOSystem *surface = new BaseSurfaceOSystem(_gameRef);
+	surface->putSurface(*_auxSurface);
+	surface->setAlphaType(ALPHA_FULL);
+	return surface;
 }
 
 } // End of namespace Wintermute

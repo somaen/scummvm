@@ -100,8 +100,9 @@ public:
 	float getScaleRatioY() const override {
 		return _ratioY;
 	}
-	virtual bool startSpriteBatch() override;
-	virtual bool endSpriteBatch() override;
+	virtual bool startSpriteBatch(bool swap = false, int width = 0, int height = 0) override;
+	virtual bool endSpriteBatch(bool swap = false) override;
+	virtual BaseSurface *getAuxSurface() override;
 	void endSaveLoad();
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform);
 	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
@@ -130,6 +131,7 @@ private:
 	uint32 _drawNum; ///< The global number of the current draw-operation.
 	Common::Rect _renderRect;
 	Graphics::Surface *_renderSurface;
+	Graphics::Surface *_auxSurface;
 	Graphics::Surface *_blankSurface;
 
 	int _borderLeft;
@@ -147,6 +149,8 @@ private:
 	uint32 _clearColor;
 
 	bool _skipThisFrame;
+
+	int _swapped;
 };
 
 } // End of namespace Wintermute

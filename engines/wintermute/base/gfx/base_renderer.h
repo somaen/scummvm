@@ -157,10 +157,10 @@ public:
 	BaseObject *getObjectAt(int x, int y);
 	void deleteRectList();
 
-	virtual bool startSpriteBatch() {
+	virtual bool startSpriteBatch(bool swap = false, int width = 0, int height = 0) {
 		return STATUS_OK;
 	};
-	virtual bool endSpriteBatch() {
+	virtual bool endSpriteBatch(bool swap = false) {
 		return STATUS_OK;
 	};
 	bool pointInViewport(Point32 *P);
@@ -190,6 +190,9 @@ public:
 
 	int32 getWidth() const { return _width; }
 	int32 getHeight() const { return _height; }
+
+	virtual BaseSurface *getAuxSurface() = 0;
+
 protected:
 	int32 _height;
 	int32 _width;
