@@ -83,6 +83,30 @@ struct TransparentSurface : public Graphics::Surface {
 
 	AlphaType _alphaMode;
 
+#ifdef SCUMM_LITTLE_ENDIAN
+	static const int kAIndex = 0;
+	static const int kBIndex = 1;
+	static const int kGIndex = 2;
+	static const int kRIndex = 3;
+#else
+	static const int kAIndex = 3;
+	static const int kBIndex = 2;
+	static const int kGIndex = 1;
+	static const int kRIndex = 0;
+#endif
+
+	static const int kBShift = 8;//img->format.bShift;
+	static const int kGShift = 16;//img->format.gShift;
+	static const int kRShift = 24;//img->format.rShift;
+	static const int kAShift = 0;//img->format.aShift;
+
+
+	static const int kBModShift = 0;//img->format.bShift;
+	static const int kGModShift = 8;//img->format.gShift;
+	static const int kRModShift = 16;//img->format.rShift;
+	static const int kAModShift = 24;//img->format.aShift;
+
+
 	/**
 	 @brief renders the surface to another surface
 	 @param pDest a pointer to the target image. In most cases this is the framebuffer.
@@ -115,7 +139,8 @@ struct TransparentSurface : public Graphics::Surface {
 	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = nullptr,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
-	                  int width = -1, int height = -1);
+	                  int width = -1, int height = -1,
+	                  TSpriteBlendMode blend = BLEND_NORMAL);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
