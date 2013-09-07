@@ -433,6 +433,11 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 		}
 	} else {
 
+		byte ca = (color >> aShift) & 0xFF;
+		byte cr = (color >> rShift) & 0xFF;
+		byte cg = (color >> gShift) & 0xFF;
+		byte cb = (color >> bShift) & 0xFF;
+
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
@@ -447,11 +452,6 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 				byte *inr = &in[rIndex];
 				byte *ing = &in[gIndex];
 				byte *inb = &in[bIndex];
-
-				byte ca = (color >> aShift) & 0xFF;
-				byte cr = (color >> rShift) & 0xFF;
-				byte cg = (color >> gShift) & 0xFF;
-				byte cb = (color >> bShift) & 0xFF;
 
 				Blender::blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
 				in += inStep;
