@@ -35,13 +35,12 @@ namespace Wintermute {
 class VideoTheoraPlayer;
 class AdEntity : public AdTalkHolder {
 public:
-	VideoTheoraPlayer *_theora;
 	bool setSprite(const char *filename);
 	void setItem(const char *itemName);
 	DECLARE_PERSISTENT(AdEntity, AdTalkHolder)
 	void updatePosition();
 	virtual int getHeight();
-	BaseRegion *_region;
+
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	virtual bool update();
 	virtual bool display();
@@ -62,6 +61,8 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
 private:
+	VideoTheoraPlayer *_theora;
+	BaseRegion *_region;
 	int32 _walkToX;
 	int32 _walkToY;
 	TDirection _walkToDir;
