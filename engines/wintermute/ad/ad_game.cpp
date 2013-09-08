@@ -1488,7 +1488,7 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 	delete[] _scheduledScene;
 	_scheduledScene = nullptr;
 
-	if (_scene && !_scene->_initialized) {
+	if (_scene && !_scene->isInitialized()) {
 		return changeScene(filename, fadeIn);
 	} else {
 		_scheduledScene = new char [strlen(filename) + 1];

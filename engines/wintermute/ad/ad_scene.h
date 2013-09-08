@@ -56,12 +56,11 @@ public:
 
 	bool getRegionsAt(int x, int y, AdRegion **regionList, int numRegions);
 	bool handleItemAssociations(const char *itemName, bool show);
-	UIWindow *_shieldWindow;
+
 	float getRotationAt(int x, int y);
 	bool loadState();
 	bool saveState();
-	bool _persistentState;
-	bool _persistentStateSprites;
+
 	BaseObject *getNodeByName(const char *name);
 	void setOffset(int offsetLeft, int offsetTop);
 	bool pointInViewport(int x, int y);
@@ -69,12 +68,10 @@ public:
 	int getOffsetLeft();
 	bool getViewportSize(int32 *width = nullptr, int32 *height = nullptr);
 	bool getViewportOffset(int32 *offsetX = nullptr, int32 *offsetY = nullptr);
-	BaseViewport *_viewport;
-	BaseFader *_fader;
-	int32 _pfPointsNum;
+
 	void pfPointsAdd(int x, int y, int distance);
 	void pfPointsStart();
-	bool _initialized;
+	bool isInitialized() { return _initialized; }
 	bool correctTargetPoint(int32 startX, int32 startY, int32 *x, int32 *y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
 	bool correctTargetPoint2(int32 startX, int32 startY, int32 *targetX, int32 *targetY, bool checkFreeObjects, BaseObject *requester);
 	DECLARE_PERSISTENT(AdScene, BaseObject)
@@ -89,7 +86,7 @@ public:
 	bool sortRotLevels();
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	uint32 getAlphaAt(int x, int y, bool colorCheck = false);
-	bool _paralaxScrolling;
+
 	void skipTo(int offsetX, int offsetY);
 	void setDefaults();
 	void cleanup();
@@ -97,20 +94,9 @@ public:
 	void scrollToObject(BaseObject *object);
 	void scrollTo(int offsetX, int offsetY);
 	virtual bool update() override;
-	bool _autoScroll;
-	int32 _targetOffsetTop;
-	int32 _targetOffsetLeft;
-
-	int32 _scrollPixelsV;
-	uint32 _scrollTimeV;
-	uint32 _lastTimeV;
-
-	int32 _scrollPixelsH;
-	uint32 _scrollTimeH;
-	uint32 _lastTimeH;
 
 	virtual bool display();
-	uint32 _pfMaxTime;
+
 	bool initLoop();
 	void pathFinderStep();
 	bool isBlockedAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
@@ -120,15 +106,58 @@ public:
 	bool getPath(const BasePoint &source, const BasePoint &target, AdPath *path, BaseObject *requester = nullptr);
 	AdScene(BaseGame *inGame);
 	virtual ~AdScene();
+
+	bool loadFile(const char *filename);
+	bool loadBuffer(byte *buffer, bool complete = true);
+
+	bool addObject(AdObject *Object);
+	bool removeObject(AdObject *Object);
+
+	virtual bool restoreDeviceObjects();
+	int getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester = nullptr);
+
+	// scripting interface
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
+
+
+private:
+	UIWindow *_shieldWindow;
+
+	bool _persistentState;
+	bool _persistentStateSprites;
+
+	BaseViewport *_viewport;
+	BaseFader *_fader;
+	int32 _pfPointsNum;
+	
+	bool _paralaxScrolling;
+	
+	bool _autoScroll;
+	int32 _targetOffsetTop;
+	int32 _targetOffsetLeft;
+	
+	int32 _scrollPixelsV;
+	uint32 _scrollTimeV;
+	uint32 _lastTimeV;
+	
+	int32 _scrollPixelsH;
+	uint32 _scrollTimeH;
+	uint32 _lastTimeH;
+	
+	uint32 _pfMaxTime;
+
+	bool _initialized;
+
 	BaseArray<AdLayer *> _layers;
 	BaseArray<AdObject *> _objects;
 	BaseArray<AdWaypointGroup *> _waypointGroups;
-	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	
 	int32 _width;
 	int32 _height;
-	bool addObject(AdObject *Object);
-	bool removeObject(AdObject *Object);
+	
 	int32 _editorMarginH;
 	int32 _editorMarginV;
 	uint32 _editorColFrame;
@@ -143,7 +172,7 @@ public:
 	uint32 _editorColScale;
 	uint32 _editorColDecor;
 	uint32 _editorColDecorSel;
-
+	
 	bool _editorShowRegions;
 	bool _editorShowBlocked;
 	bool _editorShowDecor;
@@ -152,17 +181,6 @@ public:
 	BaseArray<AdScaleLevel *> _scaleLevels;
 	BaseArray<AdRotLevel *> _rotLevels;
 
-	virtual bool restoreDeviceObjects();
-	int getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester = nullptr);
-
-	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
-
-
-private:
 	bool persistState(bool saving = true);
 	void pfAddWaypointGroup(AdWaypointGroup *Wpt, BaseObject *requester = nullptr);
 	bool _pfReady;
