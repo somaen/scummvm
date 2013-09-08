@@ -92,13 +92,13 @@ void BaseActiveRect::clipRect() {
 	Rect32 rc;
 	bool customViewport;
 	_gameRef->getCurrentViewportRect(&rc, &customViewport);
-	BaseRenderer *Rend = BaseEngine::getRenderer();
+	BaseRenderer *renderer = BaseEngine::getRenderer();
 
 	if (!customViewport) {
-		rc.left -= Rend->_drawOffsetX;
-		rc.right -= Rend->_drawOffsetX;
-		rc.top -= Rend->_drawOffsetY;
-		rc.bottom -= Rend->_drawOffsetY;
+		rc.left -= renderer->_drawOffsetX;
+		rc.right -= renderer->_drawOffsetX;
+		rc.top -= renderer->_drawOffsetY;
+		rc.bottom -= renderer->_drawOffsetY;
 	}
 
 	if (rc.left > _rect.left) {
