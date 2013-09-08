@@ -195,7 +195,7 @@ bool BasePlatform::isRectEmpty(const Rect32 *lprc) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePlatform::ptInRect(Rect32 *lprc, Point32 p) {
+bool BasePlatform::ptInRect(const Rect32 *lprc, Point32 p) {
 	return (p.x >= lprc->left) && (p.x < lprc->right) && (p.y >= lprc->top) && (p.y < lprc->bottom);
 }
 

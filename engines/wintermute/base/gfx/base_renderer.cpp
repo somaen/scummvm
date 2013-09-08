@@ -30,8 +30,7 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/base/base_sub_frame.h"
-#include "engines/wintermute/base/base_region.h"
+#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
@@ -188,36 +187,9 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 	point.y = y;
 
 	for (int i = _rectList.size() - 1; i >= 0; i--) {
-		if (BasePlatform::ptInRect(&_rectList[i]->_rect, point)) {
-			if (_rectList[i]->_precise) {
-				// frame
-				if (_rectList[i]->_frame) {
-					int xx = (int)((_rectList[i]->_frame->getRect().left + x - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
-					int yy = (int)((_rectList[i]->_frame->getRect().top  + y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
-
-					if (_rectList[i]->_frame->_mirrorX) {
-						int width = _rectList[i]->_frame->getRect().right - _rectList[i]->_frame->getRect().left;
-						xx = width - xx;
-					}
-
-					if (_rectList[i]->_frame->_mirrorY) {
-						int height = _rectList[i]->_frame->getRect().bottom - _rectList[i]->_frame->getRect().top;
-						yy = height - yy;
-					}
-
-					if (!_rectList[i]->_frame->_surface->isTransparentAt(xx, yy)) {
-						return _rectList[i]->_owner;
-					}
-				}
-				// region
-				else if (_rectList[i]->_region) {
-					if (_rectList[i]->_region->pointInRegion(x + _rectList[i]->_offsetX, y + _rectList[i]->_offsetY)) {
-						return _rectList[i]->_owner;
-					}
-				}
-			} else {
-				return _rectList[i]->_owner;
-			}
+		BaseObject *object = _rectList[i]->getObjectAt(point);
+		if (object) {
+			return object;
 		}
 	}
 

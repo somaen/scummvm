@@ -77,7 +77,7 @@ bool BaseRegion::createRegion() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::pointInRegion(int x, int y) {
+bool BaseRegion::pointInRegion(int x, int y) const {
 	if (_points.size() < 3) {
 		return false;
 	}
@@ -446,7 +446,7 @@ typedef struct {
 } dPoint;
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::ptInPolygon(int32 x, int32 y) {
+bool BaseRegion::ptInPolygon(int32 x, int32 y) const {
 	if (_points.size() < 3) {
 		return false;
 	}

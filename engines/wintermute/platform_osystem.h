@@ -55,7 +55,7 @@ public:
 
 	static bool setRectEmpty(Rect32 *lprc);
 	static bool isRectEmpty(const Rect32 *lprc);
-	static bool ptInRect(Rect32 *lprc, Point32 p);
+	static bool ptInRect(const Rect32 *lprc, Point32 p);
 	static bool setRect(Rect32 *lprc, int left, int top, int right, int bottom);
 	static bool intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2);
 	static bool unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2);

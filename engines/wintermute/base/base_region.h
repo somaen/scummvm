@@ -39,13 +39,13 @@ public:
 	void cleanup();
 	bool mimic(BaseRegion *region, float scale = 100.0f, int x = 0, int y = 0);
 	bool getBoundingRect(Rect32 *rect);
-	bool ptInPolygon(int32 x, int32 y);
+	bool ptInPolygon(int32 x, int32 y) const;
 	DECLARE_PERSISTENT(BaseRegion, BaseObject)
 	bool _active;
 	int32 _editorSelectedPoint;
 	BaseRegion(BaseGame *inGame);
 	virtual ~BaseRegion();
-	bool pointInRegion(int x, int y);
+	bool pointInRegion(int x, int y) const;
 	bool createRegion();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);

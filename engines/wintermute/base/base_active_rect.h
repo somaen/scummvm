@@ -36,9 +36,19 @@ namespace Wintermute {
 class BaseRegion;
 class BaseSubFrame;
 class BaseObject;
-class BaseActiveRect: BaseClass {
+class BaseActiveRect : BaseClass {
 public:
 	void clipRect();
+	BaseActiveRect(BaseGame *inGameOwner = nullptr);
+	BaseActiveRect(BaseGame *inGameOwner, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
+	BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY);
+	virtual ~BaseActiveRect();
+
+	BaseObject *getObjectAt(const Point32 &point);
+
+private:
+	const BaseRegion *getRegion() const { return _region; }
+
 	bool _precise;
 	float _zoomX;
 	float _zoomY;
@@ -48,11 +58,6 @@ public:
 	int32 _offsetX;
 	int32 _offsetY;
 	Rect32 _rect;
-	BaseActiveRect(BaseGame *inGameOwner = nullptr);
-	BaseActiveRect(BaseGame *inGameOwner, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
-	BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY);
-	virtual ~BaseActiveRect();
-
 };
 
 } // End of namespace Wintermute

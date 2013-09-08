@@ -27,6 +27,8 @@
  */
 
 #include "engines/wintermute/base/base_active_rect.h"
+#include "engines/wintermute/base/base_sub_frame.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_region.h"
@@ -107,6 +109,40 @@ void BaseActiveRect::clipRect() {
 	}
 
 	BasePlatform::intersectRect(&_rect, &_rect, &rc);
+}
+
+BaseObject *BaseActiveRect::getObjectAt(const Point32 &point) {
+	if (BasePlatform::ptInRect(&_rect, point)) {
+		if (_precise) {
+			// frame
+			if (_frame) {
+				int xx = (int)((_frame->getRect().left + point.x - _rect.left + _offsetX) / (float)((float)_zoomX / (float)100));
+				int yy = (int)((_frame->getRect().top  + point.y - _rect.top  + _offsetY) / (float)((float)_zoomY / (float)100));
+				
+				if (_frame->_mirrorX) {
+					int width = _frame->getRect().width();
+					xx = width - xx;
+				}
+				
+				if (_frame->_mirrorY) {
+					int height = _frame->getRect().height();
+					yy = height - yy;
+				}
+				
+				if (!_frame->_surface->isTransparentAt(xx, yy)) {
+					return _owner;
+				}
+			}
+			// region
+			else if (getRegion()) {
+				if (getRegion()->pointInRegion(point.x + _offsetX, point.y + _offsetY)) {
+					return _owner;
+				}
+			}
+		} else {
+			return _owner;
+		}
+	}
 }
 
 } // End of namespace Wintermute
