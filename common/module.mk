@@ -1,6 +1,7 @@
 MODULE := common
 
 MODULE_OBJS := \
+	accel_draw.o \
 	archive.o \
 	config-manager.o \
 	coroutines.o \

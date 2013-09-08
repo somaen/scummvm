@@ -33,6 +33,7 @@
 #include "engines/wintermute/graphics/transparent_surface.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "common/list.h"
+#include "common/accel_draw.h"
 
 namespace Wintermute {
 struct TransparentSurface;
@@ -96,6 +97,7 @@ private:
 	void *_lockPixels;
 	int _lockPitch;
 	byte *_alphaMask;
+	Common::AccelTexture *_texture;
 };
 
 } // End of namespace Wintermute

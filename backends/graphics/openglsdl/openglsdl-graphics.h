@@ -29,7 +29,7 @@
 #endif
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
-
+#include "backends/graphics/openglsdl/glaccelman.h"
 #include "common/events.h"
 
 /**
@@ -58,6 +58,7 @@ public:
 	virtual void transformMouseCoordinates(Common::Point &point);
 	virtual void notifyMousePos(Common::Point mouse);
 
+	virtual Common::AccelDrawManager *getAccelDrawMan();
 protected:
 	virtual void internUpdateScreen();
 
@@ -98,6 +99,9 @@ protected:
 
 	// Hardware screen
 	SDL_Surface *_hwscreen;
+
+	// Accelerated Drawing Manager
+	GLAccelDrawManager *_accelDrawMan;
 
 	// If screen was resized by the user
 	bool _screenResized;

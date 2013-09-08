@@ -24,6 +24,7 @@
 #define BACKENDS_MODULAR_BACKEND_H
 
 #include "backends/base-backend.h"
+#include "common/accel_draw.h"
 
 class GraphicsManager;
 class MutexManager;
@@ -129,6 +130,7 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 
 	//@}
+	virtual Common::AccelDrawManager *getAccelDrawMan();
 
 protected:
 	/** @name Managers variables */

@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/noncopyable.h"
 #include "common/keyboard.h"
+#include "common/accel_draw.h"
 
 #include "graphics/palette.h"
 
@@ -85,6 +86,7 @@ public:
 
 	virtual void displayMessageOnOSD(const char *msg) {}
 
+	virtual Common::AccelDrawManager *getAccelDrawMan() = 0;
 	// Graphics::PaletteManager interface
 	//virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 	//virtual void grabPalette(byte *colors, uint start, uint num) = 0;

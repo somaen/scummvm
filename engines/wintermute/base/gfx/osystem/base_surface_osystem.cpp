@@ -53,6 +53,7 @@ BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_lockPitch = 0;
 	_loaded = false;
 	_rotation = 0;
+	_texture = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,6 +70,7 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	_gameRef->addMem(-_width * _height * 4);
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
+	delete _texture;
 }
 
 TransparentSurface::AlphaType hasTransparencyType(const Graphics::Surface *surf) {
@@ -190,6 +192,8 @@ bool BaseSurfaceOSystem::finishLoad() {
 	delete image;
 
 	_loaded = true;
+
+	_texture = g_system->getAccelDrawMan()->createTexture(*_surface);
 
 	return true;
 }
@@ -437,7 +441,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		transform._alphaDisable = true;
 	}
 
-	renderer->drawSurface(this, _surface, &srcRect, &position, transform); 
+	renderer->drawSurface(this, _texture, &srcRect, &position, transform);
 	return STATUS_OK;
 }
 
@@ -451,6 +455,10 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 	_loaded = true;
 	_surface->free();
 	_surface->copyFrom(surface);
+	if (_texture) {
+		delete _texture;
+	}
+	_texture = g_system->getAccelDrawMan()->createTexture(*_surface);
 	if (hasAlpha) {
 		_alphaType = TransparentSurface::ALPHA_FULL;
 	} else {

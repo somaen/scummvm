@@ -92,6 +92,8 @@ public:
 	 */
 	void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
+	void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &sourceRect);
+
 	/**
 	 * Get the texture width.
 	 */

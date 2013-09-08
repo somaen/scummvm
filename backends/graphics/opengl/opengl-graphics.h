@@ -162,8 +162,9 @@ protected:
 	/**
 	 * Sets the OpenGL texture format for the given pixel format. If format is not support will raise an error.
 	 */
-	virtual void getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &intFormat, GLenum &glFormat, GLenum &type);
-
+public:
+	static void getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &intFormat, GLenum &glFormat, GLenum &type);
+protected:
 	virtual void internUpdateScreen();
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();

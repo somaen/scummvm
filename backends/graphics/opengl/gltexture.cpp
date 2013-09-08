@@ -194,6 +194,37 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 	}
 }
 
+void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &sourceRect) {
+	// Select this OpenGL texture
+	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
+	
+	// Calculate the texture rect that will be drawn
+	const GLfloat texWidth = (GLfloat)_realWidth / _textureWidth;//xdiv(_surface.w, _textureWidth);
+	const GLfloat texHeight = (GLfloat)_realHeight / _textureHeight;//xdiv(_surface.h, _textureHeight);
+	GLfloat left = sourceRect.left / (GLfloat)_realWidth;
+	GLfloat right = sourceRect.right / (GLfloat)_realWidth;
+	GLfloat top = sourceRect.top / (GLfloat)_realHeight;
+	GLfloat bottom = sourceRect.bottom / (GLfloat)_realHeight;
+	GLfloat texcoords[8] = {
+		left, top,
+		right, top,
+		left, bottom,
+		right, bottom,
+	};
+	glTexCoordPointer(2, GL_FLOAT, 0, texcoords); CHECK_GL_ERROR();
+	
+	// Calculate the screen rect where the texture will be drawn
+	const GLshort vertices[] = {
+		x,                y,
+		(GLshort)(x + w), y,
+		x,                (GLshort)(y + h),
+		(GLshort)(x + w), (GLshort)(y + h),
+	};
+	glVertexPointer(2, GL_SHORT, 0, vertices); CHECK_GL_ERROR();
+	
+	// Draw the texture to the screen buffer
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); CHECK_GL_ERROR();
+}
 void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	// Select this OpenGL texture
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();

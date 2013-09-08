@@ -44,7 +44,9 @@ ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/opengl/glerrorcheck.o \
 	graphics/opengl/gltexture.o \
+
 	graphics/opengl/opengl-graphics.o \
+	graphics/openglsdl/glaccelman.o \
 	graphics/openglsdl/openglsdl-graphics.o
 endif
 

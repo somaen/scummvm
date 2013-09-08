@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "common/list.h"
 #include "engines/wintermute/graphics/transform_struct.h"
+#include "common/accel_draw.h"
 
 namespace Wintermute {
 class BaseSurfaceOSystem;
@@ -103,7 +104,7 @@ public:
 	virtual bool startSpriteBatch() override;
 	virtual bool endSpriteBatch() override;
 	void endSaveLoad();
-	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform);
+	void drawSurface(BaseSurfaceOSystem *owner, const Common::AccelTexture *texture, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform);
 	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
 	BaseSurface *createSurface() override;
 private:

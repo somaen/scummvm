@@ -146,6 +146,7 @@ public:
 	virtual void transformMouseCoordinates(Common::Point &point);
 	virtual void notifyMousePos(Common::Point mouse);
 
+	virtual Common::AccelDrawManager *getAccelDrawMan() { return NULL; }
 protected:
 #ifdef USE_OSD
 	/** Surface containing the OSD message */

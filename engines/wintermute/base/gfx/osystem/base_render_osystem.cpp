@@ -38,6 +38,7 @@
 #include "engines/wintermute/graphics/transparent_surface.h"
 #include "common/queue.h"
 #include "common/config-manager.h"
+#include "common/accel_draw.h"
 
 #define DIRTY_RECT_LIMIT 800
 
@@ -149,12 +150,15 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 }
 
 bool BaseRenderOSystem::indicatorFlip() {
-	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_indicatorX, _indicatorY), _renderSurface->pitch, _indicatorX, _indicatorY, _indicatorWidthDrawn, _indicatorHeight);
-	g_system->updateScreen();
+	warning("Reimplement indicatorFlip");
+//	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_indicatorX, _indicatorY), _renderSurface->pitch, _indicatorX, _indicatorY, _indicatorWidthDrawn, _indicatorHeight);
+//	g_system->updateScreen();
 	return STATUS_OK;
 }
 
 bool BaseRenderOSystem::flip() {
+		g_system->getAccelDrawMan()->flipBuffer();
+		return STATUS_OK;
 	if (_renderQueue.size() > DIRTY_RECT_LIMIT) {
 		_tempDisableDirtyRects++;
 	}
@@ -162,7 +166,8 @@ bool BaseRenderOSystem::flip() {
 		_skipThisFrame = false;
 		delete _dirtyRect;
 		_dirtyRect = nullptr;
-		g_system->updateScreen();
+		warning("Should we skip?");
+//		g_system->updateScreen();
 		_needsFlip = false;
 		_drawNum = 1;
 		addDirtyRect(_renderRect);
@@ -185,6 +190,12 @@ bool BaseRenderOSystem::flip() {
 		}
 	}
 	if (_needsFlip || _disableDirtyRects || _tempDisableDirtyRects) {
+//		Common::AccelTexture *text = g_system->getAccelDrawMan()->createTexture(*_renderSurface);
+		g_system->getAccelDrawMan()->flipBuffer();
+/*		g_system->getAccelDrawMan()->drawTexture(text, 0, 0);
+		g_system->getAccelDrawMan()->destroyTexture(text);
+		g_system->getAccelDrawMan()->flipBuffer();
+
 		if (_disableDirtyRects || _tempDisableDirtyRects) {
 			g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
@@ -193,6 +204,7 @@ bool BaseRenderOSystem::flip() {
 		_dirtyRect = nullptr;
 		g_system->updateScreen();
 		_needsFlip = false;
+*/
 	}
 	_drawNum = 1;
 
@@ -271,7 +283,8 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect
 	surf.fillRect(fillRect, col);
 	TransformStruct temp = TransformStruct();
 	temp._alphaDisable = false;
-	drawSurface(nullptr, &surf, &sizeRect, &fillRect, temp);
+	warning("TODO: Fade");
+//	drawSurface(nullptr, &surf, &sizeRect, &fillRect, temp);
 	surf.free();
 
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
@@ -283,10 +296,15 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 	return _renderSurface->format;
 }
 
-void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) { 
+void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Common::AccelTexture *texture, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) {
 
+//	Common::AccelTexture *text = g_system->getAccelDrawMan()->createTexture(*surf);
+	g_system->getAccelDrawMan()->drawTexture(texture, *srcRect, *dstRect);
+//	g_system->getAccelDrawMan()->destroyTexture(text);
+return;
+/*
 	if (_tempDisableDirtyRects || _disableDirtyRects) {
-		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
+		RenderTicket *ticket = new RenderTicket( owner, surf, srcRect, dstRect, transform);
 		ticket->_transform._rgbaMod = _colorMod;
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
@@ -345,9 +363,12 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		_previousTicket = ticket;
 		drawFromSurface(ticket);
 	}
+	*/
 }
 
 void BaseRenderOSystem::repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY) {
+	warning("TODO: Repeat last draw");
+/*
 	if (_previousTicket && _lastAddedTicket != _renderQueue.end()) {
 		RenderTicket *origTicket = _previousTicket;
 
@@ -387,6 +408,7 @@ void BaseRenderOSystem::repeatLastDraw(int offsetX, int offsetY, int numTimesX, 
 	} else {
 		error("Repeat-draw failed (did you forget to draw something before this?)");
 	}
+	*/
 }
 
 void BaseRenderOSystem::invalidateTicket(RenderTicket *renderTicket) {
@@ -529,7 +551,8 @@ void BaseRenderOSystem::drawTickets() {
 		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
 		ticket->_wantsDraw = false;
 	}
-	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+	warning("Tickets are not needed");
+//	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 
 	// Revert the colorMod-state.
 	_colorMod = oldColorMod;
@@ -679,8 +702,9 @@ void BaseRenderOSystem::endSaveLoad() {
 	_drawNum = 1;
 
 	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->h, _renderSurface->w), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
-	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
-	g_system->updateScreen();
+	warning("Fix endSaveLoad");
+//	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+//	g_system->updateScreen();
 }
 
 bool BaseRenderOSystem::startSpriteBatch() {

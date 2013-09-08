@@ -69,12 +69,14 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource)
 		_lastFullscreenModeWidth = ConfMan.getInt("last_fullscreen_mode_width");
 		_lastFullscreenModeHeight = ConfMan.getInt("last_fullscreen_mode_height");
 	}
+	_accelDrawMan = new GLAccelDrawManager(this);
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 	// Unregister the event observer
 	if (g_system->getEventManager()->getEventDispatcher() != NULL)
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+	delete _accelDrawMan;
 }
 
 void OpenGLSdlGraphicsManager::initEventObserver() {
@@ -675,3 +677,7 @@ void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 }
 
 #endif
+
+Common::AccelDrawManager *OpenGLSdlGraphicsManager::getAccelDrawMan() {
+	return _accelDrawMan;
+}

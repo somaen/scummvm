@@ -244,3 +244,7 @@ void ModularBackend::displayMessageOnOSD(const char *msg) {
 void ModularBackend::quit() {
 	exit(0);
 }
+
+Common::AccelDrawManager *ModularBackend::getAccelDrawMan() {
+	return _graphicsManager->getAccelDrawMan();
+}

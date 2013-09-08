@@ -56,11 +56,14 @@ class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
 #endif
+class AccelDrawManager;
 }
 
 class AudioCDManager;
 class FilesystemFactory;
 class PaletteManager;
+
+
 
 /**
  * A structure describing time and date. This is a clone of struct tm
@@ -1217,6 +1220,7 @@ public:
 	 */
 	virtual Common::String getSystemLanguage() const;
 
+	virtual Common::AccelDrawManager *getAccelDrawMan() = 0;
 	//@}
 };
 
