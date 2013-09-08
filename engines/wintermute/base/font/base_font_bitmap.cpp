@@ -259,13 +259,13 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 		_sprite->getCurrentFrame();
 		if (_sprite->_currentFrame >= 0 && _sprite->_currentFrame < (int32)_sprite->_frames.size() && _sprite->_frames[_sprite->_currentFrame]) {
 			if (_sprite->_frames[_sprite->_currentFrame]->_subframes.size() > 0) {
-				_sprite->_frames[_sprite->_currentFrame]->_subframes[0]->_surface->displayTrans(x, y, rect);
+				_sprite->_frames[_sprite->_currentFrame]->_subframes[0]->getSurface()->displayTrans(x, y, rect);
 			}
 			handled = true;
 		}
 	}
 	if (!handled && _subframe) {
-		_subframe->_surface->displayTrans(x, y, rect);
+		_subframe->getSurface()->displayTrans(x, y, rect);
 	}
 }
 
@@ -447,7 +447,7 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 	}
 
 
-	if (((_subframe == nullptr || _subframe->_surface == nullptr) && _sprite == nullptr) || _numColumns == 0 || _tileWidth == 0 || _tileHeight == 0) {
+	if (((_subframe == nullptr || _subframe->getSurface() == nullptr) && _sprite == nullptr) || _numColumns == 0 || _tileWidth == 0 || _tileHeight == 0) {
 		_gameRef->LOG(0, "Incomplete font definition");
 		return STATUS_FAILED;
 	}
@@ -535,12 +535,12 @@ bool BaseFontBitmap::getWidths() {
 	if (_sprite) {
 		if (_widthsFrame >= 0 && _widthsFrame < (int32)_sprite->_frames.size()) {
 			if (_sprite->_frames[_widthsFrame] && (int32)_sprite->_frames[_widthsFrame]->_subframes.size() > 0) {
-				surf = _sprite->_frames[_widthsFrame]->_subframes[0]->_surface;
+				surf = _sprite->_frames[_widthsFrame]->_subframes[0]->getSurface();
 			}
 		}
 	}
 	if (surf == nullptr && _subframe) {
-		surf = _subframe->_surface;
+		surf = _subframe->getSurface();
 	}
 	if (!surf || DID_FAIL(surf->startPixelOp())) {
 		return STATUS_FAILED;

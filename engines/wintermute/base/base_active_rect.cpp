@@ -119,17 +119,17 @@ BaseObject *BaseActiveRect::getObjectAt(const Point32 &point) {
 				int xx = (int)((_frame->getRect().left + point.x - _rect.left + _offsetX) / (float)((float)_zoomX / (float)100));
 				int yy = (int)((_frame->getRect().top  + point.y - _rect.top  + _offsetY) / (float)((float)_zoomY / (float)100));
 				
-				if (_frame->_mirrorX) {
+				if (_frame->getMirrorX()) {
 					int width = _frame->getRect().width();
 					xx = width - xx;
 				}
 				
-				if (_frame->_mirrorY) {
+				if (_frame->getMirrorY()) {
 					int height = _frame->getRect().height();
 					yy = height - yy;
 				}
 				
-				if (!_frame->_surface->isTransparentAt(xx, yy)) {
+				if (!_frame->getSurface()->isTransparentAt(xx, yy)) {
 					return _owner;
 				}
 			}

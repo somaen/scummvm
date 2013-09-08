@@ -313,15 +313,15 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			sub->setSurface(surface_file, true, 0, 0, 0, lifeTime, keepLoaded);
 		}
 
-		if (!sub->_surface) {
+		if (!sub->getSurface()) {
 			delete sub;
 			BaseEngine::LOG(0, "Error loading SUBFRAME");
 			return STATUS_FAILED;
 		}
 
-		sub->_alpha = BYTETORGBA(ar, ag, ab, alpha);
+		sub->setAlpha(BYTETORGBA(ar, ag, ab, alpha));
 		if (custoTrans) {
-			sub->_transparent = BYTETORGBA(r, g, b, 0xFF);
+			sub->setTransparent(BYTETORGBA(r, g, b, 0xFF));
 		}
 	}
 
@@ -331,16 +331,14 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		sub->setRect(rect);
 	}
 
-	sub->_hotspotX = hotspotX;
-	sub->_hotspotY = hotspotY;
-	sub->_2DOnly = is2DOnly;
-	sub->_3DOnly = is3DOnly;
-	sub->_decoration = decoration;
-	sub->_mirrorX = mirrorX;
-	sub->_mirrorY = mirrorY;
+	sub->setHotspotXY(hotspotX, hotspotY);
+	sub->setMirrorXY(mirrorX, mirrorY);
+	sub->set2DOnly(is2DOnly);
+	sub->set3DOnly(is3DOnly);
+	sub->setDecoration(decoration);
 
 
-	sub->_editorSelected = editorSelected;
+	sub->setEditorSelected(editorSelected);
 	_subframes.insert_at(0, sub);
 
 	return STATUS_OK;

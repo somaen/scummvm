@@ -866,7 +866,7 @@ int AdObject::getHeight() {
 		BaseFrame *frame = _currentSprite->_frames[_currentSprite->_currentFrame];
 		int32 ret = 0;
 		for (uint32 i = 0; i < frame->_subframes.size(); i++) {
-			ret = MAX(ret, frame->_subframes[i]->_hotspotY);
+			ret = MAX(ret, frame->_subframes[i]->getHotspotY());
 		}
 
 		if (_zoomable) {

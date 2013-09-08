@@ -155,7 +155,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		BaseFrame *frame = new BaseFrame(_gameRef);
 		BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
-		if (subframe->_surface == nullptr) {
+		if (subframe->getSurface() == nullptr) {
 			BaseEngine::LOG(0, "Error loading simple sprite '%s'", filename.c_str());
 			ret = STATUS_FAILED;
 			delete frame;
@@ -447,7 +447,7 @@ BaseSurface *BaseSprite::getSurface() {
 	if (frame && frame->_subframes.size() > 0) {
 		BaseSubFrame *subframe = frame->_subframes[0];
 		if (subframe) {
-			return subframe->_surface;
+			return subframe->getSurface();
 		} else {
 			return nullptr;
 		}

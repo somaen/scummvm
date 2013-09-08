@@ -38,17 +38,13 @@ class BaseObject;
 class BaseSurface;
 class BaseSubFrame : public BaseScriptable {
 public:
-	bool _mirrorX;
-	bool _mirrorY;
-	bool _decoration;
 	bool setSurface(const Common::String &filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
 	bool setSurfaceSimple();
 	DECLARE_PERSISTENT(BaseSubFrame, BaseScriptable)
 	void setDefaultRect();
-	uint32 _transparent;
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) { return saveAsText(buffer, indent, true); }
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent, bool complete);
-	bool _editorSelected;
+
 	BaseSubFrame(BaseGame *inGame);
 	virtual ~BaseSubFrame();
 	bool loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
@@ -56,28 +52,47 @@ public:
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	const char* getSurfaceFilename();
 
-	int32 _hotspotX;
-	int32 _hotspotY;
-	uint32 _alpha;
+	void setHotspotXY(int32 hotspotX, int32 hotspotY) { _hotspotX = hotspotX; _hotspotY = hotspotY; }
+	void setMirrorXY(bool mirrorX, bool mirrorY) { _mirrorX = mirrorX; _mirrorY = mirrorY; }
+	void setAlpha(uint32 alpha) { _alpha = alpha; }
+	void setDecoration(bool decoration) { _decoration = decoration; }
+	void set2DOnly(bool value) { _2DOnly = value; }
+	void set3DOnly(bool value) { _3DOnly = value; }
+	void setEditorSelected(bool value) { _editorSelected = value; }
+	void setTransparent(uint32 transparent) { _transparent = transparent; }
+
+	int32 getHotspotY() const { return _hotspotY; }
+	bool getMirrorX() const { return _mirrorX; }
+	bool getMirrorY() const { return _mirrorY; }
+	BaseSurface *getSurface() { return _surface; }
 	// These two setters and getters are rather usefull, as they allow _rect to be lazily defined
 	// Thus we don't need to load the actual graphics before the rect is actually needed.
 	Rect32 getRect();
 	void setRect(Rect32 rect);
 private:
+	bool _editorSelected;
+	bool _mirrorX;
+	bool _mirrorY;
+	bool _decoration;
+	int32 _hotspotX;
+	int32 _hotspotY;
+	uint32 _alpha;
 	bool _wantsDefaultRect;
 	Rect32 _rect;
 	char *_surfaceFilename;
-public:
-	bool _cKDefault;
-	byte _cKRed;
-	byte _cKGreen;
-	byte _cKBlue;
-	int32 _lifeTime;
-	bool _keepLoaded;
 
 	bool _2DOnly;
 	bool _3DOnly;
 
+	bool _cKDefault;
+	byte _cKRed;
+	byte _cKGreen;
+	byte _cKBlue;
+
+	int32 _lifeTime;
+	bool _keepLoaded;
+	uint32 _transparent;
+public:
 	BaseSurface *_surface;
 
 	// scripting interface
