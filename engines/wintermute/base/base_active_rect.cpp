@@ -67,7 +67,7 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame
 BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY) : BaseClass(inGame) {
 	_owner = owner;
 	_region = region;
-	BasePlatform::copyRect(&_rect, &region->_rect);
+	BasePlatform::copyRect(&_rect, region->getRect());
 	_rect.offsetRect(-offsetX, -offsetY);
 	_zoomX = 100;
 	_zoomY = 100;

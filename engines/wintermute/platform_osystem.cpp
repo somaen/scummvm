@@ -249,7 +249,7 @@ bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
+bool BasePlatform::copyRect(Rect32 *lprcDst, const Rect32 *lprcSrc) {
 	if (lprcDst == nullptr || lprcSrc == nullptr) {
 		return false;
 	}

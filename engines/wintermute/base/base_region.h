@@ -41,16 +41,14 @@ public:
 	bool getBoundingRect(Rect32 *rect);
 	bool ptInPolygon(int32 x, int32 y) const;
 	DECLARE_PERSISTENT(BaseRegion, BaseObject)
-	bool _active;
-	int32 _editorSelectedPoint;
+
 	BaseRegion(BaseGame *inGame);
 	virtual ~BaseRegion();
 	bool pointInRegion(int x, int y) const;
 	bool createRegion();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	Rect32 _rect;
-	BaseArray<BasePoint *> _points;
+
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) { return saveAsText(buffer, indent, nullptr); }
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride);
 
@@ -59,7 +57,19 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+
+	const Rect32 *getRect() const { return &_rect; }
+	bool isActive() const { return _active; }
+	void setActive(bool active) { _active = active; }
+
+protected:
+	bool _active;
+	int32 _editorSelectedPoint;
+	BaseArray<BasePoint *> _points;
+
 private:
+	Rect32 _rect;
+
 	float _lastMimicScale;
 	int32 _lastMimicX;
 	int32 _lastMimicY;

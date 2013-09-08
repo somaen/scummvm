@@ -1069,7 +1069,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 int AdEntity::getHeight() {
 	if (_region && !_sprite) {
-		return _region->_rect.bottom - _region->_rect.top;
+		return _region->getRect()->height();
 	} else {
 		if (_currentSprite == nullptr) {
 			_currentSprite = _sprite;
@@ -1082,8 +1082,8 @@ int AdEntity::getHeight() {
 //////////////////////////////////////////////////////////////////////////
 void AdEntity::updatePosition() {
 	if (_region && !_sprite) {
-		_posX = _region->_rect.left + (_region->_rect.right - _region->_rect.left) / 2;
-		_posY = _region->_rect.bottom;
+		_posX = _region->getRect()->left + (_region->getRect()->width()) / 2;
+		_posY = _region->getRect()->bottom;
 	}
 }
 

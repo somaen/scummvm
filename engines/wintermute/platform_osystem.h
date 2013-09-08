@@ -59,7 +59,7 @@ public:
 	static bool setRect(Rect32 *lprc, int left, int top, int right, int bottom);
 	static bool intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2);
 	static bool unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2);
-	static bool copyRect(Rect32 *lprcDst, Rect32 *lprcSrc);
+	static bool copyRect(Rect32 *lprcDst, const Rect32 *lprcSrc);
 
 	// string functions
 	static char *strlwr(char *string);

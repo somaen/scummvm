@@ -287,7 +287,7 @@ float AdScene::getZoomAt(int x, int y) {
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.size() - 1; i >= 0; i--) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->isBlocked() && node->_region->pointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->isActive() && !node->_region->isBlocked() && node->_region->pointInRegion(x, y)) {
 				if (node->_region->getZoom() != 0) {
 					ret = node->_region->getZoom();
 					found = true;
@@ -320,7 +320,7 @@ uint32 AdScene::getAlphaAt(int x, int y, bool colorCheck) {
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.size() - 1; i >= 0; i--) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->isBlocked()) && node->_region->pointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->isActive() && (colorCheck || !node->_region->isBlocked()) && node->_region->pointInRegion(x, y)) {
 				if (!node->_region->isBlocked()) {
 					ret = node->_region->getAlpha();
 				}
@@ -365,7 +365,7 @@ bool AdScene::isBlockedAt(int x, int y, bool checkFreeObjects, BaseObject *reque
 			    break;
 			}
 			*/
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->hasDecoration() && node->_region->pointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->isActive() && !node->_region->hasDecoration() && node->_region->pointInRegion(x, y)) {
 				if (node->_region->isBlocked()) {
 					ret = true;
 					break;
@@ -405,7 +405,7 @@ bool AdScene::isWalkableAt(int x, int y, bool checkFreeObjects, BaseObject *requ
 	if (_mainLayer) {
 		for (uint32 i = 0; i < _mainLayer->_nodes.size(); i++) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->hasDecoration() && node->_region->pointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->isActive() && !node->_region->hasDecoration() && node->_region->pointInRegion(x, y)) {
 				if (node->_region->isBlocked()) {
 					ret = false;
 					break;
@@ -1545,7 +1545,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		if (_mainLayer) {
 			for (int i = _mainLayer->_nodes.size() - 1; i >= 0; i--) {
 				AdSceneNode *node = _mainLayer->_nodes[i];
-				if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
+				if (node->_type == OBJECT_REGION && node->_region->isActive() && node->_region->pointInRegion(x, y)) {
 					if (node->_region->hasDecoration() && !includeDecors) {
 						continue;
 					}
@@ -2709,9 +2709,9 @@ bool AdScene::persistState(bool saving) {
 				nodeState = state->getNodeState(node->_region->getName(), saving);
 				if (nodeState) {
 					if (saving) {
-						nodeState->_active = node->_region->_active;
+						nodeState->_active = node->_region->isActive();
 					} else {
-						node->_region->_active = nodeState->_active;
+						node->_region->setActive(nodeState->_active);
 					}
 				}
 				break;
@@ -2816,7 +2816,7 @@ bool AdScene::getRegionsAt(int x, int y, AdRegion **regionList, int numRegions) 
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.size() - 1; i >= 0; i--) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
+			if (node->_type == OBJECT_REGION && node->_region->isActive() && node->_region->pointInRegion(x, y)) {
 				if (numUsed < numRegions - 1) {
 					regionList[numUsed] = node->_region;
 					numUsed++;
