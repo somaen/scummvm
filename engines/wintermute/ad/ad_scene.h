@@ -50,7 +50,7 @@ public:
 	BaseObject *getNextAccessObject(BaseObject *currObject);
 	BaseObject *getPrevAccessObject(BaseObject *currObject);
 	bool getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly);
-	bool getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
+	bool getRegionObjects(const AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
 
 	bool afterLoad();
 
@@ -78,7 +78,7 @@ public:
 	bool correctTargetPoint(int32 startX, int32 startY, int32 *x, int32 *y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
 	bool correctTargetPoint2(int32 startX, int32 startY, int32 *targetX, int32 *targetY, bool checkFreeObjects, BaseObject *requester);
 	DECLARE_PERSISTENT(AdScene, BaseObject)
-	bool displayRegionContent(AdRegion *region = nullptr, bool display3DOnly = false);
+	bool displayRegionContent(const AdRegion *region = nullptr, bool display3DOnly = false);
 	bool displayRegionContentOld(AdRegion *region = nullptr);
 	static bool compareObjs(const AdObject *obj1, const AdObject *obj2);
 

@@ -54,6 +54,7 @@ public:
 	int32 getWalkToY() const;
 	TDirection getWalkToDir() const;
 	const char* getItemName() const;
+	bool hasRegion() const { return (_region != nullptr); }
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;

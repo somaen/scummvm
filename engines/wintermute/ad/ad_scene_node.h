@@ -43,10 +43,12 @@ public:
 	bool setEntity(AdEntity *entity);
 	AdEntity *_entity;
 	AdRegion *_region;
-	TObjectType _type;
+	const AdRegion *getRegion() const { return _region; }
+	TObjectType getType(){ return _type; }
 	AdSceneNode(BaseGame *inGame);
 	virtual ~AdSceneNode();
-
+private:
+	TObjectType _type;
 };
 
 }

@@ -156,7 +156,7 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 				setCaption(entity->_caption[i], i);
 			}
 		}
-		if (!entity->_region && entity->_sprite && entity->_sprite->getFilename()) {
+		if (!entity->hasRegion() && entity->_sprite && entity->_sprite->getFilename()) {
 			if (includingSprites) {
 				setFilename(entity->_sprite->getFilename());
 			} else {
@@ -174,7 +174,7 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 				entity->setCaption(_caption[i], i);
 			}
 		}
-		if (_filename && !entity->_region && includingSprites && strcmp(_filename, "") != 0) {
+		if (_filename && !entity->hasRegion() && includingSprites && strcmp(_filename, "") != 0) {
 			if (!entity->_sprite || !entity->_sprite->getFilename() || scumm_stricmp(entity->_sprite->getFilename(), _filename) != 0) {
 				entity->setSprite(_filename);
 			}

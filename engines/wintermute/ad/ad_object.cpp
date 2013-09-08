@@ -313,8 +313,8 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		} else if (val->isString()) {
 			const char *regionName = val->getString();
 			for (i = 0; i < main->_nodes.size(); i++) {
-				if (main->_nodes[i]->_type == OBJECT_REGION && main->_nodes[i]->_region->getName() && scumm_stricmp(main->_nodes[i]->_region->getName(), regionName) == 0) {
-					_stickRegion = main->_nodes[i]->_region;
+				if (main->_nodes[i]->getType() == OBJECT_REGION && main->_nodes[i]->getRegion()->getName() && scumm_stricmp(main->_nodes[i]->getRegion()->getName(), regionName) == 0) {
+					_stickRegion = main->_nodes[i]->getRegion();
 					regFound = true;
 					break;
 				}
@@ -323,8 +323,8 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			BaseScriptable *obj = val->getNative();
 
 			for (i = 0; i < main->_nodes.size(); i++) {
-				if (main->_nodes[i]->_type == OBJECT_REGION && main->_nodes[i]->_region == obj) {
-					_stickRegion = main->_nodes[i]->_region;
+				if (main->_nodes[i]->getType() == OBJECT_REGION && main->_nodes[i]->getRegion() == obj) {
+					_stickRegion = main->_nodes[i]->getRegion();
 					regFound = true;
 					break;
 				}

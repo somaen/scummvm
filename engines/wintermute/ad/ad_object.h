@@ -50,7 +50,7 @@ public:
 	virtual bool updatePartEmitter();
 
 	bool invalidateCurrRegions();
-	AdRegion *_stickRegion;
+	const AdRegion *_stickRegion;
 	bool _sceneIndependent;
 
 	bool updateBlockRegion();

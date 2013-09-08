@@ -244,8 +244,8 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			node = val->getInt();
 		} else { // get by name
 			for (uint32 i = 0; i < _nodes.size(); i++) {
-				if ((_nodes[i]->_type == OBJECT_ENTITY && scumm_stricmp(_nodes[i]->_entity->getName(), val->getString()) == 0) ||
-				        (_nodes[i]->_type == OBJECT_REGION && scumm_stricmp(_nodes[i]->_region->getName(), val->getString()) == 0)) {
+				if ((_nodes[i]->getType() == OBJECT_ENTITY && scumm_stricmp(_nodes[i]->_entity->getName(), val->getString()) == 0) ||
+				        (_nodes[i]->getType() == OBJECT_REGION && scumm_stricmp(_nodes[i]->getRegion()->getName(), val->getString()) == 0)) {
 					node = i;
 					break;
 				}
@@ -255,7 +255,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		if (node < 0 || node >= (int32)_nodes.size()) {
 			stack->pushNULL();
 		} else {
-			switch (_nodes[node]->_type) {
+			switch (_nodes[node]->getType()) {
 			case OBJECT_ENTITY:
 				stack->pushNative(_nodes[node]->_entity, true);
 				break;
@@ -343,7 +343,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		if (val->isNative()) {
 			BaseScriptable *temp = val->getNative();
 			for (uint32 i = 0; i < _nodes.size(); i++) {
-				if (_nodes[i]->_region == temp || _nodes[i]->_entity == temp) {
+				if (_nodes[i]->getRegion() == temp || _nodes[i]->_entity == temp) {
 					toDelete = _nodes[i];
 					break;
 				}
@@ -525,7 +525,7 @@ bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	}
 
 	for (uint32 i = 0; i < _nodes.size(); i++) {
-		switch (_nodes[i]->_type) {
+		switch (_nodes[i]->getType()) {
 		case OBJECT_ENTITY:
 			_nodes[i]->_entity->saveAsText(buffer, indent + 2);
 			break;
