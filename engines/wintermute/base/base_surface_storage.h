@@ -36,19 +36,20 @@ namespace Wintermute {
 class BaseSurface;
 class BaseSurfaceStorage : public BaseClass {
 public:
-	uint32 _lastCleanupTime;
 	bool initLoop();
-	bool sortSurfaces();
-	static bool surfaceSortCB(const BaseSurface *arg1, const BaseSurface *arg2);
-	bool cleanup(bool warn = false);
 	//DECLARE_PERSISTENT(BaseSurfaceStorage, BaseClass);
 
-	bool restoreAll();
 	BaseSurface *addSurface(const Common::String &filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
 	bool removeSurface(BaseSurface *surface);
 	BaseSurfaceStorage(BaseGame *inGame);
 	virtual ~BaseSurfaceStorage();
+private:
+	static bool surfaceSortCB(const BaseSurface *arg1, const BaseSurface *arg2);
+	bool sortSurfaces();
+	bool cleanup(bool warn = false);
+	bool restoreAll();
 
+	uint32 _lastCleanupTime;
 	Common::Array<BaseSurface *> _surfaces;
 };
 
