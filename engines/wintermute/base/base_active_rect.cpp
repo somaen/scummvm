@@ -143,6 +143,7 @@ BaseObject *BaseActiveRect::getObjectAt(const Point32 &point) {
 			return _owner;
 		}
 	}
+	return nullptr;
 }
 
 } // End of namespace Wintermute
