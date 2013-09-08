@@ -34,19 +34,20 @@
 namespace Wintermute {
 
 class BaseTransitionMgr : public BaseClass {
-public:
 	bool _started;
 	uint32 _lastTime;
 	bool _origInteractive;
 	bool _preserveInteractive;
+	TTransitionType _type;
+	TTransMgrState _state;
+public:
+	void setOrigInteractive(bool state) { _origInteractive = state; }
 	bool update();
 	bool start(TTransitionType type, bool nonInteractive = false);
 	bool isReady() const;
-	TTransMgrState _state;
+
 	BaseTransitionMgr(BaseGame *inGame);
 	virtual ~BaseTransitionMgr();
-	TTransitionType _type;
-
 };
 
 } // End of namespace Wintermute

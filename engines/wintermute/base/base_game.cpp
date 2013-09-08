@@ -3413,7 +3413,7 @@ bool BaseGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *
 void BaseGame::setInteractive(bool state) {
 	_interactive = state;
 	if (_transMgr) {
-		_transMgr->_origInteractive = state;
+		_transMgr->setOrigInteractive(state);
 	}
 }
 
