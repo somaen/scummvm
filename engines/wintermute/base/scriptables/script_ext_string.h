@@ -41,9 +41,9 @@ public:
 	ScValue *scGetProperty(const Common::String &name);
 	bool scSetProperty(const char *name, ScValue *value);
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	void scSetString(const char *val);
+	void scSetString(const Common::String &val);
 	const char *scToString();
-	void setStringVal(const char *val);
+	void setStringVal(const Common::String &val);
 
 	SXString(BaseGame *inGame, ScStack *Stack);
 	virtual ~SXString();
