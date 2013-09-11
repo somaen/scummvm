@@ -52,9 +52,9 @@ public:
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	void setValue(ScValue *val);
 	bool _persistent;
-	bool propExists(const char *name);
+	bool propExists(const Common::String &name);
 	void copy(ScValue *orig, bool copyWhole = false);
-	void setStringVal(const char *val);
+	void setStringVal(const Common::String &val);
 	TValType getType();
 	bool getBool(bool defaultVal = false);
 	int getInt(int defaultVal = 0);
@@ -62,7 +62,7 @@ public:
 	const char *getString();
 	void *getMemBuffer();
 	BaseScriptable *getNative();
-	bool deleteProp(const char *name);
+	bool deleteProp(const Common::String &name);
 	void deleteProps();
 	void CleanProps(bool includingNatives);
 	void setBool(bool val);

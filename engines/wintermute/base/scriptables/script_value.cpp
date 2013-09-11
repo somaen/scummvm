@@ -192,7 +192,7 @@ ScValue *ScValue::getProp(const Common::String &name) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::deleteProp(const char *name) {
+bool ScValue::deleteProp(const Common::String &name) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->deleteProp(name);
 	}
@@ -260,7 +260,7 @@ bool ScValue::setProp(const Common::String &name, ScValue *val, bool copyWhole, 
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::propExists(const char *name) {
+bool ScValue::propExists(const Common::String &name) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->propExists(name);
 	}
@@ -448,7 +448,7 @@ void ScValue::setString(const Common::String &val) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ScValue::setStringVal(const char *val) {
+void ScValue::setStringVal(const Common::String &val) {
 	if (_valString) {
 		delete[] _valString;
 		_valString = nullptr;
@@ -459,9 +459,9 @@ void ScValue::setStringVal(const char *val) {
 		return;
 	}
 
-	_valString = new char [strlen(val) + 1];
+	_valString = new char [val.size() + 1];
 	if (_valString) {
-		strcpy(_valString, val);
+		strcpy(_valString, val.c_str());
 	}
 }
 
