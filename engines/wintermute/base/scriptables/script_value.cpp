@@ -158,12 +158,12 @@ ScValue::~ScValue() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *ScValue::getProp(const char *name) {
+ScValue *ScValue::getProp(const Common::String &name) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->getProp(name);
 	}
 
-	if (_type == VAL_STRING && strcmp(name, "Length") == 0) {
+	if (_type == VAL_STRING && name.compareTo("Length") == 0) {
 		_gameRef->_scValue->_type = VAL_INT;
 
 		if (_gameRef->_textEncoding == TEXT_ANSI) {
@@ -209,7 +209,7 @@ bool ScValue::deleteProp(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::setProp(const char *name, ScValue *val, bool copyWhole, bool setAsConst) {
+bool ScValue::setProp(const Common::String &name, ScValue *val, bool copyWhole, bool setAsConst) {
 	if (_type == VAL_VARIABLE_REF) {
 		return _valRef->setProp(name, val);
 	}

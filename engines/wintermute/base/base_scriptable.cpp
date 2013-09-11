@@ -63,7 +63,7 @@ BaseScriptable::~BaseScriptable() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	/*
 	stack->correctParams(0);
 	stack->pushNULL();
@@ -89,7 +89,7 @@ ScValue *BaseScriptable::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
+bool BaseScriptable::scSetProperty(const Common::String &name, ScValue *value) {
 	if (!_scProp) {
 		_scProp = new ScValue(_gameRef);
 	}
@@ -131,7 +131,7 @@ bool BaseScriptable::scToBool() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseScriptable::scSetString(const char *val) {
+void BaseScriptable::scSetString(const Common::String &val) {
 }
 
 

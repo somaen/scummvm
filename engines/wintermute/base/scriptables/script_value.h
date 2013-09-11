@@ -81,8 +81,8 @@ public:
 	bool isFloat();
 	bool isInt();
 	bool isObject();
-	bool setProp(const char *name, ScValue *val, bool copyWhole = false, bool setAsConst = false);
-	ScValue *getProp(const char *name);
+	bool setProp(const Common::String &name, ScValue *val, bool copyWhole = false, bool setAsConst = false);
+	ScValue *getProp(const Common::String &name);
 	BaseScriptable *_valNative;
 	ScValue *_valRef;
 private:
