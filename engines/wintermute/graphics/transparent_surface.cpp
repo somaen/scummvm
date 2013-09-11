@@ -30,28 +30,6 @@
 #include "engines/wintermute/graphics/transform_tools.h"
 
 namespace Wintermute {
-#ifdef SCUMM_LITTLE_ENDIAN
-const int aIndex = 0;
-const int bIndex = 1;
-const int gIndex = 2;
-const int rIndex = 3;
-#else
-const int aIndex = 3;
-const int bIndex = 2;
-const int gIndex = 1;
-const int rIndex = 0;
-#endif
-
-const int bShift = 8;//img->format.bShift;
-const int gShift = 16;//img->format.gShift;
-const int rShift = 24;//img->format.rShift;
-const int aShift = 0;//img->format.aShift;
-
-
-const int bModShift = 0;//img->format.bShift;
-const int gModShift = 8;//img->format.gShift;
-const int rModShift = 16;//img->format.rShift;
-const int aModShift = 24;//img->format.aShift;
 
 void BlenderAdditive::blendPixel(byte *ina, byte *inr, byte *ing, byte *inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
@@ -416,15 +394,15 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
 
-				byte *outa = &out[aIndex];
-				byte *outr = &out[rIndex];
-				byte *outg = &out[gIndex];
-				byte *outb = &out[bIndex];
+				byte *outa = &out[TransparentSurface::aIndex];
+				byte *outr = &out[TransparentSurface::rIndex];
+				byte *outg = &out[TransparentSurface::gIndex];
+				byte *outb = &out[TransparentSurface::bIndex];
 
-				byte *ina = &in[aIndex];
-				byte *inr = &in[rIndex];
-				byte *ing = &in[gIndex];
-				byte *inb = &in[bIndex];
+				byte *ina = &in[TransparentSurface::aIndex];
+				byte *inr = &in[TransparentSurface::rIndex];
+				byte *ing = &in[TransparentSurface::gIndex];
+				byte *inb = &in[TransparentSurface::bIndex];
 
 				Blender::blendPixel(ina, inr, ing, inb, outa, outr, outg, outb);
 				in += inStep;
@@ -435,25 +413,25 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 		}
 	} else {
 
-		byte ca = (color >> aModShift) & 0xFF;
-		byte cr = (color >> rModShift) & 0xFF;
-		byte cg = (color >> gModShift) & 0xFF;
-		byte cb = (color >> bModShift) & 0xFF;
+		byte ca = (color >> TransparentSurface::aModShift) & 0xFF;
+		byte cr = (color >> TransparentSurface::rModShift) & 0xFF;
+		byte cg = (color >> TransparentSurface::gModShift) & 0xFF;
+		byte cb = (color >> TransparentSurface::bModShift) & 0xFF;
 
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
 
-				byte *outa = &out[aIndex];
-				byte *outr = &out[rIndex];
-				byte *outg = &out[gIndex];
-				byte *outb = &out[bIndex];
+				byte *outa = &out[TransparentSurface::aIndex];
+				byte *outr = &out[TransparentSurface::rIndex];
+				byte *outg = &out[TransparentSurface::gIndex];
+				byte *outb = &out[TransparentSurface::bIndex];
 
-				byte *ina = &in[aIndex];
-				byte *inr = &in[rIndex];
-				byte *ing = &in[gIndex];
-				byte *inb = &in[bIndex];
+				byte *ina = &in[TransparentSurface::aIndex];
+				byte *inr = &in[TransparentSurface::rIndex];
+				byte *ing = &in[TransparentSurface::gIndex];
+				byte *inb = &in[TransparentSurface::bIndex];
 
 				Blender::blendPixel(ina, inr, ing, inb, outa, outr, outg, outb, &ca, &cr, &cg, &cb);
 				in += inStep;
