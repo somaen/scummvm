@@ -96,16 +96,16 @@ public:
 	ScValue(BaseGame *inGame, bool Val);
 	ScValue(BaseGame *inGame, int32 Val);
 	ScValue(BaseGame *inGame, double Val);
-	ScValue(BaseGame *inGame, const char *Val);
+	ScValue(BaseGame *inGame, const Common::String &Val);
 	virtual ~ScValue();
 	Common::HashMap<Common::String, ScValue *> _valObject;
 	Common::HashMap<Common::String, ScValue *>::iterator _valIter;
 
-	bool setProperty(const char *propName, int32 value);
-	bool setProperty(const char *propName, const char *value);
-	bool setProperty(const char *propName, double value);
-	bool setProperty(const char *propName, bool value);
-	bool setProperty(const char *propName);
+	bool setProperty(const Common::String &propName, int32 value);
+	bool setProperty(const Common::String &propName, const char *value);
+	bool setProperty(const Common::String &propName, double value);
+	bool setProperty(const Common::String &propName, bool value);
+	bool setProperty(const Common::String &propName);
 };
 
 } // End of namespace Wintermute

@@ -103,7 +103,7 @@ ScValue::ScValue(BaseGame *inGame, double val) : BaseClass(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue::ScValue(BaseGame *inGame, const char *val) : BaseClass(inGame) {
+ScValue::ScValue(BaseGame *inGame, const Common::String &val) : BaseClass(inGame) {
 	_type = VAL_STRING;
 	_valString = nullptr;
 	setStringVal(val);
@@ -962,7 +962,7 @@ int ScValue::compareStrict(ScValue *val1, ScValue *val2) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::setProperty(const char *propName, int32 value) {
+bool ScValue::setProperty(const Common::String &propName, int32 value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
@@ -970,7 +970,7 @@ bool ScValue::setProperty(const char *propName, int32 value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::setProperty(const char *propName, const char *value) {
+bool ScValue::setProperty(const Common::String &propName, const char *value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
@@ -978,16 +978,7 @@ bool ScValue::setProperty(const char *propName, const char *value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::setProperty(const char *propName, double value) {
-	ScValue *val = new ScValue(_gameRef,  value);
-	bool ret =  DID_SUCCEED(setProp(propName, val));
-	delete val;
-	return ret;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool ScValue::setProperty(const char *propName, bool value) {
+bool ScValue::setProperty(const Common::String &propName, double value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
@@ -996,7 +987,16 @@ bool ScValue::setProperty(const char *propName, bool value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::setProperty(const char *propName) {
+bool ScValue::setProperty(const Common::String &propName, bool value) {
+	ScValue *val = new ScValue(_gameRef,  value);
+	bool ret =  DID_SUCCEED(setProp(propName, val));
+	delete val;
+	return ret;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool ScValue::setProperty(const Common::String &propName) {
 	ScValue *val = new ScValue(_gameRef);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
