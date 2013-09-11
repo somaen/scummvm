@@ -39,9 +39,9 @@ public:
 	virtual int scCompare(BaseScriptable *Val);
 	DECLARE_PERSISTENT(SXMemBuffer, BaseScriptable)
 	ScValue *scGetProperty(const Common::String &name);
-	bool scSetProperty(const char *name, ScValue *value);
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	const char *scToString();
+	bool scSetProperty(const Common::String &name, ScValue *value);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) override;
+	Common::String scToString();
 	SXMemBuffer(BaseGame *inGame, ScStack *stack);
 	SXMemBuffer(BaseGame *inGame, void *buffer);
 	virtual ~SXMemBuffer();

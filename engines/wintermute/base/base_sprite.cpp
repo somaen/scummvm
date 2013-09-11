@@ -552,11 +552,11 @@ bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetFrame
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "GetFrame") == 0) {
+	if (name == "GetFrame") {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
 		if (index < 0 || index >= (int32)_frames.size()) {
@@ -571,7 +571,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteFrame") == 0) {
+	else if (name == "DeleteFrame") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		if (val->isInt()) {
@@ -599,7 +599,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// Reset
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Reset") == 0) {
+	else if (name == "Reset") {
 		stack->correctParams(0);
 		reset();
 		stack->pushNULL();
@@ -609,7 +609,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// AddFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddFrame") == 0) {
+	else if (name == "AddFrame") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		const char *filename = nullptr;
@@ -636,7 +636,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// InsertFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InsertFrame") == 0) {
+	else if (name == "InsertFrame") {
 		stack->correctParams(2);
 		int index = stack->pop()->getInt();
 		if (index < 0) {
@@ -672,7 +672,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// Pause
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Pause") == 0) {
+	else if (name == "Pause") {
 		stack->correctParams(0);
 		_paused = true;
 		stack->pushNULL();
@@ -682,7 +682,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// Play
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Play") == 0) {
+	else if (name == "Play") {
 		stack->correctParams(0);
 		_paused = false;
 		stack->pushNULL();
@@ -770,11 +770,11 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
+bool BaseSprite::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "CurrentFrame") == 0) {
+	if (name == "CurrentFrame") {
 		_currentFrame = value->getInt(0);
 		if (_currentFrame >= (int32)_frames.size() || _currentFrame < 0) {
 			_currentFrame = -1;
@@ -786,7 +786,7 @@ bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PixelPerfect") == 0) {
+	else if (name == "PixelPerfect") {
 		_precise = value->getBool();
 		return STATUS_OK;
 	}
@@ -794,7 +794,7 @@ bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Looping
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Looping") == 0) {
+	else if (name == "Looping") {
 		_looping = value->getBool();
 		return STATUS_OK;
 	} else {
@@ -804,7 +804,7 @@ bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseSprite::scToString() {
+Common::String BaseSprite::scToString() {
 	return "[sprite]";
 }
 

@@ -230,11 +230,11 @@ ScValue *AdWaypointGroup::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdWaypointGroup::scSetProperty(const char *name, ScValue *value) {
+bool AdWaypointGroup::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Active") == 0) {
+	if (name == "Active") {
 		_active = value->getBool();
 		return STATUS_OK;
 	}

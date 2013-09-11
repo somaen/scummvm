@@ -235,7 +235,7 @@ bool ScScript::initTables() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner) {
+bool ScScript::create(const Common::String &filename, byte *buffer, uint32 size, BaseScriptHolder *owner) {
 	cleanup();
 
 	_thread = false;
@@ -244,9 +244,9 @@ bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScrip
 	delete[] _threadEvent;
 	_threadEvent = nullptr;
 
-	_filename = new char[strlen(filename) + 1];
+	_filename = new char[filename.size() + 1];
 	if (_filename) {
-		strcpy(_filename, filename);
+		strcpy(_filename, filename.c_str());
 	}
 
 	_buffer = new byte [size];

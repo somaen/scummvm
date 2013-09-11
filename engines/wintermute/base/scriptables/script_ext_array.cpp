@@ -74,7 +74,7 @@ SXArray::~SXArray() {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *SXArray::scToString() {
+Common::String SXArray::scToString() {
 	char dummy[32768];
 	strcpy(dummy, "");
 	char propName[20];
@@ -97,11 +97,11 @@ const char *SXArray::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Push
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Push") == 0) {
+	if (name == "Push") {
 		int numParams = stack->pop()->getInt(0);
 		char paramName[20];
 
@@ -118,7 +118,7 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// Pop
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Pop") == 0) {
+	if (name == "Pop") {
 
 		stack->correctParams(0);
 
@@ -174,11 +174,11 @@ ScValue *SXArray::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXArray::scSetProperty(const char *name, ScValue *value) {
+bool SXArray::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Length") == 0) {
+	if (name == "Length") {
 		int origLength = _length;
 		_length = MAX(value->getInt(0), 0);
 
@@ -197,7 +197,7 @@ bool SXArray::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else {
 		char paramName[20];
-		if (validNumber(name, paramName)) {
+		if (validNumber(name.c_str(), paramName)) {
 			int index = atoi(paramName);
 			if (index >= _length) {
 				_length = index + 1;

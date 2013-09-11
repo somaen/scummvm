@@ -72,11 +72,11 @@ void BaseKeyboardState::handleKeyRelease(Common::Event *event) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsKeyDown
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "IsKeyDown") == 0) {
+	if (name == "IsKeyDown") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		int vKey;
@@ -175,12 +175,12 @@ ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseKeyboardState::scSetProperty(const char *name, ScValue *value) {
+bool BaseKeyboardState::scSetProperty(const Common::String &name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Name") == 0) {
+	if (name == "Name") {
 	    setName(value->getString());
 	    if (_renderer) SetWindowText(_renderer->_window, _name);
 	    return STATUS_OK;
@@ -191,7 +191,7 @@ bool BaseKeyboardState::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseKeyboardState::scToString() {
+Common::String BaseKeyboardState::scToString() {
 	return "[keyboard state]";
 }
 

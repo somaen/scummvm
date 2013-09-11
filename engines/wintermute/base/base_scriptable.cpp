@@ -63,7 +63,7 @@ BaseScriptable::~BaseScriptable() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	/*
 	stack->correctParams(0);
 	stack->pushNULL();
@@ -89,7 +89,7 @@ ScValue *BaseScriptable::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
+bool BaseScriptable::scSetProperty(const Common::String &name, ScValue *value) {
 	if (!_scProp) {
 		_scProp = new ScValue(_gameRef);
 	}
@@ -102,7 +102,7 @@ bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseScriptable::scToString() {
+Common::String BaseScriptable::scToString() {
 	return "[native object]";
 }
 
@@ -131,7 +131,7 @@ bool BaseScriptable::scToBool() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseScriptable::scSetString(const char *val) {
+void BaseScriptable::scSetString(const Common::String &val) {
 }
 
 
@@ -174,17 +174,17 @@ int BaseScriptable::scCompare(BaseScriptable *val) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptable::scDebuggerDesc(char *buf, int bufSize) {
-	strcpy(buf, scToString());
+	strcpy(buf, scToString().c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptable::canHandleMethod(const char *eventMethod) const {
+bool BaseScriptable::canHandleMethod(const Common::String &eventMethod) const {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
+ScScript *BaseScriptable::invokeMethodThread(const Common::String &methodName) {
 	return nullptr;
 }
 

@@ -935,16 +935,16 @@ void AdActor::initLine(const BasePoint &startPt, const BasePoint &endPt) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GoTo / GoToAsync
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "GoTo") == 0 || strcmp(name, "GoToAsync") == 0) {
+	if (name == "GoTo" || name == "GoToAsync") {
 		stack->correctParams(2);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 		goTo(x, y);
-		if (strcmp(name, "GoToAsync") != 0) {
+		if (name != "GoToAsync") {
 			script->waitForExclusive(this);
 		}
 		stack->pushNULL();
@@ -954,17 +954,17 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// GoToObject / GoToObjectAsync
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GoToObject") == 0 || strcmp(name, "GoToObjectAsync") == 0) {
+	else if (name == "GoToObject" || name == "GoToObjectAsync") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		if (!val->isNative()) {
-			script->runtimeError("actor.%s method accepts an entity refrence only", name);
+			script->runtimeError("actor.%s method accepts an entity refrence only", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
 		AdObject *obj = (AdObject *)val->getNative();
 		if (!obj || obj->getType() != OBJECT_ENTITY) {
-			script->runtimeError("actor.%s method accepts an entity refrence only", name);
+			script->runtimeError("actor.%s method accepts an entity refrence only", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -974,7 +974,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		} else {
 			goTo(ent->getWalkToX(), ent->getWalkToY(), ent->getWalkToDir());
 		}
-		if (strcmp(name, "GoToObjectAsync") != 0) {
+		if (name != "GoToObjectAsync") {
 			script->waitForExclusive(this);
 		}
 		stack->pushNULL();
@@ -984,7 +984,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// TurnTo / TurnToAsync
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TurnTo") == 0 || strcmp(name, "TurnToAsync") == 0) {
+	else if (name == "TurnTo" || name == "TurnToAsync") {
 		stack->correctParams(1);
 		int dir;
 		ScValue *val = stack->pop();
@@ -1002,7 +1002,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 		if (dir >= 0 && dir < NUM_DIRECTIONS) {
 			turnTo((TDirection)dir);
-			if (strcmp(name, "TurnToAsync") != 0) {
+			if (name != "TurnToAsync") {
 				script->waitForExclusive(this);
 			}
 		}
@@ -1013,7 +1013,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// IsWalking
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsWalking") == 0) {
+	else if (name == "IsWalking") {
 		stack->correctParams(0);
 		stack->pushBool(_state == STATE_FOLLOWING_PATH);
 		return STATUS_OK;
@@ -1022,7 +1022,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// MergeAnims
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MergeAnims") == 0) {
+	else if (name == "MergeAnims") {
 		stack->correctParams(1);
 		stack->pushBool(DID_SUCCEED(mergeAnims(stack->pop()->getString())));
 		return STATUS_OK;
@@ -1031,7 +1031,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// UnloadAnim
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "UnloadAnim") == 0) {
+	else if (name == "UnloadAnim") {
 		stack->correctParams(1);
 		const char *animName = stack->pop()->getString();
 
@@ -1063,7 +1063,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// HasAnim
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HasAnim") == 0) {
+	else if (name =="HasAnim") {
 		stack->correctParams(1);
 		const char *animName = stack->pop()->getString();
 		stack->pushBool(getAnimByName(animName) != nullptr);
@@ -1137,11 +1137,11 @@ ScValue *AdActor::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdActor::scSetProperty(const char *name, ScValue *value) {
+bool AdActor::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Direction") == 0) {
+	if (name == "Direction") {
 		int dir = value->getInt();
 		if (dir >= 0 && dir < NUM_DIRECTIONS) {
 			_dir = (TDirection)dir;
@@ -1152,7 +1152,7 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TalkAnimName") == 0) {
+	else if (name == "TalkAnimName") {
 		if (value->isNULL()) {
 			_talkAnimName = "talk";
 		} else {
@@ -1164,7 +1164,7 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkAnimName") == 0) {
+	else if (name == "WalkAnimName") {
 		if (value->isNULL()) {
 			_walkAnimName = "walk";
 		} else {
@@ -1176,7 +1176,7 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IdleAnimName") == 0) {
+	else if (name == "IdleAnimName") {
 		if (value->isNULL()) {
 			_idleAnimName = "idle";
 		} else {
@@ -1188,7 +1188,7 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TurnLeftAnimName") == 0) {
+	else if (name == "TurnLeftAnimName") {
 		if (value->isNULL()) {
 			_turnLeftAnimName = "turnleft";
 		} else {
@@ -1200,7 +1200,7 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TurnRightAnimName") == 0) {
+	else if (name == "TurnRightAnimName") {
 		if (value->isNULL()) {
 			_turnRightAnimName = "turnright";
 		} else {
@@ -1214,7 +1214,7 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdActor::scToString() {
+Common::String AdActor::scToString() {
 	return "[actor object]";
 }
 

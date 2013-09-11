@@ -58,11 +58,11 @@ SXMath::~SXMath() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Abs
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Abs") == 0) {
+	if (name == "Abs") {
 		stack->correctParams(1);
 		stack->pushFloat(fabs(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -71,7 +71,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Acos
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Acos") == 0) {
+	else if (name == "Acos") {
 		stack->correctParams(1);
 		stack->pushFloat(acos(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -80,7 +80,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Asin
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Asin") == 0) {
+	else if (name == "Asin") {
 		stack->correctParams(1);
 		stack->pushFloat(asin(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -89,7 +89,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Atan
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Atan") == 0) {
+	else if (name == "Atan") {
 		stack->correctParams(1);
 		stack->pushFloat(atan(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -98,7 +98,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Atan2
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Atan2") == 0) {
+	else if (name =="Atan2") {
 		stack->correctParams(2);
 		double y = stack->pop()->getFloat();
 		double x = stack->pop()->getFloat();
@@ -109,7 +109,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Ceil
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Ceil") == 0) {
+	else if (name == "Ceil") {
 		stack->correctParams(1);
 		stack->pushFloat(ceil(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -118,7 +118,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Cos
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Cos") == 0) {
+	else if (name == "Cos") {
 		stack->correctParams(1);
 		stack->pushFloat(cos(degreeToRadian(stack->pop()->getFloat())));
 		return STATUS_OK;
@@ -127,7 +127,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Cosh
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Cosh") == 0) {
+	else if (name == "Cosh") {
 		stack->correctParams(1);
 		stack->pushFloat(cosh(degreeToRadian(stack->pop()->getFloat())));
 		return STATUS_OK;
@@ -136,7 +136,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Exp
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Exp") == 0) {
+	else if (name == "Exp") {
 		stack->correctParams(1);
 		stack->pushFloat(exp(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -145,7 +145,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Floor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Floor") == 0) {
+	else if (name == "Floor") {
 		stack->correctParams(1);
 		stack->pushFloat(floor(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -154,7 +154,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Log
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Log") == 0) {
+	else if (name == "Log") {
 		stack->correctParams(1);
 		stack->pushFloat(log(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -163,7 +163,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Log10
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Log10") == 0) {
+	else if (name == "Log10") {
 		stack->correctParams(1);
 		stack->pushFloat(log10(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -172,7 +172,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Pow
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Pow") == 0) {
+	else if (name == "Pow") {
 		stack->correctParams(2);
 		double x = stack->pop()->getFloat();
 		double y = stack->pop()->getFloat();
@@ -184,7 +184,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Sin
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Sin") == 0) {
+	else if (name == "Sin") {
 		stack->correctParams(1);
 		stack->pushFloat(sin(degreeToRadian(stack->pop()->getFloat())));
 		return STATUS_OK;
@@ -193,7 +193,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Sinh
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Sinh") == 0) {
+	else if (name == "Sinh") {
 		stack->correctParams(1);
 		stack->pushFloat(sinh(degreeToRadian(stack->pop()->getFloat())));
 		return STATUS_OK;
@@ -202,7 +202,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Tan
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Tan") == 0) {
+	else if (name == "Tan") {
 		stack->correctParams(1);
 		stack->pushFloat(tan(degreeToRadian(stack->pop()->getFloat())));
 		return STATUS_OK;
@@ -211,7 +211,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Tanh
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Tanh") == 0) {
+	else if (name == "Tanh") {
 		stack->correctParams(1);
 		stack->pushFloat(tanh(degreeToRadian(stack->pop()->getFloat())));
 		return STATUS_OK;
@@ -220,7 +220,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Sqrt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Sqrt") == 0) {
+	else if (name == "Sqrt") {
 		stack->correctParams(1);
 		stack->pushFloat(sqrt(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -229,7 +229,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// DegToRad
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DegToRad") == 0) {
+	else if (name == "DegToRad") {
 		stack->correctParams(1);
 		stack->pushFloat(degreeToRadian(stack->pop()->getFloat()));
 		return STATUS_OK;
@@ -238,7 +238,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// RadToDeg
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "RadToDeg") == 0) {
+	else if (name == "RadToDeg") {
 		stack->correctParams(1);
 		stack->pushFloat(radianToDegree(stack->pop()->getFloat()));
 		return STATUS_OK;

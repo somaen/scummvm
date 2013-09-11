@@ -192,17 +192,17 @@ bool AdObject::update() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// PlayAnim / PlayAnimAsync
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "PlayAnim") == 0 || strcmp(name, "PlayAnimAsync") == 0) {
+	if (name == "PlayAnim" || name == "PlayAnimAsync") {
 		stack->correctParams(1);
 		if (DID_FAIL(playAnim(stack->pop()->getString()))) {
 			stack->pushBool(false);
 		} else {
-			if (strcmp(name, "PlayAnimAsync") != 0) {
+			if (name != "PlayAnimAsync") {
 				script->waitFor(this);
 			}
 			stack->pushBool(true);
@@ -213,7 +213,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Reset
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Reset") == 0) {
+	else if (name == "Reset") {
 		stack->correctParams(0);
 		reset();
 		stack->pushNULL();
@@ -223,7 +223,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// IsTalking
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsTalking") == 0) {
+	else if (name == "IsTalking") {
 		stack->correctParams(0);
 		stack->pushBool(_state == STATE_TALKING);
 		return STATUS_OK;
@@ -232,7 +232,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// StopTalk / StopTalking
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "StopTalk") == 0 || strcmp(name, "StopTalking") == 0) {
+	else if (name == "StopTalk" || name == "StopTalking") {
 		stack->correctParams(0);
 		if (_sentence) {
 			_sentence->finish();
@@ -250,7 +250,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// ForceTalkAnim
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ForceTalkAnim") == 0) {
+	else if (name == "ForceTalkAnim") {
 		stack->correctParams(1);
 		const char *animName = stack->pop()->getString();
 		delete[] _forcedTalkAnimName;
@@ -265,7 +265,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Talk / TalkAsync
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Talk") == 0 || strcmp(name, "TalkAsync") == 0) {
+	else if (name == "Talk" || name == "TalkAsync") {
 		stack->correctParams(5);
 
 		const char *text    = stack->pop()->getString();
@@ -288,7 +288,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		const char *sound = soundVal->isNULL() ? nullptr : soundVal->getString();
 
 		talk(text, sound, duration, stances, (TTextAlign)align);
-		if (strcmp(name, "TalkAsync") != 0) {
+		if (name != "TalkAsync") {
 			script->waitForExclusive(this);
 		}
 
@@ -299,7 +299,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// StickToRegion
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "StickToRegion") == 0) {
+	else if (name == "StickToRegion") {
 		stack->correctParams(1);
 
 		AdLayer *main = ((AdGame *)_gameRef)->_scene->_mainLayer;
@@ -342,7 +342,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// SetFont
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetFont") == 0) {
+	else if (name == "SetFont") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -359,7 +359,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// GetFont
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetFont") == 0) {
+	else if (name == "GetFont") {
 		stack->correctParams(0);
 		if (_font && _font->getFilename()) {
 			stack->pushString(_font->getFilename());
@@ -372,7 +372,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// TakeItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TakeItem") == 0) {
+	else if (name == "TakeItem") {
 		stack->correctParams(2);
 
 		if (!_inventory) {
@@ -403,7 +403,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// DropItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DropItem") == 0) {
+	else if (name == "DropItem") {
 		stack->correctParams(1);
 
 		if (!_inventory) {
@@ -430,7 +430,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// GetItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetItem") == 0) {
+	else if (name == "GetItem") {
 		stack->correctParams(1);
 
 		if (!_inventory) {
@@ -458,7 +458,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// HasItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HasItem") == 0) {
+	else if (name == "HasItem") {
 		stack->correctParams(1);
 
 		if (!_inventory) {
@@ -488,7 +488,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// CreateParticleEmitter
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CreateParticleEmitter") == 0) {
+	else if (name == "CreateParticleEmitter") {
 		stack->correctParams(3);
 		bool followParent = stack->pop()->getBool();
 		int offsetX = stack->pop()->getInt();
@@ -507,7 +507,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteParticleEmitter
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteParticleEmitter") == 0) {
+	else if (name == "DeleteParticleEmitter") {
 		stack->correctParams(0);
 		if (_partEmitter) {
 			_gameRef->unregisterObject(_partEmitter);
@@ -521,7 +521,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// AddAttachment
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddAttachment") == 0) {
+	else if (name == "AddAttachment") {
 		stack->correctParams(4);
 		const char *filename = stack->pop()->getString();
 		bool preDisplay = stack->pop()->getBool(true);
@@ -557,7 +557,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// RemoveAttachment
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "RemoveAttachment") == 0) {
+	else if (name == "RemoveAttachment") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		bool found = false;
@@ -606,7 +606,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// GetAttachment
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetAttachment") == 0) {
+	else if (name == "GetAttachment") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -767,12 +767,12 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject::scSetProperty(const char *name, ScValue *value) {
+bool AdObject::scSetProperty(const Common::String &name, ScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Active") == 0) {
+	if (name == "Active") {
 		_active = value->getBool();
 		return STATUS_OK;
 	}
@@ -780,7 +780,7 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// IgnoreItems
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IgnoreItems") == 0) {
+	else if (name == "IgnoreItems") {
 		_ignoreItems = value->getBool();
 		return STATUS_OK;
 	}
@@ -788,7 +788,7 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SceneIndependent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SceneIndependent") == 0) {
+	else if (name == "SceneIndependent") {
 		_sceneIndependent = value->getBool();
 		return STATUS_OK;
 	}
@@ -796,7 +796,7 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesWidth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesWidth") == 0) {
+	else if (name == "SubtitlesWidth") {
 		_subtitlesWidth = value->getInt();
 		return STATUS_OK;
 	}
@@ -804,7 +804,7 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosRelative
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesPosRelative") == 0) {
+	else if (name == "SubtitlesPosRelative") {
 		_subtitlesModRelative = value->getBool();
 		return STATUS_OK;
 	}
@@ -812,7 +812,7 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesPosX") == 0) {
+	else if (name == "SubtitlesPosX") {
 		_subtitlesModX = value->getInt();
 		return STATUS_OK;
 	}
@@ -820,7 +820,7 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesPosY") == 0) {
+	else if (name == "SubtitlesPosY") {
 		_subtitlesModY = value->getInt();
 		return STATUS_OK;
 	}
@@ -828,7 +828,7 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosXCenter
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SubtitlesPosXCenter") == 0) {
+	else if (name == "SubtitlesPosXCenter") {
 		_subtitlesModXCenter = value->getBool();
 		return STATUS_OK;
 	} else {
@@ -838,7 +838,7 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdObject::scToString() {
+Common::String AdObject::scToString() {
 	return "[ad object]";
 }
 

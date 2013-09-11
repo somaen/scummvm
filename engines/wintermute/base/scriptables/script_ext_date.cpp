@@ -64,7 +64,7 @@ SXDate::~SXDate() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *SXDate::scToString() {
+Common::String SXDate::scToString() {
 	// TODO: Make this more stringy, and less ISO 8601-like
 	_strRep.format("%04d-%02d-%02d - %02d:%02d:%02d", _tm.tm_year, _tm.tm_mon, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec);
 	return _strRep.c_str();
@@ -73,11 +73,11 @@ const char *SXDate::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetYear
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "GetYear") == 0) {
+	if (name == "GetYear") {
 		stack->correctParams(0);
 		stack->pushInt(_tm.tm_year + 1900);
 		return STATUS_OK;
@@ -85,7 +85,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetMonth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetMonth") == 0) {
+	else if (name == "GetMonth") {
 		stack->correctParams(0);
 		stack->pushInt(_tm.tm_mon + 1);
 		return STATUS_OK;
@@ -93,7 +93,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetDate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetDate") == 0) {
+	else if (name == "GetDate") {
 		stack->correctParams(0);
 		stack->pushInt(_tm.tm_mday);
 		return STATUS_OK;
@@ -101,7 +101,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetHours
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetHours") == 0) {
+	else if (name == "GetHours") {
 		stack->correctParams(0);
 		stack->pushInt(_tm.tm_hour);
 		return STATUS_OK;
@@ -109,7 +109,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetMinutes
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetMinutes") == 0) {
+	else if (name == "GetMinutes") {
 		stack->correctParams(0);
 		stack->pushInt(_tm.tm_min);
 		return STATUS_OK;
@@ -117,7 +117,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSeconds
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetSeconds") == 0) {
+	else if (name == "GetSeconds") {
 		stack->correctParams(0);
 		stack->pushInt(_tm.tm_sec);
 		return STATUS_OK;
@@ -125,7 +125,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetWeekday
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetWeekday") == 0) {
+	else if (name == "GetWeekday") {
 		stack->correctParams(0);
 		stack->pushInt(_tm.tm_wday);
 		return STATUS_OK;
@@ -135,7 +135,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetYear
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetYear") == 0) {
+	else if (name == "SetYear") {
 		stack->correctParams(1);
 		_tm.tm_year = stack->pop()->getInt() - 1900;
 		stack->pushNULL();
@@ -144,7 +144,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetMonth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetMonth") == 0) {
+	else if (name == "SetMonth") {
 		stack->correctParams(1);
 		_tm.tm_mon = stack->pop()->getInt() - 1;
 		stack->pushNULL();
@@ -153,7 +153,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetDate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetDate") == 0) {
+	else if (name == "SetDate") {
 		stack->correctParams(1);
 		_tm.tm_mday = stack->pop()->getInt();
 		stack->pushNULL();
@@ -162,7 +162,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetHours
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetHours") == 0) {
+	else if (name == "SetHours") {
 		stack->correctParams(1);
 		_tm.tm_hour = stack->pop()->getInt();
 		stack->pushNULL();
@@ -171,7 +171,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetMinutes
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetMinutes") == 0) {
+	else if (name == "SetMinutes") {
 		stack->correctParams(1);
 		_tm.tm_min = stack->pop()->getInt();
 		stack->pushNULL();
@@ -180,7 +180,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetSeconds
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetSeconds") == 0) {
+	else if (name == "SetSeconds") {
 		stack->correctParams(1);
 		_tm.tm_sec = stack->pop()->getInt();
 		stack->pushNULL();
@@ -191,7 +191,7 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetCurrentTime
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetCurrentTime") == 0) {
+	else if (name == "SetCurrentTime") {
 		stack->correctParams(0);
 		g_system->getTimeAndDate(_tm);
 		stack->pushNULL();
@@ -219,7 +219,7 @@ ScValue *SXDate::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXDate::scSetProperty(const char *name, ScValue *value) {
+bool SXDate::scSetProperty(const Common::String &name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Name

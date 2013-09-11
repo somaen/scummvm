@@ -156,11 +156,11 @@ void UIObject::correctSize() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFont
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SetFont") == 0) {
+	if (name == "SetFont") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -180,7 +180,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// SetImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetImage") == 0) {
+	else if (name == "SetImage") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -208,7 +208,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// GetImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetImage") == 0) {
+	else if (name == "GetImage") {
 		stack->correctParams(0);
 		if (!_image || !_image->getFilename()) {
 			stack->pushNULL();
@@ -222,7 +222,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// GetImageObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetImageObject") == 0) {
+	else if (name == "GetImageObject") {
 		stack->correctParams(0);
 		if (!_image) {
 			stack->pushNULL();
@@ -236,7 +236,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Focus
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Focus") == 0) {
+	else if (name == "Focus") {
 		stack->correctParams(0);
 		focus();
 		stack->pushNULL();
@@ -246,7 +246,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// MoveAfter / MoveBefore
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MoveAfter") == 0 || strcmp(name, "MoveBefore") == 0) {
+	else if (name == "MoveAfter" || name == "MoveBefore") {
 		stack->correctParams(1);
 
 		if (_parent && _parent->_type == UI_WINDOW) {
@@ -280,7 +280,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				bool done = false;
 				for (uint32 j = 0; j < win->_widgets.size(); j++) {
 					if (win->_widgets[j] == this) {
-						if (strcmp(name, "MoveAfter") == 0) {
+						if (name == "MoveAfter") {
 							i++;
 						}
 						if (j >= i) {
@@ -312,7 +312,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// MoveToBottom
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MoveToBottom") == 0) {
+	else if (name == "MoveToBottom") {
 		stack->correctParams(0);
 
 		if (_parent && _parent->_type == UI_WINDOW) {
@@ -335,7 +335,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// MoveToTop
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MoveToTop") == 0) {
+	else if (name == "MoveToTop") {
 		stack->correctParams(0);
 
 		if (_parent && _parent->_type == UI_WINDOW) {
@@ -465,11 +465,11 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool UIObject::scSetProperty(const char *name, ScValue *value) {
+bool UIObject::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Name") == 0) {
+	if (name == "Name") {
 		setName(value->getString());
 		return STATUS_OK;
 	}
@@ -477,7 +477,7 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ParentNotify
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ParentNotify") == 0) {
+	else if (name == "ParentNotify") {
 		_parentNotify = value->getBool();
 		return STATUS_OK;
 	}
@@ -485,7 +485,7 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Width") == 0) {
+	else if (name == "Width") {
 		_width = value->getInt();
 		return STATUS_OK;
 	}
@@ -493,7 +493,7 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Height") == 0) {
+	else if (name == "Height") {
 		_height = value->getInt();
 		return STATUS_OK;
 	}
@@ -501,7 +501,7 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Visible
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Visible") == 0) {
+	else if (name == "Visible") {
 		_visible = value->getBool();
 		return STATUS_OK;
 	}
@@ -509,7 +509,7 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Disabled
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Disabled") == 0) {
+	else if (name == "Disabled") {
 		_disable = value->getBool();
 		return STATUS_OK;
 	}
@@ -517,7 +517,7 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Text") == 0) {
+	else if (name == "Text") {
 		setText(value->getString());
 		return STATUS_OK;
 	} else {
@@ -527,7 +527,7 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *UIObject::scToString() {
+Common::String UIObject::scToString() {
 	return "[ui_object]";
 }
 

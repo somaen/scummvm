@@ -454,11 +454,11 @@ bool AdItem::display(int x, int y) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverSprite
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SetHoverSprite") == 0) {
+	if (name == "SetHoverSprite") {
 		stack->correctParams(1);
 
 		bool setCurrent = false;
@@ -487,7 +487,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetHoverSprite
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetHoverSprite") == 0) {
+	else if (name == "GetHoverSprite") {
 		stack->correctParams(0);
 
 		if (!_spriteHover || !_spriteHover->getFilename()) {
@@ -501,7 +501,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetHoverSpriteObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetHoverSpriteObject") == 0) {
+	else if (name == "GetHoverSpriteObject") {
 		stack->correctParams(0);
 		if (!_spriteHover) {
 			stack->pushNULL();
@@ -514,7 +514,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetNormalCursor
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SetNormalCursor") == 0) {
+	if (name == "SetNormalCursor") {
 		stack->correctParams(1);
 
 		const char *filename = stack->pop()->getString();
@@ -535,7 +535,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetNormalCursor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetNormalCursor") == 0) {
+	else if (name == "GetNormalCursor") {
 		stack->correctParams(0);
 
 		if (!_cursorNormal || !_cursorNormal->getFilename()) {
@@ -549,7 +549,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetNormalCursorObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetNormalCursorObject") == 0) {
+	else if (name == "GetNormalCursorObject") {
 		stack->correctParams(0);
 
 		if (!_cursorNormal) {
@@ -563,7 +563,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverCursor
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SetHoverCursor") == 0) {
+	if (name == "SetHoverCursor") {
 		stack->correctParams(1);
 
 		const char *filename = stack->pop()->getString();
@@ -584,7 +584,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetHoverCursor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetHoverCursor") == 0) {
+	else if (name == "GetHoverCursor") {
 		stack->correctParams(0);
 
 		if (!_cursorHover || !_cursorHover->getFilename()) {
@@ -598,7 +598,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetHoverCursorObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetHoverCursorObject") == 0) {
+	else if (name == "GetHoverCursorObject") {
 		stack->correctParams(0);
 
 		if (!_cursorHover) {
@@ -698,11 +698,11 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdItem::scSetProperty(const char *name, ScValue *value) {
+bool AdItem::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Name") == 0) {
+	if (name == "Name") {
 		setName(value->getString());
 		return STATUS_OK;
 	}
@@ -710,7 +710,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// DisplayAmount
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DisplayAmount") == 0) {
+	else if (name == "DisplayAmount") {
 		_displayAmount = value->getBool();
 		return STATUS_OK;
 	}
@@ -718,7 +718,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Amount
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Amount") == 0) {
+	else if (name == "Amount") {
 		_amount = value->getInt();
 		return STATUS_OK;
 	}
@@ -726,7 +726,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountOffsetX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AmountOffsetX") == 0) {
+	else if (name == "AmountOffsetX") {
 		_amountOffsetX = value->getInt();
 		return STATUS_OK;
 	}
@@ -734,7 +734,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountOffsetY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AmountOffsetY") == 0) {
+	else if (name == "AmountOffsetY") {
 		_amountOffsetY = value->getInt();
 		return STATUS_OK;
 	}
@@ -742,7 +742,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AmountAlign") == 0) {
+	else if (name == "AmountAlign") {
 		_amountAlign = (TTextAlign)value->getInt();
 		return STATUS_OK;
 	}
@@ -750,7 +750,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AmountString") == 0) {
+	else if (name == "AmountString") {
 		if (value->isNULL()) {
 			delete[] _amountString;
 			_amountString = nullptr;
@@ -763,7 +763,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorCombined
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CursorCombined") == 0) {
+	else if (name == "CursorCombined") {
 		_cursorCombined = value->getBool();
 		return STATUS_OK;
 	} else {
@@ -773,7 +773,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdItem::scToString() {
+Common::String AdItem::scToString() {
 	return "[item]";
 }
 

@@ -41,23 +41,23 @@ class ScScript;
 
 class BaseScriptable : public BaseNamedObject {
 public:
-	virtual ScScript *invokeMethodThread(const char *methodName);
+	virtual ScScript *invokeMethodThread(const Common::String &methodName);
 	DECLARE_PERSISTENT(BaseScriptable, BaseNamedObject)
 
 	BaseScriptable(BaseGame *inGame, bool noValue = false, bool persistable = true);
 	virtual ~BaseScriptable();
 
 	// high level scripting interface
-	virtual bool canHandleMethod(const char *eventMethod) const;
-	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool canHandleMethod(const Common::String &eventMethod) const;
+	virtual bool scSetProperty(const Common::String &name, ScValue *value);
 	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name);
+	virtual Common::String scToString();
 	virtual void *scToMemBuffer();
 	virtual int scToInt();
 	virtual double scToFloat();
 	virtual bool scToBool();
-	virtual void scSetString(const char *val);
+	virtual void scSetString(const Common::String &val);
 	virtual void scSetInt(int val);
 	virtual void scSetFloat(double val);
 	virtual void scSetBool(bool val);

@@ -230,13 +230,13 @@ bool BaseGameMusic::persistCrossfadeSettings(BasePersistenceManager *persistMgr)
 	return true;
 }
 
-bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PlayMusic / PlayMusicChannel
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "PlayMusic") == 0 || strcmp(name, "PlayMusicChannel") == 0) {
+	if (name == "PlayMusic" || name == "PlayMusicChannel") {
 		int channel = 0;
-		if (strcmp(name, "PlayMusic") == 0) {
+		if (name == "PlayMusic") {
 			stack->correctParams(3);
 		} else {
 			stack->correctParams(4);
@@ -262,10 +262,10 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// StopMusic / StopMusicChannel
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "StopMusic") == 0 || strcmp(name, "StopMusicChannel") == 0) {
+	else if (name == "StopMusic" || name == "StopMusicChannel") {
 		int channel = 0;
 
-		if (strcmp(name, "StopMusic") == 0) {
+		if (name == "StopMusic") {
 			stack->correctParams(0);
 		} else {
 			stack->correctParams(1);
@@ -283,10 +283,10 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// PauseMusic / PauseMusicChannel
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PauseMusic") == 0 || strcmp(name, "PauseMusicChannel") == 0) {
+	else if (name == "PauseMusic" || name == "PauseMusicChannel") {
 		int channel = 0;
 
-		if (strcmp(name, "PauseMusic") == 0) {
+		if (name == "PauseMusic") {
 			stack->correctParams(0);
 		} else {
 			stack->correctParams(1);
@@ -304,9 +304,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// ResumeMusic / ResumeMusicChannel
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ResumeMusic") == 0 || strcmp(name, "ResumeMusicChannel") == 0) {
+	else if (name == "ResumeMusic" || name == "ResumeMusicChannel") {
 		int channel = 0;
-		if (strcmp(name, "ResumeMusic") == 0) {
+		if (name == "ResumeMusic") {
 			stack->correctParams(0);
 		} else {
 			stack->correctParams(1);
@@ -324,9 +324,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// GetMusic / GetMusicChannel
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetMusic") == 0 || strcmp(name, "GetMusicChannel") == 0) {
+	else if (name == "GetMusic" || name == "GetMusicChannel") {
 		int channel = 0;
-		if (strcmp(name, "GetMusic") == 0) {
+		if (name == "GetMusic") {
 			stack->correctParams(0);
 		} else {
 			stack->correctParams(1);
@@ -347,9 +347,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// SetMusicPosition / SetMusicChannelPosition
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetMusicPosition") == 0 || strcmp(name, "SetMusicChannelPosition") == 0 || strcmp(name, "SetMusicPositionChannel") == 0) {
+	else if (name == "SetMusicPosition" || name == "SetMusicChannelPosition" || name == "SetMusicPositionChannel") {
 		int channel = 0;
-		if (strcmp(name, "SetMusicPosition") == 0) {
+		if (name == "SetMusicPosition") {
 			stack->correctParams(1);
 		} else {
 			stack->correctParams(2);
@@ -370,9 +370,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// GetMusicPosition / GetMusicChannelPosition
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetMusicPosition") == 0 || strcmp(name, "GetMusicChannelPosition") == 0) {
+	else if (name == "GetMusicPosition" || name == "GetMusicChannelPosition") {
 		int channel = 0;
-		if (strcmp(name, "GetMusicPosition") == 0) {
+		if (name == "GetMusicPosition") {
 			stack->correctParams(0);
 		} else {
 			stack->correctParams(1);
@@ -390,9 +390,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// IsMusicPlaying / IsMusicChannelPlaying
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsMusicPlaying") == 0 || strcmp(name, "IsMusicChannelPlaying") == 0) {
+	else if (name == "IsMusicPlaying" || name == "IsMusicChannelPlaying") {
 		int channel = 0;
-		if (strcmp(name, "IsMusicPlaying") == 0) {
+		if (name == "IsMusicPlaying") {
 			stack->correctParams(0);
 		} else {
 			stack->correctParams(1);
@@ -410,9 +410,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// SetMusicVolume / SetMusicChannelVolume
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetMusicVolume") == 0 || strcmp(name, "SetMusicChannelVolume") == 0) {
+	else if (name == "SetMusicVolume" || name == "SetMusicChannelVolume") {
 		int channel = 0;
-		if (strcmp(name, "SetMusicVolume") == 0) {
+		if (name == "SetMusicVolume") {
 			stack->correctParams(1);
 		} else {
 			stack->correctParams(2);
@@ -435,9 +435,9 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// GetMusicVolume / GetMusicChannelVolume
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetMusicVolume") == 0 || strcmp(name, "GetMusicChannelVolume") == 0) {
+	else if (name == "GetMusicVolume" || name == "GetMusicChannelVolume") {
 		int channel = 0;
-		if (strcmp(name, "GetMusicVolume") == 0) {
+		if (name == "GetMusicVolume") {
 			stack->correctParams(0);
 		} else {
 			stack->correctParams(1);
@@ -456,7 +456,7 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// MusicCrossfade
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MusicCrossfade") == 0) {
+	else if (name == "MusicCrossfade") {
 		stack->correctParams(4);
 		int channel1 = stack->pop()->getInt(0);
 		int channel2 = stack->pop()->getInt(0);
@@ -484,7 +484,7 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	// GetSoundLength
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetSoundLength") == 0) {
+	else if (name == "GetSoundLength") {
 		stack->correctParams(1);
 
 		int length = 0;

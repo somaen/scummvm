@@ -758,11 +758,11 @@ bool UIWindow::showWidget(const char *name, bool visible) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetWidget / GetControl
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "GetWidget") == 0 || strcmp(name, "GetControl") == 0) {
+	if (name == "GetWidget" || name == "GetControl") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		if (val->getType() == VAL_INT) {
@@ -788,7 +788,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// SetInactiveFont
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetInactiveFont") == 0) {
+	else if (name == "SetInactiveFont") {
 		stack->correctParams(1);
 
 		if (_fontInactive) {
@@ -803,7 +803,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// SetInactiveImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetInactiveImage") == 0) {
+	else if (name == "SetInactiveImage") {
 		stack->correctParams(1);
 
 		delete _imageInactive;
@@ -823,7 +823,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// GetInactiveImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetInactiveImage") == 0) {
+	else if (name == "GetInactiveImage") {
 		stack->correctParams(0);
 		if (!_imageInactive || !_imageInactive->getFilename()) {
 			stack->pushNULL();
@@ -837,7 +837,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// GetInactiveImageObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetInactiveImageObject") == 0) {
+	else if (name == "GetInactiveImageObject") {
 		stack->correctParams(0);
 		if (!_imageInactive) {
 			stack->pushNULL();
@@ -852,7 +852,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Close
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Close") == 0) {
+	else if (name == "Close") {
 		stack->correctParams(0);
 		stack->pushBool(DID_SUCCEED(close()));
 		return STATUS_OK;
@@ -861,7 +861,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// GoExclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GoExclusive") == 0) {
+	else if (name == "GoExclusive") {
 		stack->correctParams(0);
 		goExclusive();
 		script->waitFor(this);
@@ -872,7 +872,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// GoSystemExclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GoSystemExclusive") == 0) {
+	else if (name == "GoSystemExclusive") {
 		stack->correctParams(0);
 		goSystemExclusive();
 		script->waitFor(this);
@@ -883,7 +883,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Center
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Center") == 0) {
+	else if (name == "Center") {
 		stack->correctParams(0);
 		_posX = (_gameRef->_renderer->getWidth() - _width) / 2;
 		_posY = (_gameRef->_renderer->getHeight() - _height) / 2;
@@ -894,7 +894,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// LoadFromFile
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "LoadFromFile") == 0) {
+	else if (name == "LoadFromFile") {
 		stack->correctParams(1);
 
 		ScValue *val = stack->pop();
@@ -911,7 +911,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// CreateButton
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CreateButton") == 0) {
+	else if (name == "CreateButton") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -930,7 +930,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// CreateStatic
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CreateStatic") == 0) {
+	else if (name == "CreateStatic") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -949,7 +949,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// CreateEditor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CreateEditor") == 0) {
+	else if (name == "CreateEditor") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -968,7 +968,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// CreateWindow
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CreateWindow") == 0) {
+	else if (name == "CreateWindow") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -987,7 +987,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteControl / DeleteButton / DeleteStatic / DeleteEditor / DeleteWindow
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteControl") == 0 || strcmp(name, "DeleteButton") == 0 || strcmp(name, "DeleteStatic") == 0 || strcmp(name, "DeleteEditor") == 0 || strcmp(name, "DeleteWindow") == 0) {
+	else if (name == "DeleteControl" || name == "DeleteButton" || name == "DeleteStatic" || name == "DeleteEditor" || name == "DeleteWindow") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		UIObject *obj = (UIObject *)val->getNative();
@@ -1003,7 +1003,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		}
 		stack->pushNULL();
 		return STATUS_OK;
-	} else if DID_SUCCEED(_gameRef->windowScriptMethodHook(this, script, stack, name)) {
+	} else if DID_SUCCEED(_gameRef->windowScriptMethodHook(this, script, stack, name.c_str())) {
 		return STATUS_OK;
 	}
 
@@ -1102,11 +1102,11 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool UIWindow::scSetProperty(const char *name, ScValue *value) {
+bool UIWindow::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Name") == 0) {
+	if (name == "Name") {
 		setName(value->getString());
 		return STATUS_OK;
 	}
@@ -1114,7 +1114,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Menu") == 0) {
+	else if (name == "Menu") {
 		_isMenu = value->getBool();
 		return STATUS_OK;
 	}
@@ -1122,7 +1122,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// InGame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InGame") == 0) {
+	else if (name == "InGame") {
 		_inGame = value->getBool();
 		return STATUS_OK;
 	}
@@ -1130,7 +1130,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// PauseMusic
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PauseMusic") == 0) {
+	else if (name == "PauseMusic") {
 		_pauseMusic = value->getBool();
 		return STATUS_OK;
 	}
@@ -1138,7 +1138,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ClipContents
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ClipContents") == 0) {
+	else if (name == "ClipContents") {
 		_clipContents = value->getBool();
 		return STATUS_OK;
 	}
@@ -1146,7 +1146,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Transparent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Transparent") == 0) {
+	else if (name == "Transparent") {
 		_transparent = value->getBool();
 		return STATUS_OK;
 	}
@@ -1154,7 +1154,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// FadeColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "FadeColor") == 0) {
+	else if (name == "FadeColor") {
 		_fadeColor = (uint32)value->getInt();
 		_fadeBackground = (_fadeColor != 0);
 		return STATUS_OK;
@@ -1163,7 +1163,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Exclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Exclusive") == 0) {
+	else if (name == "Exclusive") {
 		if (value->getBool()) {
 			goExclusive();
 		} else {
@@ -1176,7 +1176,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SystemExclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SystemExclusive") == 0) {
+	else if (name == "SystemExclusive") {
 		if (value->getBool()) {
 			goSystemExclusive();
 		} else {
@@ -1191,7 +1191,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *UIWindow::scToString() {
+Common::String UIWindow::scToString() {
 	return "[window]";
 }
 

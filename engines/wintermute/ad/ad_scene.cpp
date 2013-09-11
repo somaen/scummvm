@@ -1334,11 +1334,11 @@ void AdScene::skipTo(int offsetX, int offsetY) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LoadActor
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "LoadActor") == 0) {
+	if (name == "LoadActor") {
 		stack->correctParams(1);
 		AdActor *act = new AdActor(_gameRef);
 		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
@@ -1355,7 +1355,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// LoadEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "LoadEntity") == 0) {
+	else if (name == "LoadEntity") {
 		stack->correctParams(1);
 		AdEntity *ent = new AdEntity(_gameRef);
 		if (ent && DID_SUCCEED(ent->loadFile(stack->pop()->getString()))) {
@@ -1372,7 +1372,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// CreateEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CreateEntity") == 0) {
+	else if (name == "CreateEntity") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -1388,7 +1388,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// UnloadObject / UnloadActor / UnloadEntity / UnloadActor3D / DeleteEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "UnloadActor3D") == 0 || strcmp(name, "DeleteEntity") == 0) {
+	else if (name == "UnloadObject" || name == "UnloadActor" || name == "UnloadEntity" || name == "UnloadActor3D" || name == "DeleteEntity") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		AdObject *obj = (AdObject *)val->getNative();
@@ -1404,7 +1404,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// SkipTo
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SkipTo") == 0) {
+	else if (name == "SkipTo") {
 		stack->correctParams(2);
 		ScValue *val1 = stack->pop();
 		ScValue *val2 = stack->pop();
@@ -1420,7 +1420,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollTo / ScrollToAsync
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScrollTo") == 0 || strcmp(name, "ScrollToAsync") == 0) {
+	else if (name == "ScrollTo" || name == "ScrollToAsync") {
 		stack->correctParams(2);
 		ScValue *val1 = stack->pop();
 		ScValue *val2 = stack->pop();
@@ -1429,7 +1429,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		} else {
 			scrollTo(val1->getInt(), val2->getInt());
 		}
-		if (strcmp(name, "ScrollTo") == 0) {
+		if (name == "ScrollTo") {
 			script->waitForExclusive(this);
 		}
 		stack->pushNULL();
@@ -1439,7 +1439,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// GetLayer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetLayer") == 0) {
+	else if (name == "GetLayer") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		if (val->isInt()) {
@@ -1469,7 +1469,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// GetWaypointGroup
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetWaypointGroup") == 0) {
+	else if (name == "GetWaypointGroup") {
 		stack->correctParams(1);
 		int group = stack->pop()->getInt();
 		if (group < 0 || group >= (int32)_waypointGroups.size()) {
@@ -1483,7 +1483,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetNode") == 0) {
+	else if (name == "GetNode") {
 		stack->correctParams(1);
 		const char *nodeName = stack->pop()->getString();
 
@@ -1500,7 +1500,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// GetFreeNode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetFreeNode") == 0) {
+	else if (name == "GetFreeNode") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -1531,7 +1531,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// GetRegionAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetRegionAt") == 0) {
+	else if (name == "GetRegionAt") {
 		stack->correctParams(3);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
@@ -1562,7 +1562,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// IsBlockedAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsBlockedAt") == 0) {
+	else if (name == "IsBlockedAt") {
 		stack->correctParams(2);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
@@ -1574,7 +1574,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// IsWalkableAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsWalkableAt") == 0) {
+	else if (name == "IsWalkableAt") {
 		stack->correctParams(2);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
@@ -1586,7 +1586,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// GetScaleAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetScaleAt") == 0) {
+	else if (name == "GetScaleAt") {
 		stack->correctParams(2);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
@@ -1598,7 +1598,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// GetRotationAt
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetRotationAt") == 0) {
+	else if (name == "GetRotationAt") {
 		stack->correctParams(2);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
@@ -1610,7 +1610,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// IsScrolling
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsScrolling") == 0) {
+	else if (name == "IsScrolling") {
 		stack->correctParams(0);
 		bool ret = false;
 		if (_autoScroll) {
@@ -1626,7 +1626,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// FadeOut / FadeOutAsync
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "FadeOut") == 0 || strcmp(name, "FadeOutAsync") == 0) {
+	else if (name == "FadeOut" || name == "FadeOutAsync") {
 		stack->correctParams(5);
 		uint32 duration = stack->pop()->getInt(500);
 		byte red = stack->pop()->getInt(0);
@@ -1635,7 +1635,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		byte alpha = stack->pop()->getInt(0xFF);
 
 		_fader->fadeOut(BYTETORGBA(red, green, blue, alpha), duration);
-		if (strcmp(name, "FadeOutAsync") != 0) {
+		if (name != "FadeOutAsync") {
 			script->waitFor(_fader);
 		}
 
@@ -1646,7 +1646,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// FadeIn / FadeInAsync
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "FadeIn") == 0 || strcmp(name, "FadeInAsync") == 0) {
+	else if (name == "FadeIn" || name == "FadeInAsync") {
 		stack->correctParams(5);
 		uint32 duration = stack->pop()->getInt(500);
 		byte red = stack->pop()->getInt(0);
@@ -1655,7 +1655,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		byte alpha = stack->pop()->getInt(0xFF);
 
 		_fader->fadeIn(BYTETORGBA(red, green, blue, alpha), duration);
-		if (strcmp(name, "FadeInAsync") != 0) {
+		if (name != "FadeInAsync") {
 			script->waitFor(_fader);
 		}
 
@@ -1666,7 +1666,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// GetFadeColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetFadeColor") == 0) {
+	else if (name == "GetFadeColor") {
 		stack->correctParams(0);
 		stack->pushInt(_fader->getCurrentColor());
 		return STATUS_OK;
@@ -1675,7 +1675,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// IsPointInViewport
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsPointInViewport") == 0) {
+	else if (name == "IsPointInViewport") {
 		stack->correctParams(2);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
@@ -1686,7 +1686,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// SetViewport
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetViewport") == 0) {
+	else if (name == "SetViewport") {
 		stack->correctParams(4);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
@@ -1715,7 +1715,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// AddLayer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddLayer") == 0) {
+	else if (name == "AddLayer") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -1737,7 +1737,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// InsertLayer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InsertLayer") == 0) {
+	else if (name == "InsertLayer") {
 		stack->correctParams(2);
 		int index = stack->pop()->getInt();
 		ScValue *val = stack->pop();
@@ -1768,7 +1768,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteLayer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteLayer") == 0) {
+	else if (name == "DeleteLayer") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -1986,11 +1986,11 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::scSetProperty(const char *name, ScValue *value) {
+bool AdScene::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Name") == 0) {
+	if (name == "Name") {
 		setName(value->getString());
 		return STATUS_OK;
 	}
@@ -1998,7 +1998,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AutoScroll
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AutoScroll") == 0) {
+	else if (name == "AutoScroll") {
 		_autoScroll = value->getBool();
 		return STATUS_OK;
 	}
@@ -2006,7 +2006,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentState
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PersistentState") == 0) {
+	else if (name == "PersistentState") {
 		_persistentState = value->getBool();
 		return STATUS_OK;
 	}
@@ -2014,7 +2014,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentStateSprites
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PersistentStateSprites") == 0) {
+	else if (name == "PersistentStateSprites") {
 		_persistentStateSprites = value->getBool();
 		return STATUS_OK;
 	}
@@ -2022,7 +2022,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScrollPixelsX") == 0) {
+	else if (name == "ScrollPixelsX") {
 		_scrollPixelsH = value->getInt();
 		return STATUS_OK;
 	}
@@ -2030,7 +2030,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScrollPixelsY") == 0) {
+	else if (name == "ScrollPixelsY") {
 		_scrollPixelsV = value->getInt();
 		return STATUS_OK;
 	}
@@ -2038,7 +2038,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScrollSpeedX") == 0) {
+	else if (name == "ScrollSpeedX") {
 		_scrollTimeH = value->getInt();
 		return STATUS_OK;
 	}
@@ -2046,7 +2046,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ScrollSpeedY") == 0) {
+	else if (name == "ScrollSpeedY") {
 		_scrollTimeV = value->getInt();
 		return STATUS_OK;
 	}
@@ -2054,7 +2054,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "OffsetX") == 0) {
+	else if (name == "OffsetX") {
 		_offsetLeft = value->getInt();
 
 		int32 viewportWidth, viewportHeight;
@@ -2070,7 +2070,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "OffsetY") == 0) {
+	else if (name == "OffsetY") {
 		_offsetTop = value->getInt();
 
 		int32 viewportWidth, viewportHeight;
@@ -2088,7 +2088,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdScene::scToString() {
+Common::String AdScene::scToString() {
 	return "[scene object]";
 }
 
