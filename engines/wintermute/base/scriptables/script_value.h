@@ -102,7 +102,7 @@ public:
 	Common::HashMap<Common::String, ScValue *>::iterator _valIter;
 
 	bool setProperty(const Common::String &propName, int32 value);
-	bool setProperty(const Common::String &propName, const char *value);
+	bool setProperty(const Common::String &propName, const Common::String &value);
 	bool setProperty(const Common::String &propName, double value);
 	bool setProperty(const Common::String &propName, bool value);
 	bool setProperty(const Common::String &propName);

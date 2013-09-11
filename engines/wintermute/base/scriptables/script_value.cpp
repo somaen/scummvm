@@ -970,7 +970,7 @@ bool ScValue::setProperty(const Common::String &propName, int32 value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::setProperty(const Common::String &propName, const char *value) {
+bool ScValue::setProperty(const Common::String &propName, const Common::String &value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;

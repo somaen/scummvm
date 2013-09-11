@@ -178,13 +178,13 @@ void BaseScriptable::scDebuggerDesc(char *buf, int bufSize) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptable::canHandleMethod(const char *eventMethod) const {
+bool BaseScriptable::canHandleMethod(const Common::String &eventMethod) const {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
+ScScript *BaseScriptable::invokeMethodThread(const Common::String &methodName) {
 	return nullptr;
 }
 
