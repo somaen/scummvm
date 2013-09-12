@@ -60,8 +60,8 @@ void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *o
 	}
 }
 
-
 void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+
 	if (*ca != 255) {
 		ina = ina * (*ca) >> 8;
 	}
@@ -85,7 +85,6 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 			*outr = MAX(*outr - (inr * ina >> 8), 0);
 	}
 }
-
 
 void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 
@@ -148,6 +147,7 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 }
 
 void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+
 	if (ina == 0) {
 		return;
 	} else if (ina == 255) {
@@ -164,8 +164,8 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 	}
 }
 
-
 void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+
 	if (ina == 0) {
 		return;
 	} else if (ina == 255) {
