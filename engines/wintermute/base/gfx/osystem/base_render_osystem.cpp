@@ -358,48 +358,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	}
 }
 
-void BaseRenderOSystem::repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY) {
-	if (_previousTicket && _lastAddedTicket != _renderQueue.end()) {
-		RenderTicket *origTicket = _previousTicket;
-
-		// Make sure drawSurface WILL start from the correct _lastAddedTicket
-		if (!_tempDisableDirtyRects && !_disableDirtyRects && *_lastAddedTicket != origTicket) {
-			RenderQueueIterator it;
-			RenderQueueIterator endIterator = _renderQueue.end();
-			for (it = _renderQueue.begin(); it != endIterator; ++it) {
-				if ((*it) == _previousTicket) {
-					_lastAddedTicket = it;
-					break;
-				}
-			}
-		}
-		Common::Rect srcRect(0, 0, 0, 0);
-		srcRect.setWidth(origTicket->getSrcRect()->width());
-		srcRect.setHeight(origTicket->getSrcRect()->height());
-
-		Common::Rect dstRect = origTicket->_dstRect;
-		int initLeft = dstRect.left;
-		int initRight = dstRect.right;
-
-		TransformStruct temp = TransformStruct(kDefaultZoomX, kDefaultZoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, BLEND_NORMAL, kDefaultRgbaMod, false, false, kDefaultOffsetX, kDefaultOffsetY);
-
-		for (int i = 0; i < numTimesY; i++) {
-			if (i == 0) {
-				dstRect.translate(offsetX, 0);
-			}
-			for (int j = (i == 0 ? 1 : 0); j < numTimesX; j++) {
-				drawSurface(origTicket->_owner, origTicket->getSurface(), &srcRect, &dstRect, temp); 
-				dstRect.translate(offsetX, 0);
-			}
-			dstRect.left = initLeft;
-			dstRect.right = initRight;
-			dstRect.translate(0, offsetY);
-		}
-	} else {
-		error("Repeat-draw failed (did you forget to draw something before this?)");
-	}
-}
-
 void BaseRenderOSystem::invalidateTicket(RenderTicket *renderTicket) {
 	addDirtyRect(renderTicket->_dstRect);
 	renderTicket->_isValid = false;
