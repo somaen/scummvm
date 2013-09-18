@@ -68,9 +68,6 @@ void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *o
 	 * @param *outa, *outr, *outg, *outb pointer to the colormod components.
 	 */
 
-	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
-	// Just use the faster, sans-colormod version
-
 	if (*ca != 255) {
 		ina = (ina) * (*ca) >> 8;
 	}
@@ -104,9 +101,6 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 	 * @param *outa, *outr, *outg, *outb pointer to the colormod components.
 	 */
 
-	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
-	// Just use the faster, sans-colormod version
-
 	if (*ca != 255) {
 		ina = ina * (*ca) >> 8;
 	}
@@ -139,9 +133,6 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 	 * @param *outa, *outr, *outg, *outb pointer to the output pixel.
 	 * @param *outa, *outr, *outg, *outb pointer to the colormod components.
 	 */
-
-	assert(!(*cr == 255 && *ca == 255 && *cb == 255 && *cg == 255));
-	// Just use the faster, sans-colormod version
 
 	if (*ca != 255) {
 		ina = ina * (*ca) >> 8;
