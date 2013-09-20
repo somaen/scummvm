@@ -365,7 +365,7 @@ bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdTalkHolder::scToString() {
+Common::String AdTalkHolder::scToString() {
 	return "[talk-holder object]";
 }
 

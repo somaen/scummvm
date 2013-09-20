@@ -102,7 +102,7 @@ bool BaseScriptable::scSetProperty(const Common::String &name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseScriptable::scToString() {
+Common::String BaseScriptable::scToString() {
 	return "[native object]";
 }
 
@@ -174,7 +174,7 @@ int BaseScriptable::scCompare(BaseScriptable *val) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptable::scDebuggerDesc(char *buf, int bufSize) {
-	strcpy(buf, scToString());
+	strcpy(buf, scToString().c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////

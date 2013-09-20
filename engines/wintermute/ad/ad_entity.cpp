@@ -964,7 +964,7 @@ bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdEntity::scToString() {
+Common::String AdEntity::scToString() {
 	return "[entity object]";
 }
 

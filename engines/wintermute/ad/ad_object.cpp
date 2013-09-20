@@ -838,7 +838,7 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdObject::scToString() {
+Common::String AdObject::scToString() {
 	return "[ad object]";
 }
 

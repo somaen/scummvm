@@ -266,7 +266,7 @@ bool BaseScriptHolder::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseScriptHolder::scToString() {
+Common::String BaseScriptHolder::scToString() {
 	return "[script_holder]";
 }
 
@@ -481,7 +481,7 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
-	strcpy(buf, scToString());
+	strcpy(buf, scToString().c_str());
 	if (getName() && strcmp(getName(), "<unnamed>") != 0) {
 		strcat(buf, "  Name: ");
 		strcat(buf, getName());

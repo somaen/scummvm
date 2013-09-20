@@ -94,7 +94,7 @@ void SXFile::close() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *SXFile::scToString() {
+Common::String SXFile::scToString() {
 	if (_filename) {
 		return _filename;
 	} else {

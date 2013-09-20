@@ -91,7 +91,7 @@ void SXString::setStringVal(const Common::String &val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *SXString::scToString() {
+Common::String SXString::scToString() {
 	if (_string) {
 		return _string;
 	} else {

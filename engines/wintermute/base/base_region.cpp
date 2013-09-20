@@ -389,7 +389,7 @@ bool BaseRegion::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseRegion::scToString() {
+Common::String BaseRegion::scToString() {
 	return "[region]";
 }
 

@@ -927,7 +927,7 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseObject::scToString() {
+Common::String BaseObject::scToString() {
 	return "[object]";
 }
 

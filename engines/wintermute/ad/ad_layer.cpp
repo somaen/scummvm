@@ -497,7 +497,7 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdLayer::scToString() {
+Common::String AdLayer::scToString() {
 	return "[layer]";
 }
 

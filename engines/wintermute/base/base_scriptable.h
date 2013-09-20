@@ -52,7 +52,7 @@ public:
 	virtual bool scSetProperty(const Common::String &name, ScValue *value);
 	virtual ScValue *scGetProperty(const Common::String &name);
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name);
-	virtual const char *scToString();
+	virtual Common::String scToString();
 	virtual void *scToMemBuffer();
 	virtual int scToInt();
 	virtual double scToFloat();

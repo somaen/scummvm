@@ -804,7 +804,7 @@ bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseSprite::scToString() {
+Common::String BaseSprite::scToString() {
 	return "[sprite]";
 }
 

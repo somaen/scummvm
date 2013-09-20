@@ -359,7 +359,7 @@ bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdRegion::scToString() {
+Common::String AdRegion::scToString() {
 	return "[ad region]";
 }
 

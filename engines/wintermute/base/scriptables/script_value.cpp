@@ -649,7 +649,7 @@ const char *ScValue::getString() {
 		break;
 
 	case VAL_NATIVE: {
-		const char *strVal = _valNative->scToString();
+		const char *strVal = _valNative->scToString().c_str();
 		setStringVal(strVal);
 		return strVal;
 		break;

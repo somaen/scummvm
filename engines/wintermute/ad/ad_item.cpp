@@ -773,7 +773,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdItem::scToString() {
+Common::String AdItem::scToString() {
 	return "[item]";
 }
 

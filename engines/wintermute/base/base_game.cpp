@@ -2539,7 +2539,7 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseGame::scToString() {
+Common::String BaseGame::scToString() {
 	return "[game object]";
 }
 

@@ -126,7 +126,7 @@ bool SXMemBuffer::checkBounds(ScScript *script, int start, int length) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *SXMemBuffer::scToString() {
+Common::String SXMemBuffer::scToString() {
 	return "[membuffer object]";
 }
 

@@ -546,7 +546,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *UIEdit::scToString() {
+Common::String UIEdit::scToString() {
 	return "[edit]";
 }
 

@@ -527,7 +527,7 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *UIObject::scToString() {
+Common::String UIObject::scToString() {
 	return "[ui_object]";
 }
 

@@ -2088,7 +2088,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdScene::scToString() {
+Common::String AdScene::scToString() {
 	return "[scene object]";
 }
 

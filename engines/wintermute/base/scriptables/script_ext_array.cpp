@@ -74,7 +74,7 @@ SXArray::~SXArray() {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *SXArray::scToString() {
+Common::String SXArray::scToString() {
 	char dummy[32768];
 	strcpy(dummy, "");
 	char propName[20];

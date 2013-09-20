@@ -625,7 +625,7 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseSubFrame::scToString() {
+Common::String BaseSubFrame::scToString() {
 	return "[subframe]";
 }
 

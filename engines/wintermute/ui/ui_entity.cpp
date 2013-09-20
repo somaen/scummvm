@@ -349,7 +349,7 @@ bool UIEntity::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *UIEntity::scToString() {
+Common::String UIEntity::scToString() {
 	return "[entity container]";
 }
 

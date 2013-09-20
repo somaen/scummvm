@@ -1168,7 +1168,7 @@ bool UIButton::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *UIButton::scToString() {
+Common::String UIButton::scToString() {
 	return "[button]";
 }
 

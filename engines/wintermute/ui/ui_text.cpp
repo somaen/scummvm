@@ -493,7 +493,7 @@ bool UIText::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *UIText::scToString() {
+Common::String UIText::scToString() {
 	return "[static]";
 }
 

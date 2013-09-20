@@ -1191,7 +1191,7 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *UIWindow::scToString() {
+Common::String UIWindow::scToString() {
 	return "[window]";
 }
 

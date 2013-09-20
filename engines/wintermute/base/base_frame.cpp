@@ -760,7 +760,7 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseFrame::scToString() {
+Common::String BaseFrame::scToString() {
 	return "[frame]";
 }
 

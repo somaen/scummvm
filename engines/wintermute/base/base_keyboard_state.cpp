@@ -191,7 +191,7 @@ bool BaseKeyboardState::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseKeyboardState::scToString() {
+Common::String BaseKeyboardState::scToString() {
 	return "[keyboard state]";
 }
 

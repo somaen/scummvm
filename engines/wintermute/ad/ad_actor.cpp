@@ -1214,7 +1214,7 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *AdActor::scToString() {
+Common::String AdActor::scToString() {
 	return "[actor object]";
 }
 

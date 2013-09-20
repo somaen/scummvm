@@ -42,7 +42,7 @@ public:
 	bool scSetProperty(const Common::String &name, ScValue *value);
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name);
 	void scSetString(const Common::String &val);
-	const char *scToString();
+	Common::String scToString();
 	void setStringVal(const Common::String &val);
 
 	SXString(BaseGame *inGame, ScStack *Stack);

@@ -43,7 +43,7 @@ public:
 	ScValue *scGetProperty(const Common::String &name);
 	bool scSetProperty(const char *name, ScValue *value);
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	const char *scToString();
+	Common::String scToString();
 	SXFile(BaseGame *inGame, ScStack *Stack);
 	virtual ~SXFile();
 private:

@@ -1146,7 +1146,7 @@ bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *PartEmitter::scToString() {
+Common::String PartEmitter::scToString() {
 	return "[particle emitter]";
 }
 
