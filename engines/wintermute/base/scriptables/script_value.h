@@ -101,11 +101,11 @@ public:
 	Common::HashMap<Common::String, ScValue *> _valObject;
 	Common::HashMap<Common::String, ScValue *>::iterator _valIter;
 
-	bool setProperty(const Common::String &propName, int32 value);
-	bool setProperty(const Common::String &propName, const Common::String &value);
-	bool setProperty(const Common::String &propName, double value);
-	bool setProperty(const Common::String &propName, bool value);
-	bool setProperty(const Common::String &propName);
+	bool setProperty(const Common::String &propName, int32 value) override;
+	bool setProperty(const Common::String &propName, const Common::String &value) override;
+	bool setProperty(const Common::String &propName, double value) override;
+	bool setProperty(const Common::String &propName, bool value) override;
+	bool setProperty(const Common::String &propName) override;
 };
 
 } // End of namespace Wintermute
