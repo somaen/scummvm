@@ -48,7 +48,7 @@ public:
 	virtual ~BaseScriptable();
 
 	// high level scripting interface
-	virtual bool canHandleMethod(const Common::String &eventMethod) const override;
+	virtual bool canHandleMethod(const Common::String &eventMethod) const;
 	virtual bool scSetProperty(const Common::String &name, ScValue *value);
 	virtual ScValue *scGetProperty(const Common::String &name);
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name);

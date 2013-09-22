@@ -41,8 +41,8 @@ public:
 	SXDate(BaseGame *inGame, ScStack *Stack);
 	virtual ~SXDate();
 	ScValue *scGetProperty(const Common::String &name);
-	bool scSetProperty(const char *name, ScValue *value);
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
+	bool scSetProperty(const Common::String &name, ScValue *value);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) override;
 	Common::String scToString();
 private:
 	TimeDate _tm;

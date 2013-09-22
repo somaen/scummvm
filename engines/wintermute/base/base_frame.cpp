@@ -430,12 +430,12 @@ bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSound
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "GetSound") == 0) {
+	if (name == "GetSound") {
 		stack->correctParams(0);
 
 		if (_sound && _sound->getFilename()) {
@@ -449,7 +449,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	// SetSound
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SetSound") == 0) {
+	if (name == "SetSound") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		delete _sound;
@@ -473,7 +473,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	// GetSubframe
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "GetSubframe") == 0) {
+	if (name == "GetSubframe") {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
 		if (index < 0 || index >= (int32)_subframes.size()) {
@@ -489,7 +489,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteSubframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteSubframe") == 0) {
+	else if (name == "DeleteSubframe") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		if (val->isInt()) {
@@ -514,7 +514,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	// AddSubframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddSubframe") == 0) {
+	else if (name == "AddSubframe") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		const char *filename = nullptr;
@@ -536,7 +536,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	// InsertSubframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InsertSubframe") == 0) {
+	else if (name == "InsertSubframe") {
 		stack->correctParams(2);
 		int index = stack->pop()->getInt();
 		if (index < 0) {
@@ -567,7 +567,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	// GetEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetSubframe") == 0) {
+	else if (name == "GetSubframe") {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
 		if (index < 0 || index >= (int32)_applyEvent.size()) {
@@ -582,7 +582,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	// AddEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddEvent") == 0) {
+	else if (name == "AddEvent") {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
 		for (uint32 i = 0; i < _applyEvent.size(); i++) {
@@ -599,7 +599,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteEvent
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteEvent") == 0) {
+	else if (name == "DeleteEvent") {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
 		for (uint32 i = 0; i < _applyEvent.size(); i++) {
@@ -707,11 +707,11 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
+bool BaseFrame::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Delay") == 0) {
+	if (name == "Delay") {
 		_delay = MAX(0, value->getInt());
 		return STATUS_OK;
 	}
@@ -719,7 +719,7 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Keyframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Keyframe") == 0) {
+	else if (name == "Keyframe") {
 		_keyframe = value->getBool();
 		return STATUS_OK;
 	}
@@ -727,7 +727,7 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// KillSounds
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "KillSounds") == 0) {
+	else if (name == "KillSounds") {
 		_killSound = value->getBool();
 		return STATUS_OK;
 	}
@@ -735,7 +735,7 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MoveX") == 0) {
+	else if (name == "MoveX") {
 		_moveX = value->getInt();
 		return STATUS_OK;
 	}
@@ -743,7 +743,7 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MoveY") == 0) {
+	else if (name == "MoveY") {
 		_moveY = value->getInt();
 		return STATUS_OK;
 	}

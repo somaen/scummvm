@@ -238,7 +238,7 @@ bool AdRegion::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool AdRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool AdRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	/*
 	    //////////////////////////////////////////////////////////////////////////
 	    // SkipTo
@@ -313,11 +313,11 @@ ScValue *AdRegion::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdRegion::scSetProperty(const char *name, ScValue *value) {
+bool AdRegion::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Name") == 0) {
+	if (name == "Name") {
 		setName(value->getString());
 		return STATUS_OK;
 	}
@@ -325,7 +325,7 @@ bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Blocked
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Blocked") == 0) {
+	else if (name == "Blocked") {
 		_blocked = value->getBool();
 		return STATUS_OK;
 	}
@@ -333,7 +333,7 @@ bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Decoration") == 0) {
+	else if (name == "Decoration") {
 		_decoration = value->getBool();
 		return STATUS_OK;
 	}
@@ -341,7 +341,7 @@ bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Scale") == 0) {
+	else if (name == "Scale") {
 		_zoom = value->getFloat();
 		return STATUS_OK;
 	}
@@ -349,7 +349,7 @@ bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AlphaColor") == 0) {
+	else if (name == "AlphaColor") {
 		_alpha = (uint32)value->getInt();
 		return STATUS_OK;
 	} else {

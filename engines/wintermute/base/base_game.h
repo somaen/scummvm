@@ -167,8 +167,8 @@ public:
 	virtual bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual bool scSetProperty(const Common::String &name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) override;
 	virtual Common::String scToString() override;
 	// compatibility bits
 	bool _compatKillMethodThreads;

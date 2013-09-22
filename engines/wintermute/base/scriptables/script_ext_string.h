@@ -40,7 +40,7 @@ public:
 	DECLARE_PERSISTENT(SXString, BaseScriptable)
 	ScValue *scGetProperty(const Common::String &name);
 	bool scSetProperty(const Common::String &name, ScValue *value);
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) override;
 	void scSetString(const Common::String &val);
 	Common::String scToString();
 	void setStringVal(const Common::String &val);

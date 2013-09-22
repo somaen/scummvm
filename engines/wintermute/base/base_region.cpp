@@ -219,12 +219,12 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// AddPoint
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "AddPoint") == 0) {
+	if (name == "AddPoint") {
 		stack->correctParams(2);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
@@ -240,7 +240,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// InsertPoint
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InsertPoint") == 0) {
+	else if (name == "InsertPoint") {
 		stack->correctParams(3);
 		int index = stack->pop()->getInt();
 		int x = stack->pop()->getInt();
@@ -261,7 +261,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// SetPoint
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetPoint") == 0) {
+	else if (name == "SetPoint") {
 		stack->correctParams(3);
 		int index = stack->pop()->getInt();
 		int x = stack->pop()->getInt();
@@ -283,7 +283,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// RemovePoint
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "RemovePoint") == 0) {
+	else if (name == "RemovePoint") {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
 
@@ -305,7 +305,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// GetPoint
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetPoint") == 0) {
+	else if (name == "GetPoint") {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
 
@@ -367,11 +367,11 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::scSetProperty(const char *name, ScValue *value) {
+bool BaseRegion::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Name") == 0) {
+	if (name == "Name") {
 		setName(value->getString());
 		return STATUS_OK;
 	}
@@ -379,7 +379,7 @@ bool BaseRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Active") == 0) {
+	else if (name == "Active") {
 		_active = value->getBool();
 		return STATUS_OK;
 	} else {

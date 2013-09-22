@@ -48,7 +48,7 @@ public:
 	BaseArray<BasePoint *> _points;
 
 	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
+	virtual bool scSetProperty(const Common::String &name, ScValue *value);
 private:
 	int32 _editorSelectedPoint;
 	float _lastMimicScale;

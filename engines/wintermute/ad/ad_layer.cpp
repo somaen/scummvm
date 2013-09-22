@@ -231,11 +231,11 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetNode
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "GetNode") == 0) {
+	if (name == "GetNode") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		int node = -1;
@@ -272,12 +272,12 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// AddRegion / AddEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddRegion") == 0 || strcmp(name, "AddEntity") == 0) {
+	else if (name == "AddRegion" || name == "AddEntity") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
 		AdSceneNode *node = new AdSceneNode(_gameRef);
-		if (strcmp(name, "AddRegion") == 0) {
+		if (name == "AddRegion") {
 			AdRegion *region = new AdRegion(_gameRef);
 			if (!val->isNULL()) {
 				region->setName(val->getString());
@@ -299,13 +299,13 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// InsertRegion / InsertEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InsertRegion") == 0 || strcmp(name, "InsertEntity") == 0) {
+	else if (name == "InsertRegion" || name == "InsertEntity") {
 		stack->correctParams(2);
 		int index = stack->pop()->getInt();
 		ScValue *val = stack->pop();
 
 		AdSceneNode *node = new AdSceneNode(_gameRef);
-		if (strcmp(name, "InsertRegion") == 0) {
+		if (name == "InsertRegion") {
 			AdRegion *region = new AdRegion(_gameRef);
 			if (!val->isNULL()) {
 				region->setName(val->getString());
@@ -335,7 +335,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteNode
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteNode") == 0) {
+	else if (name == "DeleteNode") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -440,11 +440,11 @@ ScValue *AdLayer::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdLayer::scSetProperty(const char *name, ScValue *value) {
+bool AdLayer::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Name") == 0) {
+	if (name == "Name") {
 		setName(value->getString());
 		return STATUS_OK;
 	}
@@ -452,7 +452,7 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CloseUp
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CloseUp") == 0) {
+	else if (name == "CloseUp") {
 		_closeUp = value->getBool();
 		return STATUS_OK;
 	}
@@ -460,7 +460,7 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Width") == 0) {
+	else if (name == "Width") {
 		_width = value->getInt();
 		if (_width < 0) {
 			_width = 0;
@@ -471,7 +471,7 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Height") == 0) {
+	else if (name == "Height") {
 		_height = value->getInt();
 		if (_height < 0) {
 			_height = 0;
@@ -482,7 +482,7 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Active") == 0) {
+	else if (name == "Active") {
 		bool b = value->getBool();
 		if (b == false && _main) {
 			_gameRef->LOG(0, "Warning: cannot deactivate scene's main layer");

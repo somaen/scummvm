@@ -123,11 +123,11 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSprite
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SetSprite") == 0) {
+	if (name == "SetSprite") {
 		stack->correctParams(1);
 
 		ScValue *val = stack->pop();
@@ -166,7 +166,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	// GetSprite
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetSprite") == 0) {
+	else if (name == "GetSprite") {
 		stack->correctParams(0);
 
 		if (!_sprite || !_sprite->getFilename()) {
@@ -180,7 +180,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	// GetSpriteObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetSpriteObject") == 0) {
+	else if (name == "GetSpriteObject") {
 		stack->correctParams(0);
 
 		if (!_sprite) {
@@ -194,7 +194,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	// AddTalkSprite
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddTalkSprite") == 0) {
+	else if (name == "AddTalkSprite") {
 		stack->correctParams(2);
 
 		const char *filename = stack->pop()->getString();
@@ -218,7 +218,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	// RemoveTalkSprite
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "RemoveTalkSprite") == 0) {
+	else if (name == "RemoveTalkSprite") {
 		stack->correctParams(2);
 
 		const char *filename = stack->pop()->getString();
@@ -272,7 +272,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	// SetTalkSprite
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetTalkSprite") == 0) {
+	else if (name == "SetTalkSprite") {
 		stack->correctParams(2);
 
 		const char *filename = stack->pop()->getString();
@@ -350,7 +350,7 @@ ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
+bool AdTalkHolder::scSetProperty(const Common::String &name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Item

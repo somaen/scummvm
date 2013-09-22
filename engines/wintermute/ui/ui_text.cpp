@@ -403,11 +403,11 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SizeToFit
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SizeToFit") == 0) {
+	if (name == "SizeToFit") {
 		stack->correctParams(0);
 		sizeToFit();
 		stack->pushNULL();
@@ -417,7 +417,7 @@ bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// HeightToFit
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HeightToFit") == 0) {
+	else if (name == "HeightToFit") {
 		stack->correctParams(0);
 		if (_font && _text) {
 			_height = _font->getTextHeight((byte *)_text, _width);
@@ -463,11 +463,11 @@ ScValue *UIText::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool UIText::scSetProperty(const char *name, ScValue *value) {
+bool UIText::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "TextAlign") == 0) {
+	if (name == "TextAlign") {
 		int i = value->getInt();
 		if (i < 0 || i >= NUM_TEXT_ALIGN) {
 			i = 0;
@@ -479,7 +479,7 @@ bool UIText::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// VerticalAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "VerticalAlign") == 0) {
+	else if (name == "VerticalAlign") {
 		int i = value->getInt();
 		if (i < 0 || i >= NUM_VERTICAL_ALIGN) {
 			i = 0;

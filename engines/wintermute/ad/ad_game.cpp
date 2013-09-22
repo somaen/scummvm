@@ -346,11 +346,11 @@ void AdGame::finishSentences() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ChangeScene
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "ChangeScene") == 0) {
+	if (name == "ChangeScene") {
 		stack->correctParams(3);
 		const char *filename = stack->pop()->getString();
 		ScValue *valFadeOut = stack->pop();
@@ -376,7 +376,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// LoadActor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "LoadActor") == 0) {
+	else if (name == "LoadActor") {
 		stack->correctParams(1);
 		AdActor *act = new AdActor(_gameRef);
 		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
@@ -393,7 +393,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// LoadEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "LoadEntity") == 0) {
+	else if (name == "LoadEntity") {
 		stack->correctParams(1);
 		AdEntity *ent = new AdEntity(_gameRef);
 		if (ent && DID_SUCCEED(ent->loadFile(stack->pop()->getString()))) {
@@ -410,7 +410,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// UnloadObject / UnloadActor / UnloadEntity / DeleteEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "DeleteEntity") == 0) {
+	else if (name == "UnloadObject" || name == "UnloadActor" || name == "UnloadEntity" || name == "DeleteEntity") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		AdObject *obj = (AdObject *)val->getNative();
@@ -426,7 +426,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// CreateEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CreateEntity") == 0) {
+	else if (name == "CreateEntity") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -442,7 +442,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// CreateItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CreateItem") == 0) {
+	else if (name == "CreateItem") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -458,7 +458,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteItem") == 0) {
+	else if (name == "DeleteItem") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -480,7 +480,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// QueryItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "QueryItem") == 0) {
+	else if (name == "QueryItem") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -507,7 +507,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// AddResponse/AddResponseOnce/AddResponseOnceGame
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddResponse") == 0 || strcmp(name, "AddResponseOnce") == 0 || strcmp(name, "AddResponseOnceGame") == 0) {
+	else if (name == "AddResponse" || name == "AddResponseOnce" || name == "AddResponseOnceGame") {
 		stack->correctParams(6);
 		int id = stack->pop()->getInt();
 		const char *text = stack->pop()->getString();
@@ -540,9 +540,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 					res->setFont(val4->getString());
 				}
 
-				if (strcmp(name, "AddResponseOnce") == 0) {
+				if (name == "AddResponseOnce") {
 					res->_responseType = RESPONSE_ONCE;
-				} else if (strcmp(name, "AddResponseOnceGame") == 0) {
+				} else if (name == "AddResponseOnceGame") {
 					res->_responseType = RESPONSE_ONCE_GAME;
 				}
 
@@ -559,7 +559,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ResetResponse
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ResetResponse") == 0) {
+	else if (name == "ResetResponse") {
 		stack->correctParams(1);
 		int id = stack->pop()->getInt(-1);
 		resetResponse(id);
@@ -570,7 +570,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ClearResponses
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ClearResponses") == 0) {
+	else if (name == "ClearResponses") {
 		stack->correctParams(0);
 		_responseBox->clearResponses();
 		_responseBox->clearButtons();
@@ -581,7 +581,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetResponse
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetResponse") == 0) {
+	else if (name == "GetResponse") {
 		stack->correctParams(1);
 		bool autoSelectLast = stack->pop()->getBool();
 
@@ -617,7 +617,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetNumResponses
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetNumResponses") == 0) {
+	else if (name == "GetNumResponses") {
 		stack->correctParams(0);
 		if (_responseBox) {
 			_responseBox->weedResponses();
@@ -633,7 +633,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// StartDlgBranch
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "StartDlgBranch") == 0) {
+	else if (name == "StartDlgBranch") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		Common::String branchName;
@@ -652,7 +652,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// EndDlgBranch
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "EndDlgBranch") == 0) {
+	else if (name == "EndDlgBranch") {
 		stack->correctParams(1);
 
 		const char *branchName = nullptr;
@@ -670,7 +670,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetCurrentDlgBranch
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetCurrentDlgBranch") == 0) {
+	else if (name == "GetCurrentDlgBranch") {
 		stack->correctParams(0);
 
 		if (_dlgPendingBranches.size() > 0) {
@@ -685,35 +685,35 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// TakeItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TakeItem") == 0) {
+	else if (name == "TakeItem") {
 		return _invObject->scCallMethod(script, stack, thisStack, name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// DropItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DropItem") == 0) {
+	else if (name == "DropItem") {
 		return _invObject->scCallMethod(script, stack, thisStack, name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetItem") == 0) {
+	else if (name == "GetItem") {
 		return _invObject->scCallMethod(script, stack, thisStack, name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// HasItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HasItem") == 0) {
+	else if (name == "HasItem") {
 		return _invObject->scCallMethod(script, stack, thisStack, name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// IsItemTaken
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsItemTaken") == 0) {
+	else if (name == "IsItemTaken") {
 		stack->correctParams(1);
 
 		ScValue *val = stack->pop();
@@ -742,7 +742,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetInventoryWindow
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetInventoryWindow") == 0) {
+	else if (name == "GetInventoryWindow") {
 		stack->correctParams(0);
 		if (_inventoryBox && _inventoryBox->_window) {
 			stack->pushNative(_inventoryBox->_window, true);
@@ -756,7 +756,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// GetResponsesWindow
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetResponsesWindow") == 0 || strcmp(name, "GetResponseWindow") == 0) {
+	else if (name == "GetResponsesWindow" || name == "GetResponseWindow") {
 		stack->correctParams(0);
 		if (_responseBox && _responseBox->getResponseWindow()) {
 			stack->pushNative(_responseBox->getResponseWindow(), true);
@@ -770,7 +770,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// LoadResponseBox
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "LoadResponseBox") == 0) {
+	else if (name == "LoadResponseBox") {
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 
@@ -790,7 +790,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// LoadInventoryBox
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "LoadInventoryBox") == 0) {
+	else if (name == "LoadInventoryBox") {
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 
@@ -810,7 +810,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// LoadItems
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "LoadItems") == 0) {
+	else if (name == "LoadItems") {
 		stack->correctParams(2);
 		const char *filename = stack->pop()->getString();
 		bool merge = stack->pop()->getBool(false);
@@ -824,7 +824,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// AddSpeechDir
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "AddSpeechDir") == 0) {
+	else if (name == "AddSpeechDir") {
 		stack->correctParams(1);
 		const char *dir = stack->pop()->getString();
 		stack->pushBool(DID_SUCCEED(addSpeechDir(dir)));
@@ -835,7 +835,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// RemoveSpeechDir
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "RemoveSpeechDir") == 0) {
+	else if (name == "RemoveSpeechDir") {
 		stack->correctParams(1);
 		const char *dir = stack->pop()->getString();
 		stack->pushBool(DID_SUCCEED(removeSpeechDir(dir)));
@@ -846,7 +846,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetSceneViewport
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetSceneViewport") == 0) {
+	else if (name == "SetSceneViewport") {
 		stack->correctParams(4);
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
@@ -1063,12 +1063,12 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::scSetProperty(const char *name, ScValue *value) {
+bool AdGame::scSetProperty(const Common::String &name, ScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// SelectedItem
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SelectedItem") == 0) {
+	if (name == "SelectedItem") {
 		if (value->isNULL()) {
 			_selectedItem = nullptr;
 		} else {
@@ -1092,7 +1092,7 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SmartItemCursor
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SmartItemCursor") == 0) {
+	else if (name == "SmartItemCursor") {
 		_smartItemCursor = value->getBool();
 		return STATUS_OK;
 	}
@@ -1100,7 +1100,7 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// InventoryVisible
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InventoryVisible") == 0) {
+	else if (name == "InventoryVisible") {
 		if (_inventoryBox) {
 			_inventoryBox->_visible = value->getBool();
 		}
@@ -1110,7 +1110,7 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// InventoryObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InventoryObject") == 0) {
+	else if (name == "InventoryObject") {
 		if (_inventoryOwner && _inventoryBox) {
 			_inventoryOwner->getInventory()->_scrollOffset = _inventoryBox->_scrollOffset;
 		}
@@ -1136,7 +1136,7 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// InventoryScrollOffset
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "InventoryScrollOffset") == 0) {
+	else if (name == "InventoryScrollOffset") {
 		if (_inventoryBox) {
 			_inventoryBox->_scrollOffset = value->getInt();
 		}
@@ -1146,7 +1146,7 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// TalkSkipButton
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "TalkSkipButton") == 0) {
+	else if (name == "TalkSkipButton") {
 		int val = value->getInt();
 		if (val < 0) {
 			val = 0;
@@ -1161,7 +1161,7 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// StartupScene
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "StartupScene") == 0) {
+	else if (name == "StartupScene") {
 		if (value == nullptr) {
 			delete[] _startupScene;
 			_startupScene = nullptr;

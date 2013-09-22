@@ -267,11 +267,11 @@ bool UIEntity::display(int offsetX, int offsetY) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GetEntity
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "GetEntity") == 0) {
+	if (name == "GetEntity") {
 		stack->correctParams(0);
 
 		if (_entity) {
@@ -286,7 +286,7 @@ bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// SetEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetEntity") == 0) {
+	else if (name == "SetEntity") {
 		stack->correctParams(1);
 
 		const char *filename = stack->pop()->getString();
@@ -333,11 +333,11 @@ ScValue *UIEntity::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool UIEntity::scSetProperty(const char *name, ScValue *value) {
+bool UIEntity::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Freezable") == 0) {
+	if (name == "Freezable") {
 		if (_entity) {
 			_entity->makeFreezable(value->getBool());
 		}

@@ -687,11 +687,11 @@ bool AdEntity::update() {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// StopSound
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "StopSound") == 0 && _subtype == ENTITY_SOUND) {
+	if (name == "StopSound" && _subtype == ENTITY_SOUND) {
 		stack->correctParams(0);
 
 		if (DID_FAIL(stopSFX(false))) {
@@ -705,7 +705,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// PlayTheora
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PlayTheora") == 0) {
+	else if (name == "PlayTheora") {
 		stack->correctParams(4);
 		const char *filename = stack->pop()->getString();
 		bool looping = stack->pop()->getBool(false);
@@ -732,7 +732,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// StopTheora
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "StopTheora") == 0) {
+	else if (name == "StopTheora") {
 		stack->correctParams(0);
 		if (_theora) {
 			_theora->stop();
@@ -749,7 +749,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// IsTheoraPlaying
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsTheoraPlaying") == 0) {
+	else if (name == "IsTheoraPlaying") {
 		stack->correctParams(0);
 		if (_theora && _theora->isPlaying()) {
 			stack->pushBool(true);
@@ -763,7 +763,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// PauseTheora
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PauseTheora") == 0) {
+	else if (name == "PauseTheora") {
 		stack->correctParams(0);
 		if (_theora && _theora->isPlaying()) {
 			_theora->pause();
@@ -778,7 +778,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// ResumeTheora
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ResumeTheora") == 0) {
+	else if (name == "ResumeTheora") {
 		stack->correctParams(0);
 		if (_theora && _theora->isPaused()) {
 			_theora->resume();
@@ -793,7 +793,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// IsTheoraPaused
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsTheoraPaused") == 0) {
+	else if (name == "IsTheoraPaused") {
 		stack->correctParams(0);
 		if (_theora && _theora->isPaused()) {
 			stack->pushBool(true);
@@ -808,7 +808,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// CreateRegion
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CreateRegion") == 0) {
+	else if (name == "CreateRegion") {
 		stack->correctParams(0);
 		if (!_region) {
 			_region = new BaseRegion(_gameRef);
@@ -826,7 +826,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// DeleteRegion
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteRegion") == 0) {
+	else if (name == "DeleteRegion") {
 		stack->correctParams(0);
 		if (_region) {
 			_gameRef->unregisterObject(_region);
@@ -922,12 +922,12 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdEntity::scSetProperty(const char *name, ScValue *value) {
+bool AdEntity::scSetProperty(const Common::String &name, ScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Item") == 0) {
+	if (name == "Item") {
 		setItem(value->getString());
 		return STATUS_OK;
 	}
@@ -935,7 +935,7 @@ bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkToX") == 0) {
+	else if (name == "WalkToX") {
 		_walkToX = value->getInt();
 		return STATUS_OK;
 	}
@@ -943,7 +943,7 @@ bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkToY") == 0) {
+	else if (name == "WalkToY") {
 		_walkToY = value->getInt();
 		return STATUS_OK;
 	}
@@ -951,7 +951,7 @@ bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WalkToDirection") == 0) {
+	else if (name == "WalkToDirection") {
 		int dir = value->getInt();
 		if (dir >= 0 && dir < NUM_DIRECTIONS) {
 			_walkToDir = (TDirection)dir;

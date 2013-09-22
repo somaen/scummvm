@@ -132,11 +132,11 @@ Common::String SXMemBuffer::scToString() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSize
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SetSize") == 0) {
+	if (name == "SetSize") {
 		stack->correctParams(1);
 		int newSize = stack->pop()->getInt();
 		newSize = MAX(0, newSize);
@@ -152,7 +152,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// GetBool
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetBool") == 0) {
+	else if (name == "GetBool") {
 		stack->correctParams(1);
 		int start = stack->pop()->getInt();
 		if (!checkBounds(script, start, sizeof(bool))) {
@@ -167,7 +167,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// GetByte
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetByte") == 0) {
+	else if (name == "GetByte") {
 		stack->correctParams(1);
 		int start = stack->pop()->getInt();
 		if (!checkBounds(script, start, sizeof(byte))) {
@@ -182,7 +182,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// GetShort
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetShort") == 0) {
+	else if (name == "GetShort") {
 		stack->correctParams(1);
 		int start = stack->pop()->getInt();
 		if (!checkBounds(script, start, sizeof(short))) {
@@ -197,7 +197,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// GetInt / GetLong
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetInt") == 0 || strcmp(name, "GetLong") == 0) {
+	else if (name == "GetInt" || name == "GetLong") {
 		stack->correctParams(1);
 		int start = stack->pop()->getInt();
 		if (!checkBounds(script, start, sizeof(int))) {
@@ -212,7 +212,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// GetFloat
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetFloat") == 0) {
+	else if (name == "GetFloat") {
 		stack->correctParams(1);
 		int start = stack->pop()->getInt();
 		if (!checkBounds(script, start, sizeof(float))) {
@@ -227,7 +227,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// GetDouble
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetDouble") == 0) {
+	else if (name == "GetDouble") {
 		stack->correctParams(1);
 		int start = stack->pop()->getInt();
 		if (!checkBounds(script, start, sizeof(double))) {
@@ -242,7 +242,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// GetString
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetString") == 0) {
+	else if (name == "GetString") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		int length = stack->pop()->getInt();
@@ -271,7 +271,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// GetPointer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetPointer") == 0) {
+	else if (name == "GetPointer") {
 		stack->correctParams(1);
 		int start = stack->pop()->getInt();
 		if (!checkBounds(script, start, sizeof(void *))) {
@@ -287,7 +287,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// SetBool
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetBool") == 0) {
+	else if (name == "SetBool") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		bool val = stack->pop()->getBool();
@@ -304,7 +304,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// SetByte
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetByte") == 0) {
+	else if (name == "SetByte") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		byte val = (byte)stack->pop()->getInt();
@@ -321,7 +321,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// SetShort
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetShort") == 0) {
+	else if (name == "SetShort") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		short val = (short)stack->pop()->getInt();
@@ -338,7 +338,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// SetInt / SetLong
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetInt") == 0 || strcmp(name, "SetLong") == 0) {
+	else if (name == "SetInt" || name == "SetLong") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		int val = stack->pop()->getInt();
@@ -355,7 +355,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// SetFloat
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetFloat") == 0) {
+	else if (name == "SetFloat") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		float val = (float)stack->pop()->getFloat();
@@ -372,7 +372,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// SetDouble
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetDouble") == 0) {
+	else if (name == "SetDouble") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		double val = stack->pop()->getFloat();
@@ -389,7 +389,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// SetString
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetString") == 0) {
+	else if (name == "SetString") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		const char *val = stack->pop()->getString();
@@ -406,7 +406,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// SetPointer
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetPointer") == 0) {
+	else if (name == "SetPointer") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		/* ScValue *val = */ stack->pop();
@@ -429,7 +429,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	// DEBUG_Dump
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DEBUG_Dump") == 0) {
+	else if (name == "DEBUG_Dump") {
 		stack->correctParams(0);
 		if (_buffer && _size) {
 			warning("SXMemBuffer::ScCallMethod - DEBUG_Dump");
@@ -471,7 +471,7 @@ ScValue *SXMemBuffer::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
+bool SXMemBuffer::scSetProperty(const Common::String &name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length
