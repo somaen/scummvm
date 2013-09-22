@@ -111,8 +111,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Substring
 	//////////////////////////////////////////////////////////////////////////
-	
-	if (!name.equals("Substring")) {
+	if (name == "Substring") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		int end   = stack->pop()->getInt();
@@ -147,7 +146,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Substr
 	//////////////////////////////////////////////////////////////////////////
-	else if (!name.equals("Substr")) {
+	else if (name == "Substr") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 
@@ -189,7 +188,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// ToUpperCase
 	//////////////////////////////////////////////////////////////////////////
-	else if (!name.equals("ToUpperCase")) {
+	else if (name == "ToUpperCase") {
 		stack->correctParams(0);
 
 		WideString str;
@@ -213,7 +212,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// ToLowerCase
 	//////////////////////////////////////////////////////////////////////////
-	else if (!name.equals("ToLowerCase")) {
+	else if (name == "ToLowerCase") {
 		stack->correctParams(0);
 
 		WideString str;
@@ -237,7 +236,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// IndexOf
 	//////////////////////////////////////////////////////////////////////////
-	else if (!name.equals("IndexOf")) {
+	else if (name == "IndexOf") {
 		stack->correctParams(2);
 
 		const char *strToFind = stack->pop()->getString();
@@ -266,7 +265,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Split
 	//////////////////////////////////////////////////////////////////////////
-	else if (!name.compareTo("Split")) {
+	else if (name == "Split") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		char separators[MAX_PATH_LENGTH] = ",";
