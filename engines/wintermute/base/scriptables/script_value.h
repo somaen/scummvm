@@ -55,6 +55,7 @@ public:
 	bool propExists(const Common::String &name);
 	void copy(ScValue *orig, bool copyWhole = false);
 	void setStringVal(const Common::String &val);
+	void setStringVal(const char *val);
 	TValType getType();
 	bool getBool(bool defaultVal = false);
 	int getInt(int defaultVal = 0);

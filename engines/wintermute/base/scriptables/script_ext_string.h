@@ -44,6 +44,7 @@ public:
 	void scSetString(const Common::String &val);
 	Common::String scToString();
 	void setStringVal(const Common::String &val);
+	void setStringVal(const char *val);
 
 	SXString(BaseGame *inGame, ScStack *Stack);
 	virtual ~SXString();

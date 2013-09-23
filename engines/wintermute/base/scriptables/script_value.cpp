@@ -449,19 +449,24 @@ void ScValue::setString(const Common::String &val) {
 
 //////////////////////////////////////////////////////////////////////////
 void ScValue::setStringVal(const Common::String &val) {
+	setStringVal(val.c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void ScValue::setStringVal(const char *val) {
 	if (_valString) {
 		delete[] _valString;
 		_valString = nullptr;
 	}
 	
-	/*if (val == nullptr) {
+	if (val == nullptr) {
 		_valString = nullptr;
 		return;
 	}
-	*/
-	_valString = new char [val.size() + 1];
+	
+	_valString = new char [strlen(val) + 1];
 	if (_valString) {
-		strcpy(_valString, val.c_str());
+		strcpy(_valString, val);
 	}
 }
 

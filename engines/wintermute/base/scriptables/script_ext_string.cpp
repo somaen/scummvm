@@ -75,10 +75,9 @@ SXString::~SXString() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-void SXString::setStringVal(const Common::String &val) {
-	int len = val.size();
+void SXString::setStringVal(const char *val) {
+	int len = strlen(val);
 	if (len >= _capacity) {
 		_capacity = len + 1;
 		delete[] _string;
@@ -86,7 +85,12 @@ void SXString::setStringVal(const Common::String &val) {
 		_string = new char[_capacity];
 		memset(_string, 0, _capacity);
 	}
-	strcpy(_string, val.c_str());
+	strcpy(_string, val);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void SXString::setStringVal(const Common::String &val) {
+	setStringVal(val.c_str());
 }
 
 
