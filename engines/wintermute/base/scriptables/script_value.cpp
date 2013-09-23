@@ -453,12 +453,12 @@ void ScValue::setStringVal(const Common::String &val) {
 		delete[] _valString;
 		_valString = nullptr;
 	}
-
-	if (val == nullptr) {
+	
+	/*if (val == nullptr) {
 		_valString = nullptr;
 		return;
 	}
-
+	*/
 	_valString = new char [val.size() + 1];
 	if (_valString) {
 		strcpy(_valString, val.c_str());
