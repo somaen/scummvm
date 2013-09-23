@@ -30,7 +30,7 @@
 #define WINTERMUTE_BASE_GAME_MUSIC_H
 
 #include "common/scummsys.h"
-
+#include "common/str.h"
 
 namespace Wintermute {
 
@@ -45,7 +45,7 @@ public:
 	BaseGameMusic(BaseGame *gameRef);
 	void cleanup();
 
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name);
 
 	bool resumeMusic(int channel);
 	bool setMusicStartTime(int channel, uint32 time);

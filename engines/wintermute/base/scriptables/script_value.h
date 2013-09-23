@@ -52,8 +52,9 @@ public:
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	void setValue(ScValue *val);
 	bool _persistent;
-	bool propExists(const char *name);
+	bool propExists(const Common::String &name);
 	void copy(ScValue *orig, bool copyWhole = false);
+	// void setStringVal(const Common::String &val);
 	void setStringVal(const char *val);
 	TValType getType();
 	bool getBool(bool defaultVal = false);
@@ -62,14 +63,14 @@ public:
 	const char *getString();
 	void *getMemBuffer();
 	BaseScriptable *getNative();
-	bool deleteProp(const char *name);
+	bool deleteProp(const Common::String &name);
 	void deleteProps();
 	void CleanProps(bool includingNatives);
 	void setBool(bool val);
 	void setInt(int val);
 	void setFloat(double val);
 	void setString(const char *val);
-	void setString(const Common::String &val);
+	// void setString(const Common::String &val);
 	void setNULL();
 	void setNative(BaseScriptable *val, bool persistent = false);
 	void setObject();
@@ -81,8 +82,8 @@ public:
 	bool isFloat();
 	bool isInt();
 	bool isObject();
-	bool setProp(const char *name, ScValue *val, bool copyWhole = false, bool setAsConst = false);
-	ScValue *getProp(const char *name);
+	bool setProp(const Common::String &name, ScValue *val, bool copyWhole = false, bool setAsConst = false);
+	ScValue *getProp(const Common::String &name);
 	BaseScriptable *_valNative;
 	ScValue *_valRef;
 private:
@@ -101,11 +102,11 @@ public:
 	Common::HashMap<Common::String, ScValue *> _valObject;
 	Common::HashMap<Common::String, ScValue *>::iterator _valIter;
 
-	bool setProperty(const char *propName, int32 value);
-	bool setProperty(const char *propName, const char *value);
-	bool setProperty(const char *propName, double value);
-	bool setProperty(const char *propName, bool value);
-	bool setProperty(const char *propName);
+	bool setProperty(const Common::String &propName, int32 value);
+	bool setProperty(const Common::String &propName, const char *value);
+	bool setProperty(const Common::String &propName, double value);
+	bool setProperty(const Common::String &propName, bool value);
+	bool setProperty(const Common::String &propName);
 };
 
 } // End of namespace Wintermute

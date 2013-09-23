@@ -56,9 +56,9 @@ public:
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	virtual bool scSetProperty(const Common::String &name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) override;
+	virtual Common::String scToString() override;
 private:
 	float _lastMimicScale;
 	int32 _lastMimicX;

@@ -75,7 +75,6 @@ SXString::~SXString() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void SXString::setStringVal(const char *val) {
 	int len = strlen(val);
@@ -89,9 +88,14 @@ void SXString::setStringVal(const char *val) {
 	strcpy(_string, val);
 }
 
+/*//////////////////////////////////////////////////////////////////////////
+void SXString::setStringVal(const Common::String &val) {
+	setStringVal(val.c_str());
+}
+*/
 
 //////////////////////////////////////////////////////////////////////////
-const char *SXString::scToString() {
+Common::String SXString::scToString() {
 	if (_string) {
 		return _string;
 	} else {
@@ -107,11 +111,11 @@ void SXString::scSetString(const char *val) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Substring
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Substring") == 0) {
+	if (name == "Substring") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 		int end   = stack->pop()->getInt();
@@ -146,7 +150,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Substr
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Substr") == 0) {
+	else if (name == "Substr") {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
 
@@ -188,7 +192,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// ToUpperCase
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ToUpperCase") == 0) {
+	else if (name == "ToUpperCase") {
 		stack->correctParams(0);
 
 		WideString str;
@@ -212,7 +216,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// ToLowerCase
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ToLowerCase") == 0) {
+	else if (name == "ToLowerCase") {
 		stack->correctParams(0);
 
 		WideString str;
@@ -236,7 +240,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// IndexOf
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IndexOf") == 0) {
+	else if (name == "IndexOf") {
 		stack->correctParams(2);
 
 		const char *strToFind = stack->pop()->getString();
@@ -265,7 +269,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// Split
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Split") == 0) {
+	else if (name == "Split") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		char separators[MAX_PATH_LENGTH] = ",";
@@ -376,11 +380,11 @@ ScValue *SXString::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXString::scSetProperty(const char *name, ScValue *value) {
+bool SXString::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Capacity") == 0) {
+	if (!name.compareTo("Capacity")) {
 		int32 newCap = (uint32)value->getInt();
 		if (newCap < (int32)(strlen(_string) + 1)) {
 			_gameRef->LOG(0, "Warning: cannot lower string capacity");

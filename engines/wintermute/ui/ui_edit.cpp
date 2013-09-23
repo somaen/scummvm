@@ -377,11 +377,11 @@ bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetSelectedFont
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SetSelectedFont") == 0) {
+	if (name == "SetSelectedFont") {
 		stack->correctParams(1);
 
 		if (_fontSelected) {
@@ -475,11 +475,11 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool UIEdit::scSetProperty(const char *name, ScValue *value) {
+bool UIEdit::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SelStart") == 0) {
+	if (name == "SelStart") {
 		_selStart = value->getInt();
 		_selStart = MAX<int32>(_selStart, 0);
 		_selStart = (int)MIN((size_t)_selStart, strlen(_text));
@@ -489,7 +489,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelEnd
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SelEnd") == 0) {
+	else if (name == "SelEnd") {
 		_selEnd = value->getInt();
 		_selEnd = MAX<int32>(_selEnd, 0);
 		_selEnd = (int)MIN((size_t)_selEnd, strlen(_text));
@@ -499,7 +499,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CursorBlinkRate") == 0) {
+	else if (name == "CursorBlinkRate") {
 		_cursorBlinkRate = (uint32)value->getInt();
 		return STATUS_OK;
 	}
@@ -507,7 +507,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorChar
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "CursorChar") == 0) {
+	else if (name == "CursorChar") {
 		setCursorChar(value->getString());
 		return STATUS_OK;
 	}
@@ -515,7 +515,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// FrameWidth
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "FrameWidth") == 0) {
+	else if (name == "FrameWidth") {
 		_frameWidth = value->getInt();
 		return STATUS_OK;
 	}
@@ -523,7 +523,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MaxLength
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MaxLength") == 0) {
+	else if (name == "MaxLength") {
 		_maxLength = value->getInt();
 		return STATUS_OK;
 	}
@@ -531,7 +531,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Text") == 0) {
+	else if (name == "Text") {
 		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::utf8ToWide(value->getString());
 			setText(StringUtil::wideToAnsi(wstr).c_str());
@@ -546,7 +546,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *UIEdit::scToString() {
+Common::String UIEdit::scToString() {
 	return "[edit]";
 }
 

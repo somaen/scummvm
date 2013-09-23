@@ -43,8 +43,8 @@ public:
 	virtual ~BaseScriptHolder();
 	virtual ScScript *invokeMethodThread(const char *methodName);
 	virtual void makeFreezable(bool freezable);
-	bool canHandleEvent(const char *eventName) const;
-	virtual bool canHandleMethod(const char *eventMethod) const;
+	bool canHandleEvent(const Common::String &eventName) const;
+	virtual bool canHandleMethod(const Common::String &eventMethod) const override;
 	bool cleanup();
 	bool removeScript(ScScript *script);
 	bool addScript(const char *filename);
@@ -60,9 +60,9 @@ public:
 	BaseArray<ScScript *> _scripts;
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	virtual bool scSetProperty(const Common::String &name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) override;
+	virtual Common::String scToString() override;
 	virtual void scDebuggerDesc(char *buf, int bufSize) override;
 	// IWmeObject
 private:

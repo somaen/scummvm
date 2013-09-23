@@ -130,7 +130,7 @@ public:
 	uint32 getDWORD();
 	double getFloat();
 	void cleanup();
-	bool create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner);
+	bool create(const Common::String &filename, byte *buffer, uint32 size, BaseScriptHolder *owner);
 	uint32 _iP;
 private:
 	void readHeader();

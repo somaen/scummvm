@@ -41,9 +41,9 @@ class SXFile : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(SXFile, BaseScriptable)
 	ScValue *scGetProperty(const Common::String &name);
-	bool scSetProperty(const char *name, ScValue *value);
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	const char *scToString();
+	bool scSetProperty(const Common::String &name, ScValue *value);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) override;
+	Common::String scToString();
 	SXFile(BaseGame *inGame, ScStack *Stack);
 	virtual ~SXFile();
 private:

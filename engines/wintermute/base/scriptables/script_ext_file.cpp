@@ -94,7 +94,7 @@ void SXFile::close() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *SXFile::scToString() {
+Common::String SXFile::scToString() {
 	if (_filename) {
 		return _filename;
 	} else {
@@ -104,11 +104,11 @@ const char *SXFile::scToString() {
 
 #define FILE_BUFFER_SIZE 32768
 //////////////////////////////////////////////////////////////////////////
-bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SetFilename
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "SetFilename") == 0) {
+	if (name == "SetFilename") {
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 		cleanup();
@@ -120,12 +120,12 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// OpenAsText / OpenAsBinary
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "OpenAsText") == 0 || strcmp(name, "OpenAsBinary") == 0) {
+	else if (name == "OpenAsText" || name == "OpenAsBinary") {
 		stack->correctParams(1);
 		close();
 		_mode = stack->pop()->getInt(1);
 		if (_mode < 1 || _mode > 3) {
-			script->runtimeError("File.%s: invalid access mode. Setting read mode.", name);
+			script->runtimeError("File.%s: invalid access mode. Setting read mode.", name.c_str());
 			_mode = 1;
 		}
 		if (_mode == 1) {
@@ -134,10 +134,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 				//script->runtimeError("File.%s: Error opening file '%s' for reading.", Name, _filename);
 				close();
 			} else {
-				_textMode = strcmp(name, "OpenAsText") == 0;
+				_textMode = name == "OpenAsText";
 			}
 		} else {
-			if (strcmp(name, "OpenAsText") == 0) {
+			if (name == "OpenAsText") {
 				if (_mode == 2) {
 					_writeFile = openForWrite(_filename, false);
 				} else {
@@ -155,7 +155,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 				//script->runtimeError("File.%s: Error opening file '%s' for writing.", Name, _filename);
 				close();
 			} else {
-				_textMode = strcmp(name, "OpenAsText") == 0;
+				_textMode = name == "OpenAsText";
 			}
 		}
 
@@ -171,7 +171,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Close
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Close") == 0) {
+	else if (name == "Close") {
 		stack->correctParams(0);
 		close();
 		stack->pushNULL();
@@ -181,10 +181,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// SetPosition
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetPosition") == 0) {
+	else if (name == "SetPosition") {
 		stack->correctParams(1);
 		if (_mode == 0) {
-			script->runtimeError("File.%s: File is not open", name);
+			script->runtimeError("File.%s: File is not open", name.c_str());
 			stack->pushBool(false);
 		} else {
 			int pos = stack->pop()->getInt();
@@ -196,7 +196,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Delete
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Delete") == 0) {
+	else if (name == "Delete") {
 		stack->correctParams(0);
 		close();
 		error("SXFile-Method: \"Delete\" not supported");
@@ -208,7 +208,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// Copy
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Copy") == 0) {
+	else if (name == "Copy") {
 		stack->correctParams(2);
 		/* const char *dest = */ stack->pop()->getString();
 		/* bool overwrite = */ stack->pop()->getBool(true);
@@ -223,10 +223,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadLine
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadLine") == 0) {
+	else if (name == "ReadLine") {
 		stack->correctParams(0);
 		if (!_textMode || !_readFile) {
-			script->runtimeError("File.%s: File must be open in text mode.", name);
+			script->runtimeError("File.%s: File must be open in text mode.", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -278,12 +278,12 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadText
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadText") == 0) {
+	else if (name == "ReadText") {
 		stack->correctParams(1);
 		int textLen = stack->pop()->getInt();
 
 		if (!_textMode || !_readFile) {
-			script->runtimeError("File.%s: File must be open in text mode.", name);
+			script->runtimeError("File.%s: File must be open in text mode.", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -331,16 +331,16 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// WriteLine / WriteText
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WriteLine") == 0 || strcmp(name, "WriteText") == 0) {
+	else if (name == "WriteLine" || name == "WriteText") {
 		stack->correctParams(1);
 		const char *line = stack->pop()->getString();
 		if (!_textMode || !_writeFile) {
-			script->runtimeError("File.%s: File must be open for writing in text mode.", name);
+			script->runtimeError("File.%s: File must be open for writing in text mode.", name.c_str());
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
 		Common::String writeLine;
-		if (strcmp(name, "WriteLine") == 0) {
+		if (name == "WriteLine") {
 			writeLine = Common::String::format("%s\n", line);
 		} else {
 			writeLine = Common::String::format("%s", line);
@@ -356,10 +356,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadBool
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadBool") == 0) {
+	else if (name == "ReadBool") {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
-			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for reading in binary mode.", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -376,10 +376,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadByte
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadByte") == 0) {
+	else if (name == "ReadByte") {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
-			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for reading in binary mode.", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -396,10 +396,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadShort
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadShort") == 0) {
+	else if (name == "ReadShort") {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
-			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for reading in binary mode.", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -415,10 +415,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadInt / ReadLong
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadInt") == 0 || strcmp(name, "ReadLong") == 0) {
+	else if (name == "ReadInt" || name == "ReadLong") {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
-			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for reading in binary mode.", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -435,10 +435,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadFloat
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadFloat") == 0) {
+	else if (name == "ReadFloat") {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
-			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for reading in binary mode.", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -456,11 +456,11 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadDouble
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadDouble") == 0) { // TODO: Solve reading a 8 byte double.
+	else if (name == "ReadDouble") { // TODO: Solve reading a 8 byte double.
 		error("SXFile::ReadDouble - Not endian safe yet");
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
-			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for reading in binary mode.", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -477,10 +477,10 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadString
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadString") == 0) {
+	else if (name == "ReadString") {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
-			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for reading in binary mode.", name.c_str());
 			stack->pushNULL();
 			return STATUS_OK;
 		}
@@ -506,12 +506,12 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// WriteBool
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WriteBool") == 0) {
+	else if (name == "WriteBool") {
 		stack->correctParams(1);
 		bool val = stack->pop()->getBool();
 
 		if (_textMode || !_writeFile) {
-			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for writing in binary mode.", name.c_str());
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -524,12 +524,12 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// WriteByte
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WriteByte") == 0) {
+	else if (name == "WriteByte") {
 		stack->correctParams(1);
 		byte val = stack->pop()->getInt();
 
 		if (_textMode || !_writeFile) {
-			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for writing in binary mode.", name.c_str());
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -542,12 +542,12 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// WriteShort
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WriteShort") == 0) {
+	else if (name == "WriteShort") {
 		stack->correctParams(1);
 		int16 val = stack->pop()->getInt();
 
 		if (_textMode || !_writeFile) {
-			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for writing in binary mode.", name.c_str());
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -560,12 +560,12 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// WriteInt / WriteLong
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WriteInt") == 0 || strcmp(name, "WriteLong") == 0) {
+	else if (name == "WriteInt" || name == "WriteLong") {
 		stack->correctParams(1);
 		int32 val = stack->pop()->getInt();
 
 		if (_textMode || !_writeFile) {
-			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for writing in binary mode.", name.c_str());
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -578,12 +578,12 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// WriteFloat
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WriteFloat") == 0) {
+	else if (name == "WriteFloat") {
 		stack->correctParams(1);
 		float val = stack->pop()->getFloat();
 
 		if (_textMode || !_writeFile) {
-			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for writing in binary mode.", name.c_str());
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -597,13 +597,13 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// WriteDouble
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WriteDouble") == 0) {
+	else if (name == "WriteDouble") {
 		error("SXFile::WriteDouble - Not endian safe yet");
 		stack->correctParams(1);
 		/* double val = */ stack->pop()->getFloat();
 
 		if (_textMode || !_writeFile) {
-			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for writing in binary mode.", name.c_str());
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -616,12 +616,12 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// WriteString
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "WriteString") == 0) {
+	else if (name == "WriteString") {
 		stack->correctParams(1);
 		const char *val = stack->pop()->getString();
 
 		if (_textMode || !_writeFile) {
-			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
+			script->runtimeError("File.%s: File must be open for writing in binary mode.", name.c_str());
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -696,7 +696,7 @@ ScValue *SXFile::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SXFile::scSetProperty(const char *name, ScValue *value) {
+bool SXFile::scSetProperty(const Common::String &name, ScValue *value) {
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Length

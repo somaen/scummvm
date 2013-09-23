@@ -39,10 +39,11 @@ public:
 	virtual int scCompare(BaseScriptable *Val);
 	DECLARE_PERSISTENT(SXString, BaseScriptable)
 	ScValue *scGetProperty(const Common::String &name);
-	bool scSetProperty(const char *name, ScValue *value);
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
+	bool scSetProperty(const Common::String &name, ScValue *value);
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) override;
 	void scSetString(const char *val);
-	const char *scToString();
+	Common::String scToString();
+/*	void setStringVal(const Common::String &val);*/
 	void setStringVal(const char *val);
 
 	SXString(BaseGame *inGame, ScStack *Stack);

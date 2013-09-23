@@ -415,12 +415,12 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
-bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
+bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetImage
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "GetImage") == 0) {
+	if (name == "GetImage") {
 		stack->correctParams(0);
 
 		if (!_surfaceFilename) {
@@ -434,7 +434,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	//////////////////////////////////////////////////////////////////////////
 	// SetImage
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetImage") == 0) {
+	else if (name == "SetImage") {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
@@ -555,11 +555,11 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
+bool BaseSubFrame::scSetProperty(const Common::String &name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "AlphaColor") == 0) {
+	if (name == "AlphaColor") {
 		_alpha = (uint32)value->getInt();
 		return STATUS_OK;
 	}
@@ -567,7 +567,7 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Is2DOnly") == 0) {
+	else if (name == "Is2DOnly") {
 		_2DOnly = value->getBool();
 		return STATUS_OK;
 	}
@@ -575,7 +575,7 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Is3DOnly") == 0) {
+	else if (name == "Is3DOnly") {
 		_3DOnly = value->getBool();
 		return STATUS_OK;
 	}
@@ -583,7 +583,7 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MirrorX") == 0) {
+	else if (name == "MirrorX") {
 		_mirrorX = value->getBool();
 		return STATUS_OK;
 	}
@@ -591,7 +591,7 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MirrorY") == 0) {
+	else if (name == "MirrorY") {
 		_mirrorY = value->getBool();
 		return STATUS_OK;
 	}
@@ -599,7 +599,7 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Decoration") == 0) {
+	else if (name == "Decoration") {
 		_decoration = value->getBool();
 		return STATUS_OK;
 	}
@@ -607,7 +607,7 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HotspotX") == 0) {
+	else if (name == "HotspotX") {
 		_hotspotX = value->getInt();
 		return STATUS_OK;
 	}
@@ -615,7 +615,7 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "HotspotY") == 0) {
+	else if (name == "HotspotY") {
 		_hotspotY = value->getInt();
 		return STATUS_OK;
 	} else {
@@ -625,7 +625,7 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseSubFrame::scToString() {
+Common::String BaseSubFrame::scToString() {
 	return "[subframe]";
 }
 

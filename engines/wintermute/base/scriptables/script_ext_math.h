@@ -40,7 +40,7 @@ public:
 	SXMath(BaseGame *inGame);
 	virtual ~SXMath();
 	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const Common::String &name) override;
 
 private:
 	double degreeToRadian(double value);
