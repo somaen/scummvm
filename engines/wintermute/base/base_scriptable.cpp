@@ -131,7 +131,7 @@ bool BaseScriptable::scToBool() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseScriptable::scSetString(const Common::String &val) {
+void BaseScriptable::scSetString(const char *val) {
 }
 
 

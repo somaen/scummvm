@@ -57,7 +57,7 @@ public:
 	virtual int scToInt();
 	virtual double scToFloat();
 	virtual bool scToBool();
-	virtual void scSetString(const Common::String &val);
+	virtual void scSetString(const char *val);
 	virtual void scSetInt(int val);
 	virtual void scSetFloat(double val);
 	virtual void scSetBool(bool val);

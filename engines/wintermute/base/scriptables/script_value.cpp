@@ -103,7 +103,7 @@ ScValue::ScValue(BaseGame *inGame, double val) : BaseClass(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue::ScValue(BaseGame *inGame, const Common::String &val) : BaseClass(inGame) {
+ScValue::ScValue(BaseGame *inGame, const char *val) : BaseClass(inGame) {
 	_type = VAL_STRING;
 	_valString = nullptr;
 	setStringVal(val);
@@ -442,15 +442,16 @@ void ScValue::setString(const char *val) {
 		_type = VAL_NULL;
 	}
 }
-
-void ScValue::setString(const Common::String &val) {
-	setString(val.c_str());
-}
-
+/*
+void ScValue::setString(const char *val) {
+	setString(val);
+}*/
+/*
 //////////////////////////////////////////////////////////////////////////
 void ScValue::setStringVal(const Common::String &val) {
 	setStringVal(val.c_str());
 }
+*/
 
 //////////////////////////////////////////////////////////////////////////
 void ScValue::setStringVal(const char *val) {
@@ -975,7 +976,7 @@ bool ScValue::setProperty(const Common::String &propName, int32 value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::setProperty(const Common::String &propName, const Common::String &value) {
+bool ScValue::setProperty(const Common::String &propName, const char *value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;

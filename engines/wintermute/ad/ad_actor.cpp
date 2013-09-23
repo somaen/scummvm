@@ -1096,7 +1096,7 @@ ScValue *AdActor::scGetProperty(const Common::String &name) {
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "TalkAnimName") {
-		_scValue->setString(_talkAnimName);
+		_scValue->setString(_talkAnimName.c_str());
 		return _scValue;
 	}
 
@@ -1104,7 +1104,7 @@ ScValue *AdActor::scGetProperty(const Common::String &name) {
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "WalkAnimName") {
-		_scValue->setString(_walkAnimName);
+		_scValue->setString(_walkAnimName.c_str());
 		return _scValue;
 	}
 
@@ -1112,7 +1112,7 @@ ScValue *AdActor::scGetProperty(const Common::String &name) {
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "IdleAnimName") {
-		_scValue->setString(_idleAnimName);
+		_scValue->setString(_idleAnimName.c_str());
 		return _scValue;
 	}
 
@@ -1120,7 +1120,7 @@ ScValue *AdActor::scGetProperty(const Common::String &name) {
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "TurnLeftAnimName") {
-		_scValue->setString(_turnLeftAnimName);
+		_scValue->setString(_turnLeftAnimName.c_str());
 		return _scValue;
 	}
 
@@ -1128,7 +1128,7 @@ ScValue *AdActor::scGetProperty(const Common::String &name) {
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "TurnRightAnimName") {
-		_scValue->setString(_turnRightAnimName);
+		_scValue->setString(_turnRightAnimName.c_str());
 		return _scValue;
 	} else {
 		return AdTalkHolder::scGetProperty(name);

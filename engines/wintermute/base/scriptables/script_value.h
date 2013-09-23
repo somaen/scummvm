@@ -54,7 +54,7 @@ public:
 	bool _persistent;
 	bool propExists(const Common::String &name);
 	void copy(ScValue *orig, bool copyWhole = false);
-	void setStringVal(const Common::String &val);
+	// void setStringVal(const Common::String &val);
 	void setStringVal(const char *val);
 	TValType getType();
 	bool getBool(bool defaultVal = false);
@@ -70,7 +70,7 @@ public:
 	void setInt(int val);
 	void setFloat(double val);
 	void setString(const char *val);
-	void setString(const Common::String &val);
+	// void setString(const Common::String &val);
 	void setNULL();
 	void setNative(BaseScriptable *val, bool persistent = false);
 	void setObject();
@@ -97,13 +97,13 @@ public:
 	ScValue(BaseGame *inGame, bool Val);
 	ScValue(BaseGame *inGame, int32 Val);
 	ScValue(BaseGame *inGame, double Val);
-	ScValue(BaseGame *inGame, const Common::String &Val);
+	ScValue(BaseGame *inGame, const char *Val);
 	virtual ~ScValue();
 	Common::HashMap<Common::String, ScValue *> _valObject;
 	Common::HashMap<Common::String, ScValue *>::iterator _valIter;
 
 	bool setProperty(const Common::String &propName, int32 value);
-	bool setProperty(const Common::String &propName, const Common::String &value);
+	bool setProperty(const Common::String &propName, const char *value);
 	bool setProperty(const Common::String &propName, double value);
 	bool setProperty(const Common::String &propName, bool value);
 	bool setProperty(const Common::String &propName);
