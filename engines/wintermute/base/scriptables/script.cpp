@@ -31,7 +31,9 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "common/tokenizer.h"
 #include "common/memstream.h"
+#include "engines/wintermute/debugger_adapter.h"
 
 namespace Wintermute {
 
@@ -51,7 +53,6 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_engine = engine;
 
 	_globals = nullptr;
-
 	_scopeStack = nullptr;
 	_callStack  = nullptr;
 	_thisStack  = nullptr;
@@ -91,8 +92,11 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 
 	_unbreakable = false;
 	_parentScript = nullptr;
+	
+	_adapter = _gameRef->_adapter;
 
 	_tracingMode = false;
+	_step = kDefaultStep;
 }
 
 
@@ -318,11 +322,20 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 	_engine = original->_engine;
 	_parentScript = original;
 
+	mapWatchList();
+
+	_step = kDefaultStep;
+
 	return STATUS_OK;
 }
 
 
-
+void ScScript::mapWatchList () {
+	for (uint i = 0; i < _engine->_watchlist.size(); i++) {
+		if (!strcmp(_engine->_watchlist[i]._filename.c_str(), _filename))
+			_watchlist.add(_engine->_watchlist[i]);
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::createMethodThread(ScScript *original, const Common::String &methodName) {
@@ -521,6 +534,7 @@ bool ScScript::executeInstruction() {
 	ScValue *op2;
 
 	uint32 inst = getDWORD();
+	
 	switch (inst) {
 
 	case II_DEF_VAR:
@@ -1079,9 +1093,34 @@ bool ScScript::executeInstruction() {
 
 	case II_DBG_LINE: {
 		int newLine = getDWORD();
+
 		if (newLine != _currentLine) {
 			_currentLine = newLine;
 		}
+
+		for (uint j = 0; j < _engine->_breakpoints.size(); j++) {
+			if (_engine->_breakpoints[j]._line == _currentLine &&
+			        !strcmp(_engine->_breakpoints[j]._filename.c_str(), _filename) &&
+			        _engine->_breakpoints[j]._enabled
+			   ) {
+				_engine->_breakpoints[j]._hits++;
+				_adapter->triggerBreakpoint(this);
+			}
+		}
+
+
+		if (_callStack->_sP <= _step) {
+			_adapter->triggerStep(this);
+		}
+
+		for (uint i = 0; i < _watchlist.size(); i++) {
+			if (ScValue::compare(resolveName(_watchlist[i]._symbol.c_str()), _watchlist[i]._lastValue) &&
+			    _watchlist[i]._enabled) {
+				_watchlist[i]._lastValue->copy(resolveName(_watchlist[i]._symbol.c_str()));
+				_adapter->triggerWatch(this, _watchlist[i]._symbol.c_str());
+			}
+		}
+
 		break;
 
 	}
@@ -1120,7 +1159,7 @@ uint32 ScScript::getMethodPos(const Common::String &name) const {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *ScScript::getVar(char *name) {
+ScValue *ScScript::getVar(const char *name) {
 	ScValue *ret = nullptr;
 
 	// scope locals
@@ -1249,15 +1288,15 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	// buffer
 	if (persistMgr->getIsSaving()) {
 		if (_state != SCRIPT_PERSISTENT && _state != SCRIPT_FINISHED && _state != SCRIPT_THREAD_FINISHED) {
-			persistMgr->transfer(TMEMBER(_bufferSize));
+			persistMgr->transferUint32(TMEMBER(_bufferSize));
 			persistMgr->putBytes(_buffer, _bufferSize);
 		} else {
 			// don't save idle/finished scripts
 			int32 bufferSize = 0;
-			persistMgr->transfer(TMEMBER(bufferSize));
+			persistMgr->transferSint32(TMEMBER(bufferSize));
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(_bufferSize));
+		persistMgr->transferUint32(TMEMBER(_bufferSize));
 		if (_bufferSize > 0) {
 			_buffer = new byte[_bufferSize];
 			persistMgr->getBytes(_buffer, _bufferSize);
@@ -1270,31 +1309,31 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	persistMgr->transferPtr(TMEMBER_PTR(_callStack));
-	persistMgr->transfer(TMEMBER(_currentLine));
+	persistMgr->transferSint32(TMEMBER(_currentLine));
 	persistMgr->transferPtr(TMEMBER_PTR(_engine));
-	persistMgr->transfer(TMEMBER(_filename));
-	persistMgr->transfer(TMEMBER(_freezable));
+	persistMgr->transferCharPtr(TMEMBER(_filename));
+	persistMgr->transferBool(TMEMBER(_freezable));
 	persistMgr->transferPtr(TMEMBER_PTR(_globals));
-	persistMgr->transfer(TMEMBER(_iP));
+	persistMgr->transferUint32(TMEMBER(_iP));
 	persistMgr->transferPtr(TMEMBER_PTR(_scopeStack));
 	persistMgr->transferPtr(TMEMBER_PTR(_stack));
-	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transferSint32(TMEMBER_INT(_state));
 	persistMgr->transferPtr(TMEMBER_PTR(_operand));
-	persistMgr->transfer(TMEMBER_INT(_origState));
+	persistMgr->transferSint32(TMEMBER_INT(_origState));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 	persistMgr->transferPtr(TMEMBER_PTR(_reg1));
-	persistMgr->transfer(TMEMBER(_thread));
-	persistMgr->transfer(TMEMBER(_threadEvent));
+	persistMgr->transferBool(TMEMBER(_thread));
+	persistMgr->transferCharPtr(TMEMBER(_threadEvent));
 	persistMgr->transferPtr(TMEMBER_PTR(_thisStack));
-	persistMgr->transfer(TMEMBER(_timeSlice));
+	persistMgr->transferUint32(TMEMBER(_timeSlice));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitScript));
-	persistMgr->transfer(TMEMBER(_waitTime));
-	persistMgr->transfer(TMEMBER(_waitFrozen));
+	persistMgr->transferUint32(TMEMBER(_waitTime));
+	persistMgr->transferBool(TMEMBER(_waitFrozen));
 
-	persistMgr->transfer(TMEMBER(_methodThread));
-	persistMgr->transfer(TMEMBER(_methodThread));
-	persistMgr->transfer(TMEMBER(_unbreakable));
+	persistMgr->transferBool(TMEMBER(_methodThread));
+	persistMgr->transferBool(TMEMBER(_methodThread)); // TODO-SAVE: Deduplicate.
+	persistMgr->transferBool(TMEMBER(_unbreakable));
 	persistMgr->transferPtr(TMEMBER_PTR(_parentScript));
 
 	if (!persistMgr->getIsSaving()) {
@@ -1457,7 +1496,6 @@ void ScScript::afterLoad() {
 
 		_buffer = new byte [_bufferSize];
 		memcpy(_buffer, buffer, _bufferSize);
-
 		delete _scriptStream;
 		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 
@@ -1465,4 +1503,30 @@ void ScScript::afterLoad() {
 	}
 }
 
-} // End of namespace Wintermute
+////////////////////////////////////////////////
+ScValue *ScScript::resolveName(const char *name) {
+	// TODO: Some edge cases still left?
+	Common::String strName = Common::String(name);
+	strName.trim();
+	Common::StringTokenizer st = Common::StringTokenizer(strName.c_str(), ".");
+	
+	Common::String varName = st.nextToken();
+	ScValue *value = getVar(varName.c_str());
+
+	if (value == nullptr) {
+		return nullptr;
+	}
+	
+	while(value != nullptr && !st.empty() && (value->isNative() || value->isObject())) {
+		value = value->getProp(st.nextToken().c_str());
+	}
+	
+	return value;
+
+}
+
+int32 ScScript::getCallDepth() {
+	return _callStack->_sP;
+}
+
+} // end of namespace Wintermute

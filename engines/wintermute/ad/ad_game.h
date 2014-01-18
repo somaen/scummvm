@@ -120,16 +120,17 @@ public:
 	BaseArray<AdObject *> _objects;
 
 	virtual bool loadFile(const char *filename);
-	virtual bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool loadBuffer(char *buffer, bool complete = true);
 
 	bool loadItemsFile(const char *filename, bool merge = false);
-	bool loadItemsBuffer(byte *buffer, bool merge = false);
+	bool loadItemsBuffer(char *buffer, bool merge = false);
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	bool validMouse();
+	Common::String debuggerToString() const override;
 private:
 	virtual bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) override;
 

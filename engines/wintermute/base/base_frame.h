@@ -52,7 +52,7 @@ public:
 	uint32 _delay;
 	BaseArray<BaseSubFrame *> _subframes;
 	bool draw(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, bool allFrames = false, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
-	bool loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
+	bool loadBuffer(char *buffer, int lifeTime, bool keepLoaded);
 
 	BaseFrame(BaseGame *inGame);
 	virtual ~BaseFrame();
@@ -64,6 +64,8 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+	virtual Common::String debuggerToString() const override;
+
 private:
 	bool _keyframe;
 	bool _editorExpanded;

@@ -124,7 +124,7 @@ public:
 	BaseArray<AdObject *> _objects;
 	BaseArray<AdWaypointGroup *> _waypointGroups;
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	int32 _width;
 	int32 _height;
 	bool addObject(AdObject *Object);
@@ -160,7 +160,7 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
-
+	virtual Common::String debuggerToString() const override;
 
 private:
 	bool persistState(bool saving = true);

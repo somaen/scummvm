@@ -40,7 +40,7 @@ public:
 	void setItem(const char *itemName);
 	DECLARE_PERSISTENT(AdEntity, AdTalkHolder)
 	void updatePosition();
-	virtual int getHeight();
+	virtual int32 getHeight() override;
 	BaseRegion *_region;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	virtual bool update();
@@ -48,7 +48,7 @@ public:
 	AdEntity(BaseGame *inGame);
 	virtual ~AdEntity();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 
 	int32 getWalkToX() const;
 	int32 getWalkToY() const;
@@ -60,6 +60,7 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+	Common::String debuggerToString() const override;
 private:
 	int32 _walkToX;
 	int32 _walkToY;

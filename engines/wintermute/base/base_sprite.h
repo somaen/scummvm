@@ -53,7 +53,7 @@ public:
 	void reset();
 	bool isChanged();
 	bool isFinished();
-	bool loadBuffer(byte *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	bool loadBuffer(char *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool loadFile(const Common::String &filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool draw(int x, int y, BaseObject *Register = nullptr, float zoomX = kDefaultZoomX, float zoomY = kDefaultZoomY, uint32 alpha = kDefaultRgbaMod);
 	bool _looping;
@@ -69,6 +69,8 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+	Common::String debuggerToString() const override;
+	
 private:
 	BaseObject *_owner;
 	bool _canBreak;

@@ -36,6 +36,9 @@
 
 #include "engines/engine.h"
 
+#include "gui/debugger.h"
+#include "fullpipe/console.h"
+
 struct ADGameDescription;
 
 namespace Fullpipe {
@@ -52,12 +55,16 @@ class Inventory2;
 struct CursorInfo;
 struct EntranceInfo;
 class ExCommand;
+class Floaters;
 class GameProject;
 class GameObject;
 class GlobalMessageQueueList;
 struct MessageHandler;
 struct MovTable;
+class MGM;
 class NGIArchive;
+class PictureObject;
+struct PreloadItem;
 class Scene;
 class SoundList;
 class StaticANIObject;
@@ -78,6 +85,9 @@ protected:
 public:
 	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~FullpipeEngine();
+
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 	void initialize();
 
@@ -119,7 +129,9 @@ public:
 	int _sceneWidth;
 	int _sceneHeight;
 	Scene *_currentScene;
+	Scene *_loaderScene;
 	Scene *_scene2;
+	Scene *_scene3;
 	StaticANIObject *_aniMan;
 	StaticANIObject *_aniMan2;
 	byte *_globalPalette;
@@ -140,7 +152,11 @@ public:
 	void stopAllSounds();
 	void toggleMute();
 	void playSound(int id, int flag);
+	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
 	void startSceneTrack();
+	void stopSoundStream2();
+	void stopAllSoundStreams();
+	void stopAllSoundInstances(int id);
 
 	int _sfxVolume;
 
@@ -163,7 +179,13 @@ public:
 
 	MovTable *_movTable;
 
+	Floaters *_floaters;
+	MGM *_mgm;
+
+	Common::Array<Common::Point *> _arcadeKeys;
+
 	void initMap();
+	void updateMap(PreloadItem *pre);
 	void updateMapPiece(int mapId, int update);
 	void updateScreen();
 
@@ -210,7 +232,7 @@ public:
 	int _objectIdAtCursor;
 
 	void setCursor(int id);
-	void updateCursorsCommon();
+	void updateCursorCommon();
 
 	int getObjectState(const char *objname);
 	void setObjectState(const char *name, int state);
@@ -219,6 +241,9 @@ public:
 	bool sceneSwitcher(EntranceInfo *entrance);
 	Scene *accessScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
+	int convertScene(int scene);
+	int getSceneEntrance(int scene);
+	int getSceneFromTag(int tag);
 
 	NGIArchive *_currArchive;
 
@@ -226,11 +251,35 @@ public:
 	void openHelp();
 	void openMainMenu();
 
+	PictureObject *_arcadeOverlay;
+	PictureObject *_arcadeOverlayHelper;
+	int _arcadeOverlayX;
+	int _arcadeOverlayY;
+	int _arcadeOverlayMidX;
+	int _arcadeOverlayMidY;
+
+	void initArcadeKeys(const char *varname);
+	void processArcade(ExCommand *ex);
 	void winArcade();
+	void setArcadeOverlay(int picId);
+	int drawArcadeOverlay(int adjust);
+
 	void getAllInventory();
 
 	int lift_getButtonIdP(int objid);
+	void lift_setButton(const char *name, int state);
+	void lift_sub5(Scene *sc, int qu1, int qu2);
+	void lift_exitSeq(ExCommand *ex);
+	void lift_closedoorSeq();
+	void lift_animation3();
+	void lift_goAnimation();
+	void lift_sub1(StaticANIObject *ani);
+	void lift_startExitQueue();
+	void lift_sub05(ExCommand *ex);
+	bool lift_checkButton(const char *varname);
 
+	GameVar *_musicGameVar;
+	Audio::SoundHandle _sceneTrackHandle;
 public:
 
 	bool _isSaveAllowed;
@@ -240,7 +289,7 @@ public:
 
 };
 
-extern FullpipeEngine *g_fullpipe;
+extern FullpipeEngine *g_fp;
 extern Vars *g_vars;
 
 } // End of namespace Fullpipe

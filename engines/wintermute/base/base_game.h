@@ -34,7 +34,9 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/debugger.h"
 #include "common/events.h"
+#include "gui/debugger.h"
 
 namespace Wintermute {
 
@@ -82,6 +84,7 @@ public:
 	bool isLeftDoubleClick();
 	bool isRightDoubleClick();
 
+	DebuggerAdapter* _adapter;
 	bool _autorunDisabled;
 
 	uint32 _lastMiniUpdate;
@@ -157,7 +160,7 @@ public:
 
 	int32 _sequence;
 	virtual bool loadFile(const char *filename);
-	virtual bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool loadBuffer(char *buffer, bool complete = true);
 
 	int32 _viewportSP;
 
@@ -251,6 +254,8 @@ public:
 	void addMem(int32 bytes);
 	bool _touchInterface;
 	bool _constrainedMemory;
+
+	bool stopVideo();
 protected:
 	BaseFont *_systemFont;
 	BaseFont *_videoFont;
@@ -319,7 +324,6 @@ private:
 	BaseGameMusic *_musicSystem;
 
 	bool isVideoPlaying();
-	bool stopVideo();
 
 	BaseArray<BaseQuickMsg *> _quickMessages;
 	BaseArray<UIWindow *> _windows;

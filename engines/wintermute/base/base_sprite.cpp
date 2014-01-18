@@ -46,7 +46,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSprite, false)
 
-//////////////////////////////////////////////////////////////////////
 BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner) : BaseScriptHolder(inGame) {
 	_editorAllFrames = false;
 	_owner = Owner;
@@ -54,13 +53,11 @@ BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner) : BaseScriptHolder(i
 }
 
 
-//////////////////////////////////////////////////////////////////////
 BaseSprite::~BaseSprite() {
 	cleanup();
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseSprite::setDefaults() {
 	_currentFrame = -1;
 	_looping = false;
@@ -85,7 +82,6 @@ void BaseSprite::setDefaults() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 void BaseSprite::cleanup() {
 	BaseScriptHolder::cleanup();
 
@@ -101,7 +97,6 @@ void BaseSprite::cleanup() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
 	getCurrentFrame(zoomX, zoomY);
 	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
@@ -130,7 +125,6 @@ bool BaseSprite::isFinished() {
 	return _finished;
 }
 
-//////////////////////////////////////////////////////////////////////
 bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename);
 	if (!file) {
@@ -168,7 +162,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 			ret = STATUS_OK;
 		}
 	} else {
-		byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+		char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
 				BaseEngine::LOG(0, "Error parsing SPRITE file '%s'", filename.c_str());
@@ -203,8 +197,8 @@ TOKEN_DEF(EDITOR_BG_OFFSET_Y)
 TOKEN_DEF(EDITOR_BG_ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
-//////////////////////////////////////////////////////////////////////
-bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
+
+bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(CONTINUOUS)
 	TOKEN_TABLE(SPRITE)
@@ -223,7 +217,7 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
@@ -231,7 +225,7 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITE) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SPRITE) {
 			BaseEngine::LOG(0, "'SPRITE' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -240,30 +234,30 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 	int frameCount = 1;
 	BaseFrame *frame;
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_CONTINUOUS:
-			parser.scanStr((char *)params, "%b", &_continuous);
+			parser.scanStr(params, "%b", &_continuous);
 			break;
 
 		case TOKEN_EDITOR_MUTED:
-			parser.scanStr((char *)params, "%b", &_editorMuted);
+			parser.scanStr(params, "%b", &_editorMuted);
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_LOOPING:
-			parser.scanStr((char *)params, "%b", &_looping);
+			parser.scanStr(params, "%b", &_looping);
 			break;
 
 		case TOKEN_PRECISE:
-			parser.scanStr((char *)params, "%b", &_precise);
+			parser.scanStr(params, "%b", &_precise);
 			break;
 
 		case TOKEN_STREAMED:
-			parser.scanStr((char *)params, "%b", &_streamed);
+			parser.scanStr(params, "%b", &_streamed);
 			if (_streamed && lifeTime == -1) {
 				lifeTime = 500;
 				cacheType = CACHE_ALL;
@@ -271,33 +265,33 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 			break;
 
 		case TOKEN_STREAMED_KEEP_LOADED:
-			parser.scanStr((char *)params, "%b", &_streamedKeepLoaded);
+			parser.scanStr(params, "%b", &_streamedKeepLoaded);
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_EDITOR_BG_FILE:
 			if (_gameRef->_editorMode) {
 				delete[] _editorBgFile;
-				_editorBgFile = new char[strlen((char *)params) + 1];
+				_editorBgFile = new char[strlen(params) + 1];
 				if (_editorBgFile) {
-					strcpy(_editorBgFile, (char *)params);
+					strcpy(_editorBgFile, params);
 				}
 			}
 			break;
 
 		case TOKEN_EDITOR_BG_OFFSET_X:
-			parser.scanStr((char *)params, "%d", &_editorBgOffsetX);
+			parser.scanStr(params, "%d", &_editorBgOffsetX);
 			break;
 
 		case TOKEN_EDITOR_BG_OFFSET_Y:
-			parser.scanStr((char *)params, "%d", &_editorBgOffsetY);
+			parser.scanStr(params, "%d", &_editorBgOffsetY);
 			break;
 
 		case TOKEN_EDITOR_BG_ALPHA:
-			parser.scanStr((char *)params, "%d", &_editorBgAlpha);
+			parser.scanStr(params, "%d", &_editorBgAlpha);
 			_editorBgAlpha = MIN<int32>(_editorBgAlpha, 255);
 			_editorBgAlpha = MAX<int32>(_editorBgAlpha, 0);
 			break;
@@ -340,7 +334,6 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 }
 
 
-//////////////////////////////////////////////////////////////////////
 void BaseSprite::reset() {
 	if (_frames.size() > 0) {
 		_currentFrame = 0;
@@ -356,7 +349,6 @@ void BaseSprite::reset() {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 	//if (_owner && _owner->_freezable && _gameRef->_state == GAME_FROZEN) return true;
 
@@ -417,7 +409,6 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 }
 
 
-//////////////////////////////////////////////////////////////////////
 bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
 	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
 		return STATUS_OK;
@@ -437,7 +428,6 @@ bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, flo
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 BaseSurface *BaseSprite::getSurface() {
 	// only used for animated textures for 3D models
 	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
@@ -456,13 +446,12 @@ BaseSurface *BaseSprite::getSurface() {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
 		return false;
 	}
 
-	BasePlatform::setRectEmpty(rect);
+	rect->setEmpty();
 	for (uint32 i = 0; i < _frames.size(); i++) {
 		Rect32 frame;
 		Rect32 temp;
@@ -473,7 +462,6 @@ bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITE {\n");
 	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
@@ -516,33 +504,32 @@ bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptHolder::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_canBreak));
-	persistMgr->transfer(TMEMBER(_changed));
-	persistMgr->transfer(TMEMBER(_paused));
-	persistMgr->transfer(TMEMBER(_continuous));
-	persistMgr->transfer(TMEMBER(_currentFrame));
-	persistMgr->transfer(TMEMBER(_editorAllFrames));
-	persistMgr->transfer(TMEMBER(_editorBgAlpha));
-	persistMgr->transfer(TMEMBER(_editorBgFile));
-	persistMgr->transfer(TMEMBER(_editorBgOffsetX));
-	persistMgr->transfer(TMEMBER(_editorBgOffsetY));
-	persistMgr->transfer(TMEMBER(_editorMuted));
-	persistMgr->transfer(TMEMBER(_finished));
+	persistMgr->transferBool(TMEMBER(_canBreak));
+	persistMgr->transferBool(TMEMBER(_changed));
+	persistMgr->transferBool(TMEMBER(_paused));
+	persistMgr->transferBool(TMEMBER(_continuous));
+	persistMgr->transferSint32(TMEMBER(_currentFrame));
+	persistMgr->transferBool(TMEMBER(_editorAllFrames));
+	persistMgr->transferSint32(TMEMBER(_editorBgAlpha));
+	persistMgr->transferCharPtr(TMEMBER(_editorBgFile));
+	persistMgr->transferSint32(TMEMBER(_editorBgOffsetX));
+	persistMgr->transferSint32(TMEMBER(_editorBgOffsetY));
+	persistMgr->transferBool(TMEMBER(_editorMuted));
+	persistMgr->transferBool(TMEMBER(_finished));
 
 	_frames.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_lastFrameTime));
-	persistMgr->transfer(TMEMBER(_looping));
-	persistMgr->transfer(TMEMBER(_moveX));
-	persistMgr->transfer(TMEMBER(_moveY));
+	persistMgr->transferUint32(TMEMBER(_lastFrameTime));
+	persistMgr->transferBool(TMEMBER(_looping));
+	persistMgr->transferSint32(TMEMBER(_moveX));
+	persistMgr->transferSint32(TMEMBER(_moveY));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
-	persistMgr->transfer(TMEMBER(_precise));
-	persistMgr->transfer(TMEMBER(_streamed));
-	persistMgr->transfer(TMEMBER(_streamedKeepLoaded));
+	persistMgr->transferBool(TMEMBER(_precise));
+	persistMgr->transferBool(TMEMBER(_streamed));
+	persistMgr->transferBool(TMEMBER(_streamedKeepLoaded));
 
 
 	return STATUS_OK;
@@ -693,7 +680,6 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
 
@@ -769,7 +755,6 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
@@ -803,13 +788,11 @@ bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 const char *BaseSprite::scToString() {
 	return "[sprite]";
 }
 
 
-//////////////////////////////////////////////////////////////////////////
 bool BaseSprite::killAllSounds() {
 	for (uint32 i = 0; i < _frames.size(); i++) {
 		_frames[i]->stopSound();
@@ -817,4 +800,10 @@ bool BaseSprite::killAllSounds() {
 	return STATUS_OK;
 }
 
-} // End of namespace Wintermute
+
+////////////////////////
+Common::String BaseSprite::debuggerToString() const {
+	return Common::String::format("%p: Sprite \"%s\"", (const void *)this, getName());
+}
+
+} // end of namespace Wintermute

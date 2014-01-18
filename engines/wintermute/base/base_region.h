@@ -48,7 +48,7 @@ public:
 	bool pointInRegion(int x, int y);
 	bool createRegion();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	Rect32 _rect;
 	BaseArray<BasePoint *> _points;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) { return saveAsText(buffer, indent, nullptr); }
@@ -59,6 +59,8 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+	virtual Common::String debuggerToString() const override;
+
 private:
 	float _lastMimicScale;
 	int32 _lastMimicX;

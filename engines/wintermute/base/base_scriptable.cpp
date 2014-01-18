@@ -153,7 +153,7 @@ void BaseScriptable::scSetBool(bool val) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptable::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
-	persistMgr->transfer(TMEMBER(_refCount));
+	persistMgr->transferSint32(TMEMBER(_refCount));
 	persistMgr->transferPtr(TMEMBER_PTR(_scProp));
 	persistMgr->transferPtr(TMEMBER_PTR(_scValue));
 
@@ -188,4 +188,10 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return nullptr;
 }
 
-} // End of namespace Wintermute
+//////////////////////////////////////////////////////////////////////////
+Common::String BaseScriptable::debuggerToString() const {
+	return Common::String::format("%p: BaseScriptable %s", (const void *)this, getName());
+}
+
+
+} // end of namespace Wintermute
