@@ -369,34 +369,101 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
  */
 
 template<class Blender>
-void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
+void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color, byte *rleMap) {
 	Blender b;
 	byte *in;
 	byte *out;
-
+	uint32 rleMapStep = 2;
+	uint32 rleMapPitch = inoStep / 2;
+	byte *rleMapin;
 	if (color == 0xffffffff) {
 
-		for (uint32 i = 0; i < height; i++) {
-			out = outo;
-			in = ino;
-			for (uint32 j = 0; j < width; j++) {
-
-				byte *outa = &out[TransparentSurface::kAIndex];
-				byte *outr = &out[TransparentSurface::kRIndex];
-				byte *outg = &out[TransparentSurface::kGIndex];
-				byte *outb = &out[TransparentSurface::kBIndex];
-
-				b.blendPixel(in[TransparentSurface::kAIndex],
-							 in[TransparentSurface::kRIndex],
-							 in[TransparentSurface::kGIndex],
-							 in[TransparentSurface::kBIndex],
-							 outa, outr, outg, outb);
-
-				in += inStep;
-				out += 4;
+		if (rleMap != nullptr) {
+			for (uint32 i = 0; i < height; i++) {
+				out = outo;
+				in = ino;
+				rleMapin = rleMap;
+			// Alternate approach, just jump at the starts of lines.
+		/*		int jump = rleMapin[1] * rleMapin[0];
+				in += jump * inStep;
+				out += jump * 4;
+				rleMapin += jump * rleMapStep;*/
+				for (uint32 j = 0; j < width; j++) {
+					
+					byte *outa = &out[TransparentSurface::kAIndex];
+					byte *outr = &out[TransparentSurface::kRIndex];
+					byte *outg = &out[TransparentSurface::kGIndex];
+					byte *outb = &out[TransparentSurface::kBIndex];
+					
+					b.blendPixel(in[TransparentSurface::kAIndex],
+								 in[TransparentSurface::kRIndex],
+								 in[TransparentSurface::kGIndex],
+								 in[TransparentSurface::kBIndex],
+								 outa, outr, outg, outb);
+					// Subtract 1, since we will do j++ after this iteration.
+					int jump = (rleMapin[1] - 1) * rleMapin[0];
+					j += jump;
+					// Then add 1 to replace the original ++.
+					jump += 1;
+					out += 4 * jump;
+					in += inStep * jump;
+					rleMapin += jump * rleMapStep;
+					
+#if 0 // Very branchy, and asserting approach, just to verify.
+					if (rleMapin[0] == 0x00) {
+						int jump = rleMapin[1];
+/*						for (int k = 0; k < jump && (k + j) < width; k++) {
+							assert(in[TransparentSurface::kAIndex] == 0x00);
+							out += 4;
+							in += inStep;
+							rleMapin += rleMapStep;
+						}*/
+						out += 4 * jump;
+						in += inStep * jump;
+						rleMapin += jump * rleMapStep;
+						in -= inStep;
+						out -= 4;
+						j += jump - 1;
+					} else {
+						rleMapin += rleMapStep;
+					}
+#endif
+					//rleMapin += rleMapStep;
+// Add these if doing the alternate approach
+//					in += inStep;
+//					out += 4;
+				}
+				outo += pitch;
+				ino += inoStep;
+				
+				rleMap += rleMapPitch;
+				
 			}
-			outo += pitch;
-			ino += inoStep;
+		//	warning("END");
+		} else {
+			for (uint32 i = 0; i < height; i++) {
+				out = outo;
+				in = ino;
+				rleMapin = rleMap;
+				for (uint32 j = 0; j < width; j++) {
+					
+					byte *outa = &out[TransparentSurface::kAIndex];
+					byte *outr = &out[TransparentSurface::kRIndex];
+					byte *outg = &out[TransparentSurface::kGIndex];
+					byte *outb = &out[TransparentSurface::kBIndex];
+					
+					b.blendPixel(in[TransparentSurface::kAIndex],
+								 in[TransparentSurface::kRIndex],
+								 in[TransparentSurface::kGIndex],
+								 in[TransparentSurface::kBIndex],
+								 outa, outr, outg, outb);
+
+					in += inStep;
+					out += 4;
+				}
+				outo += pitch;
+				ino += inoStep;
+			}
 		}
 	} else {
 
@@ -408,6 +475,7 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
+			rleMapin = rleMap;
 			for (uint32 j = 0; j < width; j++) {
 
 				byte *outa = &out[TransparentSurface::kAIndex];
@@ -429,7 +497,7 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 	}
 }
 
-Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
+Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode, byte *rleMap) {
 
 	Common::Rect retSize;
 	retSize.top = 0;
@@ -467,6 +535,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		srcImage.pixels = getBasePtr(xOffset, yOffset);
 		srcImage.w = pPartRect->width();
 		srcImage.h = pPartRect->height();
+		if (rleMap) {
+			rleMap += w * yOffset * 2;
+			rleMap += xOffset * 2;
+		}
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
 			  pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
@@ -496,6 +568,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		// Scale the image
 		img = imgScaled = srcImage.scale(width, height);
 		savedPixels = (byte *)img->getPixels();
+		rleMap = nullptr;
 	} else {
 		img = &srcImage;
 	}
@@ -505,12 +578,14 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		img->h = MAX(0, (int)img->h - -posY);
 		img->setPixels((byte *)img->getBasePtr(0, -posY));
 		posY = 0;
+		rleMap = nullptr;
 	}
 
 	if (posX < 0) {
 		img->w = MAX(0, (int)img->w - -posX);
 		img->setPixels((byte *)img->getBasePtr(-posX, 0));
 		posX = 0;
+		rleMap = nullptr;
 	}
 
 	img->w = CLIP((int)img->w, 0, (int)MAX((int)target.w - posX, 0));
@@ -524,11 +599,13 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		if (flipping & TransparentSurface::FLIP_H) {
 			inStep = -inStep;
 			xp = img->w - 1;
+			rleMap = nullptr;
 		}
 
 		if (flipping & TransparentSurface::FLIP_V) {
 			inoStep = -inoStep;
 			yp = img->h - 1;
+			rleMap = nullptr;
 		}
 
 		byte *ino = (byte *)img->getBasePtr(xp, yp);
@@ -540,12 +617,12 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 			doBlitBinaryFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
-				doBlit<BlenderAdditive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				doBlit<BlenderAdditive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color, rleMap);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				doBlit<BlenderSubtractive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				doBlit<BlenderSubtractive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color, rleMap);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
-				doBlit<BlenderNormal>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				doBlit<BlenderNormal>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color, rleMap);
 			}
 		}
 

@@ -34,7 +34,7 @@
 #include "common/rect.h"
 
 namespace Wintermute {
-
+byte *generateRLEAlpha(const Graphics::Surface &surface);
 class BaseSurfaceOSystem;
 /**
  * A single RenderTicket.
@@ -52,7 +52,7 @@ class BaseSurfaceOSystem;
 class RenderTicket {
 public:
 	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, TransformStruct transform);
-	RenderTicket() : _isValid(true), _wantsDraw(false), _transform(TransformStruct()) {}
+	RenderTicket() : _isValid(true), _wantsDraw(false), _transform(TransformStruct()), _rleAlpha(nullptr) {}
 	~RenderTicket();
 	const Graphics::Surface *getSurface() const { return _surface; }
 	// Non-dirty-rects:
@@ -72,6 +72,7 @@ public:
 	const Common::Rect *getSrcRect() const { return &_srcRect; }
 private:
 	Graphics::Surface *_surface;
+	byte *_rleAlpha;
 	Common::Rect _srcRect;
 };
 

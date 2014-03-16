@@ -34,20 +34,94 @@
 
 namespace Wintermute {
 
+// TODO: Endianness
+byte *generateRLEAlpha(const Graphics::Surface &surface) {
+	byte *rleAlpha = new byte[surface.w * surface.h * 2];
+	byte *out = rleAlpha;
+	const uint32 *data = (const uint32*)surface.getBasePtr(0, 0);
+	byte lastAlpha = (*data) & 0xFF;
+	byte currentAlpha = lastAlpha;
+	uint32 count = 0; // Number of occurences
+	for (int y = 0; y < surface.h; y++) {
+		data = (const uint32*)surface.getBasePtr(0, y);
+		int handledOnLine = 0;
+		for (int x = 0; x < surface.w; x++) {
+			currentAlpha = data[x] & 0xFF;
+			if (currentAlpha != lastAlpha || count == 200) { // Write the previous values;
+				for (int i = 0; i < count; i++) {
+					// Hack: Convert to only 1/0, instead of storing the actual values.
+					//			out[0] = lastAlpha;
+					if (lastAlpha == 0x00) {
+						out[0] = 1;
+					} else {
+						out[0] = 0;
+					}
+					out[1] = count - i;
+				//	assert(out[1] != 0);
+					out += 2;
+					handledOnLine++;
+				}
+				if (currentAlpha == lastAlpha) {
+					count = 1;
+				} else {
+					count = 1;
+					lastAlpha = currentAlpha;
+				}
+			} else {
+				count++;
+			}
+		}
+		int reduce = 0;
+		for (int i = handledOnLine; i < surface.w; i++) {
+			// Hack: Convert:
+//			out[0] = lastAlpha;
+			if (lastAlpha == 0x00) {
+				out[0] = 1;
+			} else {
+				out[0] = 0;
+			}
+			out[1] = count - (i - handledOnLine);
+		//	assert(out[1] != 0);
+			out += 2;
+			reduce++;
+		}
+		count -= reduce;
+	//	assert(count == 0);
+	}
+	
+	#if 0
+	// Verification
+	out = rleAlpha;
+	for (int y = 0; y < surface.h; y++) {
+		data = (const uint32*)surface.getBasePtr(0, y);
+		for (int x = 0; x < surface.w; x++) {
+			assert(out[1] != 0);
+			assert((data[x] & 0xFF) == out[0]);
+			out += 2;
+		}
+	}
+	#endif
+	return rleAlpha;
+}
+
 RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct transform) :
 	_owner(owner),
 	_srcRect(*srcRect),
 	_dstRect(*dstRect),
 	_isValid(true),
 	_wantsDraw(true),
-	_transform(transform) {
+	_transform(transform),
+	_rleAlpha(nullptr) {
 	if (surf) {
 		_surface = new Graphics::Surface();
 		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
+		_rleAlpha = new byte[srcRect->width() * srcRect->height() * 2];
+		uint32 rlePitch = srcRect->width() * 2;
 		assert(_surface->format.bytesPerPixel == 4);
 		// Get a clipped copy of the surface
 		for (int i = 0; i < _surface->h; i++) {
 			memcpy(_surface->getBasePtr(0, i), surf->getBasePtr(srcRect->left, srcRect->top + i), srcRect->width() * _surface->format.bytesPerPixel);
+			memcpy(_rleAlpha + rlePitch * i, owner->_rleAlpha + surf->w * 2 * (srcRect->top + i) + (srcRect->left * 2) , srcRect->width() * 2);
 		}
 		// Then scale it if necessary
 		//
@@ -63,6 +137,8 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 			_surface->free();
 			delete _surface;
 			_surface = temp;
+			delete[] _rleAlpha;
+			_rleAlpha = generateRLEAlpha(*_surface);
 		} else if ((dstRect->width() != srcRect->width() ||
 					dstRect->height() != srcRect->height()) &&
 					_transform._numTimesX * _transform._numTimesY == 1) {
@@ -71,6 +147,8 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 			_surface->free();
 			delete _surface;
 			_surface = temp;
+			delete[] _rleAlpha;
+			_rleAlpha = generateRLEAlpha(*_surface);
 		}
 	} else {
 		_surface = nullptr;
@@ -82,6 +160,7 @@ RenderTicket::~RenderTicket() {
 		_surface->free();
 		delete _surface;
 	}
+	delete[] _rleAlpha;
 }
 
 bool RenderTicket::operator==(const RenderTicket &t) const {
@@ -145,7 +224,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 
 	if (_transform._numTimesX * _transform._numTimesY == 1) {
 
-		src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height(), _transform._blendMode);
+		src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height(), _transform._blendMode, _rleAlpha);
 
 	} else {
 

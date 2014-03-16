@@ -130,7 +130,8 @@ struct TransparentSurface : public Graphics::Surface {
 	                  Common::Rect *pPartRect = nullptr,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-	                  TSpriteBlendMode blend = BLEND_NORMAL);
+	                  TSpriteBlendMode blend = BLEND_NORMAL,
+					  byte *rleMap = nullptr);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 
 	/**

@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+#include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -50,6 +51,7 @@ BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_lockPitch = 0;
 	_loaded = false;
 	_rotation = 0;
+	_rleAlpha = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -61,6 +63,7 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	}
 
 	delete[] _alphaMask;
+	delete[] _rleAlpha;
 	_alphaMask = nullptr;
 
 	_gameRef->addMem(-_width * _height * 4);
@@ -187,6 +190,8 @@ bool BaseSurfaceOSystem::finishLoad() {
 	delete image;
 
 	_loaded = true;
+
+	_rleAlpha = generateRLEAlpha(*_surface);
 
 	return true;
 }
@@ -453,6 +458,8 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 	}
 	if (hasAlpha) {
 		_alphaType = TransparentSurface::ALPHA_FULL;
+		delete[] _rleAlpha;
+		_rleAlpha = generateRLEAlpha(surface);
 	} else {
 		_alphaType = TransparentSurface::ALPHA_OPAQUE;
 	}

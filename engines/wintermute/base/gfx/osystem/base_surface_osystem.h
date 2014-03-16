@@ -96,6 +96,8 @@ private:
 	void *_lockPixels;
 	int _lockPitch;
 	byte *_alphaMask;
+public: // HACK for testing the RLE.
+	byte *_rleAlpha;
 };
 
 } // End of namespace Wintermute
