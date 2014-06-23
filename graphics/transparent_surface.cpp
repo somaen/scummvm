@@ -357,11 +357,11 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		int xOffset = pPartRect->left;
 		int yOffset = pPartRect->top;
 
-		if (flipping & FLIP_V) {
+		if (flipping & FLIP_H) {
 			yOffset = srcImage.h - pPartRect->bottom;
 		}
 
-		if (flipping & FLIP_H) {
+		if (flipping & FLIP_V) {
 			xOffset = srcImage.w - pPartRect->right;
 		}
 
@@ -422,12 +422,12 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 
 		int inStep = 4;
 		int inoStep = img->pitch;
-		if (flipping & FLIP_H) {
+		if (flipping & FLIP_V) {
 			inStep = -inStep;
 			xp = img->w - 1;
 		}
 
-		if (flipping & FLIP_V) {
+		if (flipping & FLIP_H) {
 			inoStep = -inoStep;
 			yp = img->h - 1;
 		}

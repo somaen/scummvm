@@ -33,8 +33,8 @@ void TransformStruct::init(Common::Point zoom, uint32 angle, Common::Point hotsp
 	_rgbaMod = rgbaMod;
 	_alphaDisable = alphaDisable;
 	_flip = 0;
-	_flip += FLIP_H * mirrorX;
-	_flip += FLIP_V * mirrorY;
+	_flip += FLIP_V * mirrorX;
+	_flip += FLIP_H * mirrorY;
 	_offset = offset;
 	_numTimesX = 1;
 	_numTimesY = 1;
