@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,8 +29,6 @@
 
 namespace Neverhood {
 
-// Module1100
-
 class Module1100 : public Module {
 public:
 	Module1100(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -42,52 +40,9 @@ protected:
 	void updateScene();
 };
 
-class SsScene1105Button : public StaticSprite {
-public:
-	SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &collisionBounds);
-protected:
-	Scene *_parentScene;
-	int _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene1105Symbol : public StaticSprite {
-public:
-	SsScene1105Symbol(NeverhoodEngine *vm, uint32 fileHash, int16 x, int16 y);
-	void hide();
-};
-
-class SsScene1105SymbolDie : public StaticSprite {
-public:
-	SsScene1105SymbolDie(NeverhoodEngine *vm, uint dieIndex, int16 x, int16 y);
-	void hide();
-protected:
-	uint _dieIndex;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void loadSymbolSprite();
-};
-
-class AsScene1105TeddyBear : public AnimatedSprite {
-public:
-	AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentScene);
-	void show();
-	void hide();
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene1105OpenButton : public StaticSprite {
-public:
-	SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	int _countdown;
-	bool _isClicked;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
+class AsScene1105TeddyBear;
+class SsScene1105Symbol;
+class SsScene1105SymbolDie;
 
 class Scene1105 : public Scene {
 public:

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -52,7 +52,7 @@ public:
 	uint32 _delay;
 	BaseArray<BaseSubFrame *> _subframes;
 	bool draw(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, bool allFrames = false, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
-	bool loadBuffer(byte *buffer, int lifeTime, bool keepLoaded);
+	bool loadBuffer(char *buffer, int lifeTime, bool keepLoaded);
 
 	BaseFrame(BaseGame *inGame);
 	virtual ~BaseFrame();

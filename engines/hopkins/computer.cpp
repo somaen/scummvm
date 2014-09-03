@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -349,15 +349,21 @@ void ComputerManager::loadMenu() {
 	char *ptr;
 	if (_vm->_fileIO->fileExists("COMPUTAN.TXT")) {
 		ptr = (char *)_vm->_fileIO->loadFile("COMPUTAN.TXT");
-	} else if (_vm->_globals->_language == LANG_FR) {
-		ptr = (char *)_vm->_globals->allocMemory(sizeof(_frenchText));
-		strcpy(ptr, _frenchText);
-	} else if (_vm->_globals->_language == LANG_SP) {
-		ptr = (char *)_vm->_globals->allocMemory(sizeof(_spanishText));
-		strcpy(ptr, _spanishText);
 	} else {
-		ptr = (char *)_vm->_globals->allocMemory(sizeof(_englishText));
-		strcpy(ptr, _englishText);
+		switch (_vm->_globals->_language) {
+		case LANG_FR:
+			ptr = (char *)_vm->_globals->allocMemory(sizeof(_frenchText));
+			strcpy(ptr, _frenchText);
+			break;
+		case LANG_SP:
+			ptr = (char *)_vm->_globals->allocMemory(sizeof(_spanishText));
+			strcpy(ptr, _spanishText);
+			break;
+		default:
+			ptr = (char *)_vm->_globals->allocMemory(sizeof(_englishText));
+			strcpy(ptr, _englishText);
+			break;
+		}
 	}
 
 	char *tmpPtr = ptr;
@@ -479,12 +485,17 @@ void ComputerManager::readText(int idx) {
 	_vm->_events->_escKeyFl = false;
 
 	Common::String filename;
-	if (_vm->_globals->_language == LANG_EN)
+	switch (_vm->_globals->_language) {
+	case LANG_EN:
 		filename = "THOPKAN.TXT";
-	else if (_vm->_globals->_language == LANG_FR)
+		break;
+	case LANG_FR:
 		filename = "THOPK.TXT";
-	else if (_vm->_globals->_language == LANG_SP)
+		break;
+	case LANG_SP:
 		filename = "THOPKES.TXT";
+		break;
+	}
 
 	byte *ptr = _vm->_fileIO->loadFile(filename);
 	uint16 fileSize = _vm->_fileIO->fileSize(filename);
@@ -664,15 +675,12 @@ void ComputerManager::displayBricks() {
 	_breakoutSpeed = 1;
 	int16 *level = _breakoutLevel;
 
-	int cellLeft;
-	int cellTop;
-	int cellType;
 	for (int levelIdx = 0; ; levelIdx += 6) {
-		cellLeft = (int16)FROM_LE_16(level[levelIdx]);
+		int cellLeft = (int16)FROM_LE_16(level[levelIdx]);
 		if (cellLeft == -1)
 			break;
-		cellTop = FROM_LE_16(level[levelIdx + 1]);
-		cellType = FROM_LE_16(level[levelIdx + 4]);
+		int cellTop = FROM_LE_16(level[levelIdx + 1]);
+		int cellType = FROM_LE_16(level[levelIdx + 4]);
 
 		if (cellType <= 6)
 			++_breakoutBrickNbr;
@@ -822,7 +830,6 @@ int ComputerManager::displayHiscores() {
 	_vm->_graphicsMan->setColorPercentage(254, 0, 0, 0);
 
 	int yp;
-	int xp;
 	// Loop for displaying the scores
 	for (int scoreIndex = 0; scoreIndex <= 5; scoreIndex++) {
 		yp = 19 * scoreIndex;
@@ -842,7 +849,7 @@ int ComputerManager::displayHiscores() {
 	int buttonIndex = 0;
 	do {
 		_vm->_events->refreshEvents();
-		xp = _vm->_events->getMouseX();
+		int xp = _vm->_events->getMouseX();
 		yp = _vm->_events->getMouseY();
 
 		if (_vm->_events->getMouseButton() == 1 && ABS(xp - 79) <= 33 && ABS(yp - 396) <= 13)

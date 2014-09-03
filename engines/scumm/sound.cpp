@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -30,7 +30,7 @@
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
-#include "scumm/player_towns.h"
+#include "scumm/players/player_towns.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
@@ -470,8 +470,10 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 
 void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle) {
 	int num = 0, i;
-	int size = 0;
 	int id = -1;
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
+	int size = 0;
+#endif
 	Common::ScopedPtr<ScummFile> file;
 
 	if (_vm->_game.id == GID_CMI) {
@@ -562,10 +564,14 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 				num = result->num_tags;
 			}
 			offset = result->new_offset;
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
 			size = result->compressed_size;
+#endif
 		} else {
 			offset += 8;
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
 			size = -1;
+#endif
 		}
 
 		file.reset(new ScummFile());

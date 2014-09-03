@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -622,23 +622,23 @@ bool UIObject::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_back));
-	persistMgr->transfer(TMEMBER(_canFocus));
-	persistMgr->transfer(TMEMBER(_disable));
+	persistMgr->transferBool(TMEMBER(_canFocus));
+	persistMgr->transferBool(TMEMBER(_disable));
 	persistMgr->transferPtr(TMEMBER_PTR(_focusedWidget));
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
-	persistMgr->transfer(TMEMBER(_height));
+	persistMgr->transferSint32(TMEMBER(_height));
 	persistMgr->transferPtr(TMEMBER_PTR(_image));
 	persistMgr->transferPtr(TMEMBER_PTR(_listenerObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_listenerParamObject));
-	persistMgr->transfer(TMEMBER(_listenerParamDWORD));
+	persistMgr->transferUint32(TMEMBER(_listenerParamDWORD));
 	persistMgr->transferPtr(TMEMBER_PTR(_parent));
-	persistMgr->transfer(TMEMBER(_parentNotify));
-	persistMgr->transfer(TMEMBER(_sharedFonts));
-	persistMgr->transfer(TMEMBER(_sharedImages));
-	persistMgr->transfer(TMEMBER(_text));
-	persistMgr->transfer(TMEMBER_INT(_type));
-	persistMgr->transfer(TMEMBER(_visible));
-	persistMgr->transfer(TMEMBER(_width));
+	persistMgr->transferBool(TMEMBER(_parentNotify));
+	persistMgr->transferBool(TMEMBER(_sharedFonts));
+	persistMgr->transferBool(TMEMBER(_sharedImages));
+	persistMgr->transferCharPtr(TMEMBER(_text));
+	persistMgr->transferSint32(TMEMBER_INT(_type));
+	persistMgr->transferBool(TMEMBER(_visible));
+	persistMgr->transferSint32(TMEMBER(_width));
 
 	return STATUS_OK;
 }
@@ -647,5 +647,83 @@ bool UIObject::persist(BasePersistenceManager *persistMgr) {
 bool UIObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }
+
+int32 UIObject::getWidth() const {
+	return _width;
+}
+
+// Has to be non-const to allow the virtual override to work,
+// as other getHeight()-functions currently have the potential
+// of having side-effects.
+int32 UIObject::getHeight() {
+	return _height;
+}
+
+void UIObject::setWidth(int32 width) {
+	assert(width >= 0);
+	_width = width;
+}
+
+void UIObject::setHeight(int32 height) {
+	assert(height >= 0);
+	_height = height;
+}
+
+bool UIObject::isDisabled() const {
+	return _disable;
+}
+
+bool UIObject::isVisible() const {
+	return _visible;
+}
+
+void UIObject::setVisible(bool visible) {
+	_visible = visible;
+}
+
+void UIObject::setDisabled(bool disable) {
+	_disable = disable;
+}
+
+bool UIObject::hasSharedFonts() const {
+	return _sharedFonts;
+}
+
+void UIObject::setSharedFonts(bool shared) {
+	_sharedFonts = shared;
+}
+
+bool UIObject::hasSharedImages() const {
+	return _sharedImages;
+}
+
+void UIObject::setSharedImages(bool shared) {
+	_sharedImages = shared;
+}
+
+BaseSprite *UIObject::getImage() const {
+	return _image;
+}
+
+void UIObject::setImage(BaseSprite *image) {
+	_image = image;
+}
+
+bool UIObject::canFocus() const {
+	return _canFocus;
+}
+
+void UIObject::setFont(BaseFont *font) {
+	_font = font;
+}
+
+BaseFont *UIObject::getFont() {
+	return _font;
+}
+
+BaseScriptHolder *UIObject::getListener() const {
+	return _listenerObject;
+}
+
 
 } // End of namespace Wintermute

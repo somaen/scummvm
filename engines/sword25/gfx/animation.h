@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -159,18 +159,18 @@ private:
 		BACKWARD
 	};
 
-	int _relX;
-	int _relY;
+	int32 _relX;
+	int32 _relY;
 	float _scaleFactorX;
 	float _scaleFactorY;
-	uint _modulationColor;
-	uint _currentFrame;
-	int  _currentFrameTime;
+	uint32 _modulationColor;
+	uint32 _currentFrame;
+	int32  _currentFrameTime;
 	bool _running;
 	bool _finished;
 	Direction _direction;
 	AnimationResource *_animationResourcePtr;
-	uint _animationTemplateHandle;
+	uint32 _animationTemplateHandle;
 	bool _framesLocked;
 
 	ANIMATION_CALLBACK _loopPointCallback;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -45,7 +45,7 @@
 namespace Sword25 {
 
 namespace {
-const uint AUTO_WRAP_THRESHOLD_DEFAULT = 300;
+const uint32 AUTO_WRAP_THRESHOLD_DEFAULT = 300;
 }
 
 Text::Text(RenderObjectPtr<RenderObject> parentPtr) :
@@ -98,8 +98,8 @@ void Text::setText(const Common::String &text) {
 	}
 }
 
-void Text::setColor(uint modulationColor) {
-	uint newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
+void Text::setColor(uint32 modulationColor) {
+	uint32 newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
@@ -108,7 +108,7 @@ void Text::setColor(uint modulationColor) {
 
 void Text::setAlpha(int alpha) {
 	assert(alpha >= 0 && alpha < 256);
-	uint newModulationColor = (_modulationColor & 0x00ffffff) | alpha << 24;
+	uint32 newModulationColor = (_modulationColor & 0x00ffffff) | alpha << 24;
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
@@ -123,7 +123,7 @@ void Text::setAutoWrap(bool autoWrap) {
 	}
 }
 
-void Text::setAutoWrapThreshold(uint autoWrapThreshold) {
+void Text::setAutoWrapThreshold(uint32 autoWrapThreshold) {
 	if (autoWrapThreshold != _autoWrapThreshold) {
 		_autoWrapThreshold = autoWrapThreshold;
 		updateFormat();
@@ -351,7 +351,7 @@ bool Text::unpersist(InputPersistenceBlock &reader) {
 	reader.read(autoWrap);
 	setAutoWrap(autoWrap);
 
-	uint autoWrapThreshold;
+	uint32 autoWrapThreshold;
 	reader.read(autoWrapThreshold);
 	setAutoWrapThreshold(autoWrapThreshold);
 

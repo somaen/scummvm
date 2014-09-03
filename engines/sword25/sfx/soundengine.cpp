@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -339,7 +339,10 @@ bool SoundEngine::persist(OutputPersistenceBlock &writer) {
 			_handles[i].type = kFreeHandle;
 
 		writer.writeString(_handles[i].fileName);
-		writer.write((int)_handles[i].sndType);
+		if (_handles[i].type == kFreeHandle)
+			writer.write((int32)-1);
+		else
+			writer.write(_handles[i].sndType);
 		writer.write(_handles[i].volume);
 		writer.write(_handles[i].pan);
 		writer.write(_handles[i].loop);
@@ -363,13 +366,13 @@ bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
 		reader.read(_handles[i].id);
 
 		Common::String fileName;
-		int sndType;
+		int32 sndType;
 		float volume;
 		float pan;
 		bool loop;
-		int loopStart;
-		int loopEnd;
-		uint layer;
+		int32 loopStart;
+		int32 loopEnd;
+		uint32 layer;
 
 		reader.readString(fileName);
 		reader.read(sndType);
@@ -381,7 +384,7 @@ bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
 		reader.read(layer);
 
 		if (reader.isGood()) {
-			if (sndType != kFreeHandle)
+			if (sndType != -1)
 				playSoundEx(fileName, (SOUND_TYPES)sndType, volume, pan, loop, loopStart, loopEnd, layer, i);
 		} else
 			return false;

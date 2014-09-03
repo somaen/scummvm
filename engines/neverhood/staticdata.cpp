@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -53,6 +53,22 @@ void StaticData::load(const char *filename) {
 			messageItem.messageValue = fd.readUint32LE();
 			messageList->push_back(messageItem);
 		}
+
+		// WORKAROUND for a problem in two of the game's message lists:
+		// the message lists used when Klaymen is drinking the wrong potion
+		// have as a last element the animation itself (message 0x4832).
+		// However, when processMessageList() reaches the last element in a
+		// message list, it allows player input, which means that the player
+		// can erroneously skip these potion drinking animations. We insert
+		// another message at the end of these lists to prevent player input
+		// till the animations are finished
+		if (id == 0x004AF0C8 || id == 0x004B5BD0) {	// wrong potion message lists
+			MessageItem messageItem;
+			messageItem.messageNum = 0x4004;	// set Klaymen's state to idle
+			messageItem.messageValue = 0;
+			messageList->push_back(messageItem);
+		}
+
 		_messageLists[id] = messageList;
 	}
 

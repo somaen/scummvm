@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -92,6 +92,32 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kDraciWalkingDebugLevel, "walking", "Walking debug info");
 
 	_console = new DraciConsole(this);
+
+	_screen = 0;
+	_mouse = 0;
+	_game = 0;
+	_script = 0;
+	_anims = 0;
+	_sound = 0;
+	_music = 0;
+	_smallFont = 0;
+	_bigFont = 0;
+	_iconsArchive = 0;
+	_objectsArchive = 0;
+	_spritesArchive = 0;
+	_paletteArchive = 0;
+	_roomsArchive = 0;
+	_overlaysArchive = 0;
+	_animationsArchive = 0;
+	_walkingMapsArchive = 0;
+	_itemsArchive = 0;
+	_itemImagesArchive = 0;
+	_initArchive = 0;
+	_stringsArchive = 0;
+	_soundsArchive = 0;
+	_dubbingArchive = 0;
+	_showWalkingMap = 0;
+	_pauseStartTime = 0;
 }
 
 bool DraciEngine::hasFeature(EngineFeature f) const {

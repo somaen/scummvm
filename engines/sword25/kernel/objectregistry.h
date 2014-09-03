@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -139,12 +139,12 @@ protected:
 		}
 	};
 
-	typedef Common::HashMap<uint, T *>  HANDLE2PTR_MAP;
-	typedef Common::HashMap<T *, uint, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
+	typedef Common::HashMap<uint32, T *>  HANDLE2PTR_MAP;
+	typedef Common::HashMap<T *, uint32, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
 
 	HANDLE2PTR_MAP  _handle2PtrMap;
 	PTR2HANDLE_MAP  _ptr2HandleMap;
-	uint    _nextHandle;
+	uint32    _nextHandle;
 
 	T *findPtrByHandle(uint handle) {
 		// Zum Handle gehörigen Pointer finden.

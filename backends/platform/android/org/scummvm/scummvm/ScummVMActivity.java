@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -169,7 +170,14 @@ public class ScummVMActivity extends Activity {
 			_mouseHelper.attach(main_surface);
 		}
 
-		_events = new ScummVMEvents(this, _scummvm, _mouseHelper);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1)
+		{
+			_events = new ScummVMEvents(this, _scummvm, _mouseHelper);
+		}
+		else
+		{
+			_events = new ScummVMEventsHoneycomb(this, _scummvm, _mouseHelper);
+		}
 
 		main_surface.setOnKeyListener(_events);
 		main_surface.setOnTouchListener(_events);
@@ -236,6 +244,14 @@ public class ScummVMActivity extends Activity {
 	public boolean onTrackballEvent(MotionEvent e) {
 		if (_events != null)
 			return _events.onTrackballEvent(e);
+
+		return false;
+	}
+
+	@Override
+	public boolean onGenericMotionEvent(final MotionEvent e) {
+		if (_events != null)
+			return _events.onGenericMotionEvent(e);
 
 		return false;
 	}

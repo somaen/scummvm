@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -993,7 +993,7 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 		}
 
 		// Queue game credits list
-		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
+		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
 		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
 
 		// End scene after credit display
@@ -1073,7 +1073,7 @@ int Scene::ITEIntroFairePathProc(int param) {
 		_vm->_events->chain(eventColumns, event);
 
 		// Queue game credits list
-		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
+		ITEQueueCredits(DISSOLVE_DURATION + 2000, CREDIT_DURATION1, n_credits1, credits1);
 		eventColumns = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
 
 		// End scene after credit display

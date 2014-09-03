@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -38,26 +38,20 @@ class BaseFont;
 class UIEdit : public UIObject {
 public:
 	DECLARE_PERSISTENT(UIEdit, UIObject)
-	int32 _maxLength;
+
 	int insertChars(int pos, const byte *chars, int num);
 	int deleteChars(int start, int end);
-	bool _cursorVisible;
-	uint32 _lastBlinkTime;
+
 	virtual bool display(int offsetX, int offsetY);
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
-	int32 _scrollOffset;
-	int32 _frameWidth;
-	uint32 _cursorBlinkRate;
+
 	void setCursorChar(const char *character);
-	char *_cursorChar;
-	int32 _selEnd;
-	int32 _selStart;
-	BaseFont *_fontSelected;
+
 	UIEdit(BaseGame *inGame);
 	virtual ~UIEdit();
 
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
@@ -65,6 +59,17 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+private:
+	uint32 _cursorBlinkRate;
+	uint32 _lastBlinkTime;
+	int32 _selEnd;
+	int32 _selStart;
+	int32 _scrollOffset;
+	int32 _frameWidth;
+	BaseFont *_fontSelected;
+	int32 _maxLength;
+	bool _cursorVisible;
+	char *_cursorChar;
 };
 
 } // End of namespace Wintermute

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -30,18 +30,19 @@
 namespace TsAGE {
 
 Debugger::Debugger() : GUI::Debugger() {
-	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
-	DCmd_Register("walk_regions",	WRAP_METHOD(Debugger, Cmd_WalkRegions));
-	DCmd_Register("priority_regions",	WRAP_METHOD(Debugger, Cmd_PriorityRegions));
-	DCmd_Register("scene_regions",	WRAP_METHOD(Debugger, Cmd_SceneRegions));
-	DCmd_Register("setflag",		WRAP_METHOD(Debugger, Cmd_SetFlag));
-	DCmd_Register("getflag",		WRAP_METHOD(Debugger, Cmd_GetFlag));
-	DCmd_Register("clearflag",		WRAP_METHOD(Debugger, Cmd_ClearFlag));
-	DCmd_Register("listobjects",	WRAP_METHOD(Debugger, Cmd_ListObjects));
-	DCmd_Register("moveobject",		WRAP_METHOD(Debugger, Cmd_MoveObject));
-	DCmd_Register("hotspots",		WRAP_METHOD(Debugger, Cmd_Hotspots));
-	DCmd_Register("sound",			WRAP_METHOD(Debugger, Cmd_Sound));
+	DCmd_Register("continue",         WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("scene",            WRAP_METHOD(Debugger, Cmd_Scene));
+	DCmd_Register("walk_regions",     WRAP_METHOD(Debugger, Cmd_WalkRegions));
+	DCmd_Register("priority_regions", WRAP_METHOD(Debugger, Cmd_PriorityRegions));
+	DCmd_Register("scene_regions",    WRAP_METHOD(Debugger, Cmd_SceneRegions));
+	DCmd_Register("setflag",          WRAP_METHOD(Debugger, Cmd_SetFlag));
+	DCmd_Register("getflag",          WRAP_METHOD(Debugger, Cmd_GetFlag));
+	DCmd_Register("clearflag",        WRAP_METHOD(Debugger, Cmd_ClearFlag));
+	DCmd_Register("listobjects",      WRAP_METHOD(Debugger, Cmd_ListObjects));
+	DCmd_Register("moveobject",       WRAP_METHOD(Debugger, Cmd_MoveObject));
+	DCmd_Register("hotspots",         WRAP_METHOD(Debugger, Cmd_Hotspots));
+	DCmd_Register("sound",            WRAP_METHOD(Debugger, Cmd_Sound));
+	DCmd_Register("setdebug",         WRAP_METHOD(Debugger, Cmd_SetDebug));
 }
 
 static int strToInt(const char *s) {
@@ -340,6 +341,14 @@ bool Debugger::Cmd_Sound(int argc, const char **argv) {
 	return false;
 }
 
+/**
+ * Activate internal debugger, when available
+ */
+bool Debugger::Cmd_SetDebug(int argc, const char **argv) {
+	DebugPrintf("Not available in this game\n");
+	return true;
+}
+
 /*
  * This command lists the objects available, and their ID
  */
@@ -631,58 +640,58 @@ bool Ringworld2Debugger::Cmd_ListObjects(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Available objects for this game are:\n");
-	DebugPrintf("1  - R2_OPTO_DISK\n");
-	DebugPrintf("2  - R2_2\n");
-	DebugPrintf("3  - R2_NEGATOR_GUN\n");
-	DebugPrintf("4  - R2_STEPPING_DISKS\n");
-	DebugPrintf("5  - R2_5\n");
-	DebugPrintf("6  - R2_6\n");
-	DebugPrintf("7  - R2_7\n");
-	DebugPrintf("8  - R2_8\n");
-	DebugPrintf("9  - R2_9\n");
-	DebugPrintf("10 - R2_10\n");
-	DebugPrintf("11 - R2_11\n");
-	DebugPrintf("12 - R2_12\n");
-	DebugPrintf("13 - R2_13\n");
-	DebugPrintf("14 - R2_14\n");
-	DebugPrintf("15 - R2_15\n");
-	DebugPrintf("16 - R2_16\n");
-	DebugPrintf("17 - R2_17\n");
-	DebugPrintf("18 - R2_18\n");
-	DebugPrintf("19 - R2_19\n");
-	DebugPrintf("20 - R2_20\n");
-	DebugPrintf("21 - R2_21\n");
-	DebugPrintf("22 - R2_22\n");
-	DebugPrintf("23 - R2_23\n");
-	DebugPrintf("24 - R2_24\n");
-	DebugPrintf("25 - R2_25\n");
-	DebugPrintf("26 - R2_26\n");
-	DebugPrintf("27 - R2_27\n");
-	DebugPrintf("28 - R2_28\n");
-	DebugPrintf("29 - R2_29\n");
-	DebugPrintf("30 - R2_30\n");
-	DebugPrintf("31 - R2_31\n");
-	DebugPrintf("32 - R2_32\n");
-	DebugPrintf("33 - R2_33\n");
-	DebugPrintf("34 - R2_34\n");
-	DebugPrintf("35 - R2_35\n");
-	DebugPrintf("36 - R2_36\n");
-	DebugPrintf("37 - R2_37\n");
-	DebugPrintf("38 - R2_38\n");
-	DebugPrintf("39 - R2_39\n");
-	DebugPrintf("40 - R2_40\n");
-	DebugPrintf("41 - R2_41\n");
-	DebugPrintf("42 - R2_42\n");
-	DebugPrintf("43 - R2_43\n");
-	DebugPrintf("44 - R2_44\n");
-	DebugPrintf("45 - R2_45\n");
-	DebugPrintf("46 - R2_46\n");
-	DebugPrintf("47 - R2_47\n");
-	DebugPrintf("48 - R2_48\n");
-	DebugPrintf("49 - R2_49\n");
-	DebugPrintf("50 - R2_50\n");
-	DebugPrintf("51 - R2_51\n");
-	DebugPrintf("52 - R2_52\n");
+	DebugPrintf("1  - Scene %d - R2_OPTO_DISK\n", BF_INVENTORY.getObjectScene(1));
+	DebugPrintf("2  - Scene %d - R2_READER\n", BF_INVENTORY.getObjectScene(2));
+	DebugPrintf("3  - Scene %d - R2_NEGATOR_GUN\n", BF_INVENTORY.getObjectScene(3));
+	DebugPrintf("4  - Scene %d - R2_STEPPING_DISKS\n", BF_INVENTORY.getObjectScene(4));
+	DebugPrintf("5  - Scene %d - R2_ATTRACTOR_UNIT\n", BF_INVENTORY.getObjectScene(5));
+	DebugPrintf("6  - Scene %d - R2_SENSOR_PROBE\n", BF_INVENTORY.getObjectScene(6));
+	DebugPrintf("7  - Scene %d - R2_SONIC_STUNNER\n", BF_INVENTORY.getObjectScene(7));
+	DebugPrintf("8  - Scene %d - R2_CABLE_HARNESS\n", BF_INVENTORY.getObjectScene(8));
+	DebugPrintf("9  - Scene %d - R2_COM_SCANNER\n", BF_INVENTORY.getObjectScene(9));
+	DebugPrintf("10 - Scene %d - R2_SPENT_POWER_CAPSULE\n", BF_INVENTORY.getObjectScene(10));
+	DebugPrintf("11 - Scene %d - R2_CHARGED_POWER_CAPSULE\n", BF_INVENTORY.getObjectScene(11));
+	DebugPrintf("12 - Scene %d - R2_AEROSOL\n", BF_INVENTORY.getObjectScene(12));
+	DebugPrintf("13 - Scene %d - R2_REMOTE_CONTROL\n", BF_INVENTORY.getObjectScene(13));
+	DebugPrintf("14 - Scene %d - R2_OPTICAL_FIBER\n", BF_INVENTORY.getObjectScene(14));
+	DebugPrintf("15 - Scene %d - R2_CLAMP\n", BF_INVENTORY.getObjectScene(15));
+	DebugPrintf("16 - Scene %d - R2_ATTRACTOR_CABLE_HARNESS\n", BF_INVENTORY.getObjectScene(16));
+	DebugPrintf("17 - Scene %d - R2_FUEL_CELL\n", BF_INVENTORY.getObjectScene(17));
+	DebugPrintf("18 - Scene %d - R2_GYROSCOPE\n", BF_INVENTORY.getObjectScene(18));
+	DebugPrintf("19 - Scene %d - R2_AIRBAG\n", BF_INVENTORY.getObjectScene(19));
+	DebugPrintf("20 - Scene %d - R2_REBREATHER_TANK\n", BF_INVENTORY.getObjectScene(20));
+	DebugPrintf("21 - Scene %d - R2_RESERVE_REBREATHER_TANK\n", BF_INVENTORY.getObjectScene(21));
+	DebugPrintf("22 - Scene %d - R2_GUIDANCE_MODULE\n", BF_INVENTORY.getObjectScene(22));
+	DebugPrintf("23 - Scene %d - R2_THRUSTER_VALVE\n", BF_INVENTORY.getObjectScene(23));
+	DebugPrintf("24 - Scene %d - R2_BALLOON_BACKPACK\n", BF_INVENTORY.getObjectScene(24));
+	DebugPrintf("25 - Scene %d - R2_RADAR_MECHANISM\n", BF_INVENTORY.getObjectScene(25));
+	DebugPrintf("26 - Scene %d - R2_JOYSTICK\n", BF_INVENTORY.getObjectScene(26));
+	DebugPrintf("27 - Scene %d - R2_IGNITOR\n", BF_INVENTORY.getObjectScene(27));
+	DebugPrintf("28 - Scene %d - R2_DIAGNOSTICS_DISPLAY\n", BF_INVENTORY.getObjectScene(28));
+	DebugPrintf("29 - Scene %d - R2_GLASS_DOME\n", BF_INVENTORY.getObjectScene(29));
+	DebugPrintf("30 - Scene %d - R2_WICK_LAMP\n", BF_INVENTORY.getObjectScene(30));
+	DebugPrintf("31 - Scene %d - R2_SCRITH_KEY\n", BF_INVENTORY.getObjectScene(31));
+	DebugPrintf("32 - Scene %d - R2_TANNER_MASK\n", BF_INVENTORY.getObjectScene(32));
+	DebugPrintf("33 - Scene %d - R2_PURE_GRAIN_ALCOHOL\n", BF_INVENTORY.getObjectScene(33));
+	DebugPrintf("34 - Scene %d - R2_SAPPHIRE_BLUE\n", BF_INVENTORY.getObjectScene(34));
+	DebugPrintf("35 - Scene %d - R2_ANCIENT_SCROLLS\n", BF_INVENTORY.getObjectScene(35));
+	DebugPrintf("36 - Scene %d - R2_FLUTE\n", BF_INVENTORY.getObjectScene(36));
+	DebugPrintf("37 - Scene %d - R2_GUNPOWDER\n", BF_INVENTORY.getObjectScene(37));
+	DebugPrintf("38 - Scene %d - R2_NONAME\n", BF_INVENTORY.getObjectScene(38));
+	DebugPrintf("39 - Scene %d - R2_COM_SCANNER_2\n", BF_INVENTORY.getObjectScene(39));
+	DebugPrintf("40 - Scene %d - R2_SUPERCONDUCTOR_WIRE\n", BF_INVENTORY.getObjectScene(40));
+	DebugPrintf("41 - Scene %d - R2_PILLOW\n", BF_INVENTORY.getObjectScene(41));
+	DebugPrintf("42 - Scene %d - R2_FOOD_TRAY\n", BF_INVENTORY.getObjectScene(42));
+	DebugPrintf("43 - Scene %d - R2_LASER_HACKSAW\n", BF_INVENTORY.getObjectScene(43));
+	DebugPrintf("44 - Scene %d - R2_PHOTON_STUNNER\n", BF_INVENTORY.getObjectScene(44));
+	DebugPrintf("45 - Scene %d - R2_BATTERY\n", BF_INVENTORY.getObjectScene(45));
+	DebugPrintf("46 - Scene %d - R2_SOAKED_FACEMASK\n", BF_INVENTORY.getObjectScene(46));
+	DebugPrintf("47 - Scene %d - R2_LIGHT_BULB\n", BF_INVENTORY.getObjectScene(47));
+	DebugPrintf("48 - Scene %d - R2_ALCOHOL_LAMP\n", BF_INVENTORY.getObjectScene(48));
+	DebugPrintf("49 - Scene %d - R2_ALCOHOL_LAMP_2\n", BF_INVENTORY.getObjectScene(49));
+	DebugPrintf("50 - Scene %d - R2_ALCOHOL_LAMP_3\n", BF_INVENTORY.getObjectScene(50));
+	DebugPrintf("51 - Scene %d - R2_BROKEN_DISPLAY\n", BF_INVENTORY.getObjectScene(51));
+	DebugPrintf("52 - Scene %d - R2_TOOLBOX\n", BF_INVENTORY.getObjectScene(52));
 
 	return true;
 }
@@ -705,6 +714,21 @@ bool Ringworld2Debugger::Cmd_MoveObject(int argc, const char **argv) {
 	else
 		DebugPrintf("Invalid object Id %s\n", argv[1]);
 
+	return true;
+}
+
+/**
+ * Activate internal debugger, when available
+ */
+bool Ringworld2Debugger::Cmd_SetDebug(int argc, const char **argv) {
+	if (argc != 1) {
+		DebugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	// Set the internal debugger flag(s?) to true
+	// _debugCardGame is reset by scene1337::subPostInit()
+	R2_GLOBALS._debugCardGame = true;
 	return true;
 }
 } // End of namespace TsAGE

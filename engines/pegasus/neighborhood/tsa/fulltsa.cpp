@@ -2653,7 +2653,6 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 				GameState.setWSCAnalyzerOn(false);
 				GameState.setWSCDartInAnalyzer(false);
 				GameState.setWSCAnalyzedDart(false);
-				GameState.setWSCPickedUpAntidote(false);
 				GameState.setWSCSawMorph(false);
 				GameState.setWSCDesignedAntidote(false);
 				GameState.setWSCOfficeMessagesOpen(false);
@@ -2692,16 +2691,18 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 			}
 			break;
 		case kTSA37DownloadToOpMemReview:
-			switch (GameState.getTSAState()) {
-			case kPlayerOnWayToNorad:
-				g_opticalChip->playOpMemMovie(kPoseidonSpotID);
-				break;
-			case kPlayerOnWayToMars:
-				g_opticalChip->playOpMemMovie(kAriesSpotID);
-				break;
-			case kPlayerOnWayToWSC:
-				g_opticalChip->playOpMemMovie(kMercurySpotID);
-				break;
+			if (_vm->itemInBiochips(kOpticalBiochip)) {
+				switch (GameState.getTSAState()) {
+				case kPlayerOnWayToNorad:
+					g_opticalChip->playOpMemMovie(kPoseidonSpotID);
+					break;
+				case kPlayerOnWayToMars:
+					g_opticalChip->playOpMemMovie(kAriesSpotID);
+					break;
+				case kPlayerOnWayToWSC:
+					g_opticalChip->playOpMemMovie(kMercurySpotID);
+					break;
+				}
 			}
 
 			if (GameState.allTimeZonesFinished()) {

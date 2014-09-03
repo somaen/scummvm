@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -66,14 +66,19 @@ class MfcArchive : public Common::SeekableReadStream {
 
 enum ObjType {
 	kObjTypeDefault,
+	kObjTypeExCommand,
+	kObjTypeExCommand2,
+	kObjTypeMovGraph,
+	kObjTypeMovGraphLink,
+	kObjTypeMovGraphNode,
+	kObjTypeMctlCompound,
 	kObjTypeObjstateCommand,
-	kObjTypeStaticANIObject,
 	kObjTypePictureObject,
-	kObjTypeMovGraph
+	kObjTypeStaticANIObject
 };
 
 class CObject {
- public:
+public:
 	ObjType _objtype;
 
 	CObject() : _objtype(kObjTypeDefault) {}
@@ -112,6 +117,7 @@ class MemoryObject : CObject {
 	void load() { loadFile(_memfilename); }
 	byte *getData();
 	byte *loadData();
+	int getDataSize() const { return _dataSize; }
 
 	bool testFlags();
 

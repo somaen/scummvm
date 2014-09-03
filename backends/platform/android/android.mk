@@ -7,6 +7,7 @@ ANDROID_PLUGIN_VERSIONCODE = 6
 JAVA_FILES = \
 	ScummVM.java \
 	ScummVMEvents.java \
+	ScummVMEventsHoneycomb.java \
 	ScummVMApplication.java \
 	ScummVMActivity.java \
 	EditableSurfaceView.java \
@@ -25,13 +26,19 @@ PATH_RESOURCES = $(PATH_DIST)/res
 
 PORT_DISTFILES = $(PATH_DIST)/README.Android
 
+# FIXME: OUYA specific.
+#        "values-television" not present in vanilla Android.
+# $(PATH_RESOURCES)/../res-ouya/values-television/margins.xml \
+
 RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \
+	$(PATH_RESOURCES)/values/margins.xml \
 	$(PATH_RESOURCES)/layout/main.xml \
 	$(PATH_RESOURCES)/layout/splash.xml \
 	$(PATH_RESOURCES)/drawable/gradient.xml \
 	$(PATH_RESOURCES)/drawable/scummvm.png \
-	$(PATH_RESOURCES)/drawable/scummvm_big.png
+	$(PATH_RESOURCES)/drawable/scummvm_big.png \
+	$(PATH_RESOURCES)/drawable-xhdpi/ouya_icon.png
 
 PLUGIN_RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \

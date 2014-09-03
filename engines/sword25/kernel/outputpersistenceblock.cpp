@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -41,13 +41,13 @@ OutputPersistenceBlock::OutputPersistenceBlock() {
 	_data.reserve(INITIAL_BUFFER_SIZE);
 }
 
-void OutputPersistenceBlock::write(signed int value) {
+void OutputPersistenceBlock::write(int32 value) {
 	writeMarker(SINT_MARKER);
 	value = TO_LE_32(value);
 	rawWrite(&value, sizeof(value));
 }
 
-void OutputPersistenceBlock::write(uint value) {
+void OutputPersistenceBlock::write(uint32 value) {
 	writeMarker(UINT_MARKER);
 	value = TO_LE_32(value);
 	rawWrite(&value, sizeof(value));
@@ -74,14 +74,14 @@ void OutputPersistenceBlock::write(bool value) {
 void OutputPersistenceBlock::writeString(const Common::String &string) {
 	writeMarker(STRING_MARKER);
 
-	write(string.size());
+	write((uint32)string.size());
 	rawWrite(string.c_str(), string.size());
 }
 
 void OutputPersistenceBlock::writeByteArray(Common::Array<byte> &value) {
 	writeMarker(BLOCK_MARKER);
 
-	write((uint)value.size());
+	write((uint32)value.size());
 	rawWrite(&value[0], value.size());
 }
 

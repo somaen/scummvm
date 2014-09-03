@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -71,17 +71,7 @@ Sprite::~Sprite() {
 }
 
 void Sprite::loadList(int resourceId, SpriteList &spriteList) {
-	SpriteInfo *spriteInfo;
 	ByteArray spriteListData;
-	uint16 oldSpriteCount;
-	uint16 newSpriteCount;
-	uint16 spriteCount;
-	uint i;
-	int outputLength, inputLength;
-	uint32 offset;
-	const byte *spritePointer;
-	const byte *spriteDataPointer;
-
 	_vm->_resource->loadResource(_spriteContext, resourceId, spriteListData);
 
 	if (spriteListData.empty()) {
@@ -90,19 +80,19 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	ByteArrayReadStreamEndian readS(spriteListData, _spriteContext->isBigEndian());
 
-	spriteCount = readS.readUint16();
+	uint16 spriteCount = readS.readUint16();
 
 	debug(9, "Sprites: %d", spriteCount);
 
-	oldSpriteCount = spriteList.size();
-	newSpriteCount = oldSpriteCount + spriteCount;
+	uint16 oldSpriteCount = spriteList.size();
+	uint16 newSpriteCount = oldSpriteCount + spriteCount;
 
 	spriteList.resize(newSpriteCount);
 
 	bool bigHeader = _vm->getGameId() == GID_IHNM || _vm->isMacResources();
 
-	for (i = oldSpriteCount; i < spriteList.size(); i++) {
-		spriteInfo = &spriteList[i];
+	for (uint i = oldSpriteCount; i < spriteList.size(); i++) {
+		uint32 offset;
 		if (bigHeader)
 			offset = readS.readUint32();
 		else
@@ -115,9 +105,11 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 			return;
 		}
 
-		spritePointer = spriteListData.getBuffer();
+		const byte *spritePointer = spriteListData.getBuffer();
 		spritePointer += offset;
 
+		const byte *spriteDataPointer;
+		SpriteInfo *spriteInfo = &spriteList[i];
 		if (bigHeader) {
 			Common::MemoryReadStreamEndian readS2(spritePointer, 8, _spriteContext->isBigEndian());
 
@@ -139,8 +131,8 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 			spriteDataPointer = spritePointer + readS2.pos();
 		}
 
-		outputLength = spriteInfo->width * spriteInfo->height;
-		inputLength = spriteListData.size() - (spriteDataPointer - spriteListData.getBuffer());
+		int outputLength = spriteInfo->width * spriteInfo->height;
+		int inputLength = spriteListData.size() - (spriteDataPointer - spriteListData.getBuffer());
 		spriteInfo->decodedBuffer.resize(outputLength);
 		if (outputLength > 0) {
 			decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);

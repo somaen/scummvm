@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -235,13 +235,13 @@ bool InputEngine::persist(OutputPersistenceBlock &writer) {
 	// Write out the number of command callbacks and their names.
 	// Note: We do this only for compatibility with older engines resp.
 	// the original engine.
-	writer.write((uint)1);
+	writer.write((uint32)1);
 	writer.writeString("LuaCommandCB");
 
 	// Write out the number of command callbacks and their names.
 	// Note: We do this only for compatibility with older engines resp.
 	// the original engine.
-	writer.write((uint)1);
+	writer.write((uint32)1);
 	writer.writeString("LuaCharacterCB");
 
 	return true;
@@ -253,7 +253,7 @@ bool InputEngine::unpersist(InputPersistenceBlock &reader) {
 	// Read number of command callbacks and their names.
 	// Note: We do this only for compatibility with older engines resp.
 	// the original engine.
-	uint commandCallbackCount;
+	uint32 commandCallbackCount;
 	reader.read(commandCallbackCount);
 	assert(commandCallbackCount == 1);
 
@@ -263,7 +263,7 @@ bool InputEngine::unpersist(InputPersistenceBlock &reader) {
 	// Read number of character callbacks and their names.
 	// Note: We do this only for compatibility with older engines resp.
 	// the original engine.
-	uint characterCallbackCount;
+	uint32 characterCallbackCount;
 	reader.read(characterCallbackCount);
 	assert(characterCallbackCount == 1);
 

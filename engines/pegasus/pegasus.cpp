@@ -429,8 +429,10 @@ void PegasusEngine::removeTimeBase(TimeBase *timeBase) {
 	_timeBases.remove(timeBase);
 }
 
-bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
+bool PegasusEngine::loadFromStream(Common::SeekableReadStream *stream) {
 	// Dispose currently running stuff
+	lowerInventoryDrawerSync();
+	lowerBiochipDrawerSync();
 	useMenu(0);
 	useNeighborhood(0);
 	removeAllItemsFromInventory();
@@ -520,8 +522,36 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	performJump(GameState.getCurrentNeighborhood());
 
 	// AI rules
-	if (g_AIArea)
-		g_AIArea->readAIRules(stream);
+	if (g_AIArea) {
+		// HACK: clone2727 accidentally changed some Prehistoric code to output some bad saves
+		// at one point. That's fixed now, but I don't want to leave the other users high
+		// and dry.
+		if (GameState.getCurrentNeighborhood() == kPrehistoricID && !isDemo()) {
+			uint32 pos = stream->pos();
+			stream->seek(0x208);
+			uint32 roomView = stream->readUint32BE();
+			stream->seek(pos);
+
+			if (roomView == 0x30019) {
+				// This is a bad save -> Let's fix the data
+				// One byte should be put at the end instead
+				uint32 size = stream->size() - pos;
+				byte *data = (byte *)malloc(size);
+				data[0] = stream->readByte();
+				data[1] = stream->readByte();
+				data[2] = stream->readByte();
+				byte wrongData = stream->readByte();
+				stream->read(data + 3, size - 4);
+				data[size - 1] = wrongData;
+				Common::MemoryReadStream tempStream(data, size, DisposeAfterUse::YES);
+				g_AIArea->readAIRules(&tempStream);
+			} else {
+				g_AIArea->readAIRules(stream);
+			}
+		} else {
+			g_AIArea->readAIRules(stream);
+		}
+	}
 
 	startNeighborhood();
 
@@ -1430,6 +1460,15 @@ void PegasusEngine::throwAwayEverything() {
 
 	delete g_interface;
 	g_interface = 0;
+}
+
+InputBits PegasusEngine::getInputFilter() {
+	InputBits filter = InputHandler::getInputFilter();
+
+	if (isPaused())
+		return filter & ~JMPPPInput::getItemPanelsInputFilter();
+
+	return filter;
 }
 
 void PegasusEngine::processShell() {

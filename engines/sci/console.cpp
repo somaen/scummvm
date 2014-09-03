@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -2980,7 +2980,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 	Script *script;
 	// Create a custom segment manager here, so that the game's segment
 	// manager won't be affected by loading and unloading scripts here.
-	SegManager *customSegMan = new SegManager(_engine->getResMan());
+	SegManager *customSegMan = new SegManager(_engine->getResMan(), _engine->getScriptPatcher());
 
 	Common::List<ResourceId>::iterator itr;
 	for (itr = resources.begin(); itr != resources.end(); ++itr) {
@@ -3840,10 +3840,15 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 			const char *tmp = Common::find(str_objname.begin(), str_objname.end(), '.');
 			if (tmp != str_objname.end()) {
 				index = strtol(tmp + 1, &endptr, 16);
-				if (*endptr)
-					return -1;
-				// Chop off the index
-				str_objname = Common::String(str_objname.c_str(), tmp);
+				if (*endptr) {
+					// The characters after the dot do not represent an index.
+					// This can happen if an object contains a dot in its name,
+					// like 'dominoes.opt' in Hoyle 3.
+					index = -1;
+				} else {
+					// Valid index found, chop it off
+					str_objname = Common::String(str_objname.c_str(), tmp);
+				}
 			}
 
 			// Replace all underscores in the name with spaces

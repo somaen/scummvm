@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -367,6 +367,18 @@ void AgiEngine::setupOpcodes() {
 
 		logicNamesTest = insV2Test;
 		logicNamesCmd = insV2;
+
+		// Alter opcode parameters for specific games
+		// TODO: This could be either turned into a game feature, or a version
+		// specific check, instead of a game version check
+
+		// The Apple IIGS versions of MH1 and Goldrush both have a parameter for
+		// show.mouse and hide.mouse. Fixes bugs #3577754 and #3426946.
+		if ((getGameID() == GID_MH1 || getGameID() == GID_GOLDRUSH) &&
+			getPlatform() == Common::kPlatformApple2GS) {
+			logicNamesCmd[176].args = "n";	// hide.mouse
+			logicNamesCmd[178].args = "n";	// show.mouse
+		}
 	} else {
 		for (int i = 0; i < ARRAYSIZE(insV1Test); ++i)
 			_agiCondCommands[i] = insV1Test[i].func;
@@ -375,18 +387,6 @@ void AgiEngine::setupOpcodes() {
 
 		logicNamesTest = insV1Test;
 		logicNamesCmd = insV1;
-	}
-
-	// Alter opcode parameters for specific games
-	// TODO: This could be either turned into a game feature, or a version
-	// specific check, instead of a game version check
-
-	// The Apple IIGS versions of MH1 and Goldrush both have a parameter for
-	// show.mouse and hide.mouse. Fixes bugs #3577754 and #3426946.
-	if ((getGameID() == GID_MH1 || getGameID() == GID_GOLDRUSH) &&
-		getPlatform() == Common::kPlatformApple2GS) {
-		logicNamesCmd[176].args = "n";	// hide.mouse
-		logicNamesCmd[178].args = "n";	// show.mouse
 	}
 }
 

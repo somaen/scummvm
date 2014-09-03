@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -133,6 +133,14 @@ Debugger *g_readline_debugger;
 char *readline_completionFunction(const char *text, int state) {
 	return g_readline_debugger->readlineComplete(text, state);
 }
+
+#ifdef USE_READLINE_INT_COMPLETION
+typedef int RLCompFunc_t(const char *, int);
+#else
+typedef char *RLCompFunc_t(const char *, int);
+#endif
+
+
 } // end of anonymous namespace
 #endif
 
@@ -162,7 +170,7 @@ void Debugger::enter() {
 	// TODO: add support for saving/loading history?
 
 	g_readline_debugger = this;
-	rl_completion_entry_function = &readline_completionFunction;
+	rl_completion_entry_function = (RLCompFunc_t *)&readline_completionFunction;
 
 	char *line_read = 0;
 	do {

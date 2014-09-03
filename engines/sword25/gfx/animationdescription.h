@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -52,8 +52,8 @@ protected:
 public:
 	struct Frame {
 		// Die Hotspot-Angabe bezieht sich auf das ungeflippte Bild!!
-		int         hotspotX;
-		int         hotspotY;
+		int32         hotspotX;
+		int32         hotspotY;
 		bool        flipV;
 		bool        flipH;
 		Common::String  fileName;
@@ -88,8 +88,8 @@ public:
 
 protected:
 	Animation::ANIMATION_TYPES   _animationType;
-	int                          _FPS;
-	int                          _millisPerFrame;
+	int32                        _FPS;
+	int32                        _millisPerFrame;
 	bool                         _scalingAllowed;
 	bool                         _alphaAllowed;
 	bool                         _colorModulationAllowed;

@@ -249,7 +249,7 @@ private:
 	Common::List<TimeBase *> _timeBases;
 
 	// Save/Load
-	bool loadFromStream(Common::ReadStream *stream);
+	bool loadFromStream(Common::SeekableReadStream *stream);
 	bool writeToStream(Common::WriteStream *stream, int saveType);
 	void loadFromContinuePoint();
 	void writeContinueStream(Common::WriteStream *stream);
@@ -272,6 +272,7 @@ private:
 	uint getNeighborhoodCD(const NeighborhoodID neighborhood) const;
 	uint _currentCD;
 	void initKeymap();
+	InputBits getInputFilter();
 
 	// Menu
 	GameMenu *_gameMenu;

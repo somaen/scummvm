@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -261,6 +261,75 @@ public:
 	AsScene2812TrapDoor(NeverhoodEngine *vm);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class KmScene2801 : public Klaymen {
+public:
+	KmScene2801(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2803 : public Klaymen {
+public:
+	KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2803Small : public Klaymen {
+public:
+	KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	void stShrink();
+	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
+
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2805 : public Klaymen {
+public:
+	KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2806 : public Klaymen {
+public:
+	KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
+		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2809 : public Klaymen {
+public:
+	KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
+		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2810Small : public Klaymen {
+public:
+	KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2810 : public Klaymen {
+public:
+	KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
+		NRect *clipRects, uint clipRectsCount);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2812 : public Klaymen {
+public:
+	KmScene2812(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 } // End of namespace Neverhood

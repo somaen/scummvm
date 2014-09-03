@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -26,20 +26,19 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "common/system.h"
+#include "common/queue.h"
+#include "common/config-manager.h"
+#include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/gfx/base_image.h"
+#include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
-#include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/math/math_util.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_sprite.h"
-#include "common/system.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
-#include "common/queue.h"
-#include "common/config-manager.h"
-
-#define DIRTY_RECT_LIMIT 800
 
 namespace Wintermute {
 
@@ -51,22 +50,21 @@ BaseRenderer *makeOSystemRenderer(BaseGame *inGame) {
 BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_renderSurface = new Graphics::Surface();
 	_blankSurface = new Graphics::Surface();
-	_drawNum = 1;
+	_lastFrameIter = _renderQueue.end();
 	_needsFlip = true;
-	_spriteBatch = false;
-	_batchNum = 0;
 	_skipThisFrame = false;
-	_previousTicket = nullptr;
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
-	_colorMod = kDefaultRgbaMod;
-	_dirtyRect = nullptr;
+
+	_dirtyRects = new DirtyRectContainer();
+
 	_disableDirtyRects = false;
-	_tempDisableDirtyRects = 0;
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
 	}
+
+	_lastScreenChangeID = g_system->getScreenChangeID();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -78,8 +76,8 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 		delete ticket;
 	}
 
-	delete _dirtyRect;
-
+	_dirtyRects->reset();
+	delete _dirtyRects;
 	_renderSurface->free();
 	delete _renderSurface;
 	_blankSurface->free();
@@ -155,20 +153,23 @@ bool BaseRenderOSystem::indicatorFlip() {
 }
 
 bool BaseRenderOSystem::flip() {
-	if (_renderQueue.size() > DIRTY_RECT_LIMIT) {
-		_tempDisableDirtyRects++;
-	}
 	if (_skipThisFrame) {
 		_skipThisFrame = false;
-		delete _dirtyRect;
-		_dirtyRect = nullptr;
+		_dirtyRects->reset();
 		g_system->updateScreen();
 		_needsFlip = false;
-		_drawNum = 1;
+
+		// Reset ticketing state
+		_lastFrameIter = _renderQueue.end();
+		RenderQueueIterator it;
+		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
+			(*it)->_wantsDraw = false;
+		}
+
 		addDirtyRect(_renderRect);
 		return true;
 	}
-	if (!_tempDisableDirtyRects && !_disableDirtyRects) {
+	if (!_disableDirtyRects) {
 		drawTickets();
 	} else {
 		// Clear the scale-buffered tickets that wasn't reused.
@@ -184,33 +185,22 @@ bool BaseRenderOSystem::flip() {
 			}
 		}
 	}
-	if (_needsFlip || _disableDirtyRects || _tempDisableDirtyRects) {
-		if (_disableDirtyRects || _tempDisableDirtyRects) {
+
+	int oldScreenChangeID = _lastScreenChangeID;
+	_lastScreenChangeID = g_system->getScreenChangeID();
+	bool screenChanged = _lastScreenChangeID != oldScreenChangeID;
+
+	if (_needsFlip || _disableDirtyRects || screenChanged) {
+		if (_disableDirtyRects || screenChanged) {
 			g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
 		//  g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
-		delete _dirtyRect;
-		_dirtyRect = nullptr;
-		g_system->updateScreen();
+		_dirtyRects->reset();
 		_needsFlip = false;
 	}
-	_drawNum = 1;
 
-	if (_tempDisableDirtyRects && !_disableDirtyRects) {
-		_tempDisableDirtyRects--;
-		if (!_tempDisableDirtyRects) {
-			Common::Rect screen(_screenRect.top, _screenRect.left, _screenRect.bottom, _screenRect.right);
-			addDirtyRect(screen);
-
-			// The queue has been ignored but updated, and is guaranteed to be in draw-order when run without dirty-rects.
-			RenderQueueIterator it = _renderQueue.begin();
-			int drawNum = 1;
-			while (it != _renderQueue.end()) {
-				(*it)->_drawNum = drawNum++;
-				++it;
-			}
-		}
-	}
+	_lastFrameIter = _renderQueue.end();
+	g_system->updateScreen();
 
 	return STATUS_OK;
 }
@@ -218,7 +208,7 @@ bool BaseRenderOSystem::flip() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
-	if (!_disableDirtyRects && !_tempDisableDirtyRects) {
+	if (!_disableDirtyRects) {
 		return STATUS_OK;
 	}
 	if (!rect) {
@@ -277,22 +267,14 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 	return _renderSurface->format;
 }
 
-void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) { 
+void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) {
 
-	if (_tempDisableDirtyRects || _disableDirtyRects) {
+	if (_disableDirtyRects) {
 		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
-		ticket->_transform._rgbaMod = _colorMod;
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
-		_previousTicket = ticket;
 		drawFromSurface(ticket);
 		return;
-	}
-
-	// Start searching from the beginning for the first and second items (since it's empty the first time around
-	// then keep incrementing the start-position, to avoid comparing against already used tickets.
-	if (_drawNum == 0 || _drawNum == 1) {
-		_lastAddedTicket = _renderQueue.begin();
 	}
 
 	// Skip rects that are completely outside the screen:
@@ -302,28 +284,19 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 
 	if (owner) { // Fade-tickets are owner-less
 		RenderTicket compare(owner, nullptr, srcRect, dstRect, transform);
-		compare._batchNum = _batchNum;
-		if (_spriteBatch) {
-			_batchNum++;
-		}
-		RenderQueueIterator it;
+		RenderQueueIterator it = _lastFrameIter;
+		++it;
 		// Avoid calling end() and operator* every time, when potentially going through
 		// LOTS of tickets.
 		RenderQueueIterator endIterator = _renderQueue.end();
 		RenderTicket *compareTicket = nullptr;
-		for (it = _lastAddedTicket; it != endIterator; ++it) {
+		for (; it != endIterator; ++it) {
 			compareTicket = *it;
 			if (*(compareTicket) == compare && compareTicket->_isValid) {
-				compareTicket->_transform._rgbaMod = transform._rgbaMod; 
 				if (_disableDirtyRects) {
 					drawFromSurface(compareTicket);
 				} else {
-					drawFromTicket(compareTicket);
-					_previousTicket = compareTicket;
-				}
-				if (_renderQueue.size() > DIRTY_RECT_LIMIT) {
-					drawTickets();
-					_tempDisableDirtyRects = 3;
+					drawFromQueuedTicket(it);
 				}
 				return;
 			}
@@ -332,54 +305,10 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
 	if (!_disableDirtyRects) {
 		drawFromTicket(ticket);
-		_previousTicket = ticket;
 	} else {
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
-		_previousTicket = ticket;
 		drawFromSurface(ticket);
-	}
-}
-
-void BaseRenderOSystem::repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY) {
-	if (_previousTicket && _lastAddedTicket != _renderQueue.end()) {
-		RenderTicket *origTicket = _previousTicket;
-
-		// Make sure drawSurface WILL start from the correct _lastAddedTicket
-		if (!_tempDisableDirtyRects && !_disableDirtyRects && *_lastAddedTicket != origTicket) {
-			RenderQueueIterator it;
-			RenderQueueIterator endIterator = _renderQueue.end();
-			for (it = _renderQueue.begin(); it != endIterator; ++it) {
-				if ((*it) == _previousTicket) {
-					_lastAddedTicket = it;
-					break;
-				}
-			}
-		}
-		Common::Rect srcRect(0, 0, 0, 0);
-		srcRect.setWidth(origTicket->getSrcRect()->width());
-		srcRect.setHeight(origTicket->getSrcRect()->height());
-
-		Common::Rect dstRect = origTicket->_dstRect;
-		int initLeft = dstRect.left;
-		int initRight = dstRect.right;
-
-		TransformStruct temp = TransformStruct(kDefaultZoomX, kDefaultZoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, BLEND_NORMAL, kDefaultRgbaMod, false, false, kDefaultOffsetX, kDefaultOffsetY);
-
-		for (int i = 0; i < numTimesY; i++) {
-			if (i == 0) {
-				dstRect.translate(offsetX, 0);
-			}
-			for (int j = (i == 0 ? 1 : 0); j < numTimesX; j++) {
-				drawSurface(origTicket->_owner, origTicket->getSurface(), &srcRect, &dstRect, temp); 
-				dstRect.translate(offsetX, 0);
-			}
-			dstRect.left = initLeft;
-			dstRect.right = initRight;
-			dstRect.translate(0, offsetY);
-		}
-	} else {
-		error("Repeat-draw failed (did you forget to draw something before this?)");
 	}
 }
 
@@ -400,149 +329,160 @@ void BaseRenderOSystem::invalidateTicketsFromSurface(BaseSurfaceOSystem *surf) {
 
 void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 	renderTicket->_wantsDraw = true;
-	// A new item always has _drawNum == 0
-	if (renderTicket->_drawNum == 0) {
-		// In-order
-		if (_renderQueue.empty() || _drawNum > (_renderQueue.back())->_drawNum) {
-			renderTicket->_drawNum = _drawNum++;
-			_renderQueue.push_back(renderTicket);
-			addDirtyRect(renderTicket->_dstRect);
-			++_lastAddedTicket;
-		} else {
-			// Before something
-			RenderQueueIterator pos;
-			for (pos = _renderQueue.begin(); pos != _renderQueue.end(); pos++) {
-				if ((*pos)->_drawNum >= _drawNum) {
-					break;
-				}
-			}
-			_renderQueue.insert(pos, renderTicket);
-			renderTicket->_drawNum = _drawNum++;
-			// Increment the following tickets, so they still are in line
-			RenderQueueIterator it;
-			for (it = pos; it != _renderQueue.end(); ++it) {
-				(*it)->_drawNum++;
-				(*it)->_wantsDraw = false;
-			}
-			addDirtyRect(renderTicket->_dstRect);
-			_lastAddedTicket = pos;
-		}
+
+	++_lastFrameIter;
+	// In-order
+	if (_renderQueue.empty() || _lastFrameIter == _renderQueue.end()) {
+		_lastFrameIter--;
+		_renderQueue.push_back(renderTicket);
+		++_lastFrameIter;
+		addDirtyRect(renderTicket->_dstRect);
 	} else {
-		// Was drawn last round, still in the same order
-		if (_drawNum == renderTicket->_drawNum) {
-			_drawNum++;
-			++_lastAddedTicket;
-		} else {
-			// Remove the ticket from the list
-			RenderQueueIterator it = _renderQueue.begin();
-			while (it != _renderQueue.end()) {
-				if ((*it) == renderTicket) {
-					it = _renderQueue.erase(it);
-					break;
-				} else {
-					++it;
-				}
-			}
-			if (it != _renderQueue.end()) {
-				// Decreement the following tickets.
-				for (; it != _renderQueue.end(); ++it) {
-					(*it)->_drawNum--;
-				}
-			}
-			// Is not in order, so readd it as if it was a new ticket
-			renderTicket->_drawNum = 0;
-			drawFromTicket(renderTicket);
-		}
+		// Before something
+		RenderQueueIterator pos = _lastFrameIter;
+		_renderQueue.insert(pos, renderTicket);
+		--_lastFrameIter;
+		addDirtyRect(renderTicket->_dstRect);
+	}
+}
+
+void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) {
+	RenderTicket *renderTicket = *ticket;
+	assert(!renderTicket->_wantsDraw);
+	renderTicket->_wantsDraw = true;
+
+	++_lastFrameIter;
+	// Not in the same order?
+	if (*_lastFrameIter != renderTicket) {
+		--_lastFrameIter;
+		// Remove the ticket from the list
+		assert(*_lastFrameIter != renderTicket);
+		_renderQueue.erase(ticket);
+		// Is not in order, so readd it as if it was a new ticket
+		drawFromTicket(renderTicket);
 	}
 }
 
 void BaseRenderOSystem::addDirtyRect(const Common::Rect &rect) {
-	if (!_dirtyRect) {
-		_dirtyRect = new Common::Rect(rect);
-	} else {
-		_dirtyRect->extend(rect);
-	}
-	_dirtyRect->clip(_renderRect);
+	_dirtyRects->addDirtyRect(rect, _renderRect);
 }
 
 void BaseRenderOSystem::drawTickets() {
 	RenderQueueIterator it = _renderQueue.begin();
 	// Clean out the old tickets
-	// Note: We draw invalid tickets too, otherwise we wouldn't be honouring
+	// Note: We draw invalid tickets too, otherwise we wouldn't be honoring
 	// the draw request they obviously made BEFORE becoming invalid, either way
 	// we have a copy of their data, so their invalidness won't affect us.
-	uint32 decrement = 0;
 	while (it != _renderQueue.end()) {
 		if ((*it)->_wantsDraw == false) {
 			RenderTicket *ticket = *it;
 			addDirtyRect((*it)->_dstRect);
 			it = _renderQueue.erase(it);
 			delete ticket;
-			decrement++;
 		} else {
-			(*it)->_drawNum -= decrement;
 			++it;
 		}
 	}
-	if (!_dirtyRect || _dirtyRect->width() == 0 || _dirtyRect->height() == 0) {
-		it = _renderQueue.begin();
-		while (it != _renderQueue.end()) {
-			RenderTicket *ticket = *it;
-			ticket->_wantsDraw = false;
-			++it;
+
+#if DEBUG_RECTS == DEBUG_RECTS_BLACKOUT
+	_renderSurface->fillRect(Common::Rect(0,0, _renderSurface->w, _renderSurface->h), kDebugColor);
+	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(0, 0), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+#endif 
+
+	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
+
+	if (!optimized.size()) {
+		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
+				RenderTicket *ticket = *it;
+				ticket->_wantsDraw = false;
 		}
 		return;
 	}
-	// The color-mods are stored in the RenderTickets on add, since we set that state again during
-	// draw, we need to keep track of what it was prior to draw.
-	uint32 oldColorMod = _colorMod;
 
-	// Apply the clear-color to the dirty rect.
-	_renderSurface->fillRect(*_dirtyRect, _clearColor);
-	_drawNum = 1;
-	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
-		RenderTicket *ticket = *it;
-		assert(ticket->_drawNum == _drawNum);
-		++_drawNum;
-		if (ticket->_dstRect.intersects(*_dirtyRect)) {
-			// dstClip is the area we want redrawn.
-			Common::Rect dstClip(ticket->_dstRect);
-			// reduce it to the dirty rect
-			dstClip.clip(*_dirtyRect);
-			// we need to keep track of the position to redraw the dirty rect
-			Common::Rect pos(dstClip);
-			int16 offsetX = ticket->_dstRect.left;
-			int16 offsetY = ticket->_dstRect.top;
-			// convert from screen-coords to surface-coords.
-			dstClip.translate(-offsetX, -offsetY);
+	for (uint i = 0; i < optimized.size(); i++) {
+		Common::Rect *_dirtyRect = optimized[i];
+		// Apply the clear-color to the dirty rect.
+		_renderSurface->fillRect(*_dirtyRect, _clearColor);
+		_lastFrameIter = _renderQueue.end();
+		it = _renderQueue.begin();
 
-			_colorMod = ticket->_transform._rgbaMod; 
-			drawFromSurface(ticket, &pos, &dstClip);
-			_needsFlip = true;
+		// A special case: If the screen has one giant OPAQUE rect to be drawn, then we skip filling
+		// the background color. Typical use-case: Fullscreen FMVs.
+		// Caveat: The FPS-counter will invalidate this.
+		if (it != _lastFrameIter && _renderQueue.front() == _renderQueue.back() && (*it)->_transform._alphaDisable == true) {
+			// If our single opaque rect fills the dirty rect, we can skip filling.
+			if (*_dirtyRect != (*it)->_dstRect) {
+				// Apply the clear-color to the dirty rect.
+				_renderSurface->fillRect(*_dirtyRect, _clearColor);
+			}
+			// Otherwise Do NOT fill.
+		} else {
+			// Apply the clear-color to the dirty rect.
+			_renderSurface->fillRect(*_dirtyRect, _clearColor);
 		}
-		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
-		ticket->_wantsDraw = false;
-	}
-	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 
-	// Revert the colorMod-state.
-	_colorMod = oldColorMod;
+
+		for (; it != _renderQueue.end(); ++it) {
+			RenderTicket *ticket = *it;
+			if (ticket->_dstRect.intersects(*_dirtyRect)) {
+				// dstClip is the area we want redrawn.
+				Common::Rect dstClip(ticket->_dstRect);
+				// reduce it to the dirty rect
+				dstClip.clip(*_dirtyRect);
+				// we need to keep track of the position to redraw the dirty rect
+				Common::Rect pos(dstClip);
+				int16 offsetX = ticket->_dstRect.left;
+				int16 offsetY = ticket->_dstRect.top;
+				// convert from screen-coords to surface-coords.
+				dstClip.translate(-offsetX, -offsetY);
+
+				drawFromSurface(ticket, &pos, &dstClip);
+				_needsFlip = true;
+			}
+			// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
+			ticket->_wantsDraw = false;
+		}
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+	} // endfor
+
+
+
+
+#if DEBUG_RECTS == DEBUG_RECTS_OUTLINE
+	for (uint i = 0; i < _oldOptimized.size(); i++) {
+		Common::Rect *_dirtyRect = &_oldOptimized[i];
+		_renderSurface->frameRect(_oldOptimized[i], 0xFF000000);
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+	}
+
+	for (uint i = 0; i < optimized.size(); i++) {
+		Common::Rect *_dirtyRect = (optimized[i]);
+		_renderSurface->frameRect(*(optimized[i]), kDebugColor);
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+	}
+#endif 
+
+#ifdef DEBUG_RECTS
+	_oldOptimized.clear();
+
+	for (uint i = 0; i < optimized.size(); i++) {
+		_oldOptimized.push_back(*(optimized[i]));
+	}
+
+#endif
 
 	it = _renderQueue.begin();
 	// Clean out the old tickets
-	decrement = 0;
 	while (it != _renderQueue.end()) {
 		if ((*it)->_isValid == false) {
 			RenderTicket *ticket = *it;
 			addDirtyRect((*it)->_dstRect);
 			it = _renderQueue.erase(it);
 			delete ticket;
-			decrement++;
 		} else {
-			(*it)->_drawNum -= decrement;
 			++it;
 		}
-	}
+	} // endwhile
 
 }
 
@@ -559,7 +499,7 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *dstR
 bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	// This function isn't used outside of indicator-displaying, and thus quite unused in
 	// BaseRenderOSystem when dirty-rects are enabled.
-	if (!_tempDisableDirtyRects && !_disableDirtyRects && !_indicatorDisplay) {
+	if (!_disableDirtyRects && !_indicatorDisplay) {
 		error("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
 	}
 
@@ -665,12 +605,10 @@ void BaseRenderOSystem::endSaveLoad() {
 		it = _renderQueue.erase(it);
 		delete ticket;
 	}
-	_lastAddedTicket = _renderQueue.begin();
-	_previousTicket = nullptr;
 	// HACK: After a save the buffer will be drawn before the scripts get to update it,
 	// so just skip this single frame.
 	_skipThisFrame = true;
-	_drawNum = 1;
+	_lastFrameIter = _renderQueue.end();
 
 	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->h, _renderSurface->w), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
 	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
@@ -678,14 +616,10 @@ void BaseRenderOSystem::endSaveLoad() {
 }
 
 bool BaseRenderOSystem::startSpriteBatch() {
-	_spriteBatch = true;
-	_batchNum = 1;
 	return STATUS_OK;
 }
 
 bool BaseRenderOSystem::endSpriteBatch() {
-	_spriteBatch = false;
-	_batchNum = 0;
 	return STATUS_OK;
 }
 

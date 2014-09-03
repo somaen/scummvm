@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/system.h"
@@ -91,6 +92,9 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *too
 
 	// FIXME: This flag should come from widget definition
 	_editable = true;
+
+	_quickSelect = true;
+	_editColor = ThemeEngine::kFontColorNormal;
 }
 
 ListWidget::~ListWidget() {
@@ -538,7 +542,7 @@ void ListWidget::drawWidget() {
 }
 
 Common::Rect ListWidget::getEditRect() const {
-	Common::Rect r(_hlLeftPadding, 0, _w - _hlLeftPadding - _hlRightPadding, kLineHeight - 1);
+	Common::Rect r(_hlLeftPadding, 0, _w - _hlLeftPadding - _hlRightPadding, kLineHeight - 2);
 	const int offset = (_selectedItem - _currentPos) * kLineHeight + _topPadding;
 	r.top += offset;
 	r.bottom += offset;

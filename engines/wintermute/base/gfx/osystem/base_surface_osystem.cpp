@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -32,11 +32,8 @@
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "graphics/decoders/png.h"
-#include "graphics/decoders/bmp.h"
-#include "graphics/decoders/jpeg.h"
-#include "graphics/decoders/tga.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
+#include "engines/wintermute/graphics/transform_tools.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "common/stream.h"
@@ -340,7 +337,7 @@ bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode ble
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY)); 
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -381,6 +378,14 @@ bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newR
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseSurfaceOSystem::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
+	assert(numTimesX > 0 && numTimesY > 0);
+	TransformStruct transform(numTimesX, numTimesY);
+	return drawSprite(x, y, &rect, nullptr, transform);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, TransformStruct transform) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
@@ -392,13 +397,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		transform._rgbaMod = renderer->_forceAlphaColor;
 	}
 
-#if 0 // These are kept for reference if BlendMode is reimplemented at some point.
-	if (alphaDisable) {
-		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_NONE);
-	} else {
-		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
-	}
-#endif
 	// TODO: This _might_ miss the intended behaviour by 1 in each direction
 	// But I think it fits the model used in Wintermute.
 	Common::Rect srcRect;
@@ -408,24 +406,26 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	srcRect.setHeight(rect->bottom - rect->top);
 
 	Common::Rect position;
-	position.left = x + transform._offset.x;
-	position.top = y + transform._offset.y;
 
-	// Crop off-by-ones:
-	if (position.left == -1) {
-		position.left = 0; // TODO: Something is wrong
-	}
-	if (position.top == -1) {
-		position.top = 0; // TODO: Something is wrong
-	}
 	if (newRect) {
 		position.top = y;
 		position.left = x;
 		position.setWidth(newRect->width());
 		position.setHeight(newRect->height());
 	} else {
-		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / kDefaultZoomX));
-		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / kDefaultZoomY));
+
+		Rect32 r;
+		r.top = 0;
+		r.left = 0;
+		r.setWidth(rect->width());
+		r.setHeight(rect->height());
+
+		r = TransformTools::newRect(r, transform, 0);
+
+		position.top = r.top + y + transform._offset.y;
+		position.left = r.left + x + transform._offset.x;
+		position.setWidth(r.width() * transform._numTimesX);
+		position.setHeight(r.height() * transform._numTimesY);
 	}
 	renderer->modTargetRect(&position);
 
@@ -437,20 +437,20 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		transform._alphaDisable = true;
 	}
 
-	renderer->drawSurface(this, _surface, &srcRect, &position, transform); 
-	return STATUS_OK;
-}
-
-bool BaseSurfaceOSystem::repeatLastDisplayOp(int offsetX, int offsetY, int numTimesX, int numTimesY) {
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-	renderer->repeatLastDraw(offsetX, offsetY, numTimesX, numTimesY);
+	renderer->drawSurface(this, _surface, &srcRect, &position, transform);
 	return STATUS_OK;
 }
 
 bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_loaded = true;
-	_surface->free();
-	_surface->copyFrom(surface);
+	if (surface.format == _surface->format && surface.pitch == _surface->pitch && surface.h == _surface->h) {
+		const byte *src = (const byte *)surface.getBasePtr(0, 0);
+		byte *dst = (byte *)_surface->getBasePtr(0, 0);
+		memcpy(dst, src, surface.pitch * surface.h);
+	} else {
+		_surface->free();
+		_surface->copyFrom(surface);
+	}
 	if (hasAlpha) {
 		_alphaType = TransparentSurface::ALPHA_FULL;
 	} else {

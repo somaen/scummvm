@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -93,14 +93,25 @@ int AgiEngine::loadWords(const char *fname) {
 			} while (!(c & 0x80) && k < (int)sizeof(str) - 1);
 			str[k] = 0;
 
-			// And store it in our internal dictionary
-			AgiWord *w = new AgiWord;
-			w->word = myStrndup(str, k);
-			w->id = fp.readUint16BE();
-			_game.words[i].push_back(w);
+			// WORKAROUND:
+			// The SQ0 fan game stores words starting with numbers (like '7up')
+			// in its dictionary under the 'a' entry. We skip these.
+			// See bug #3615061
+			if (str[0] == 'a' + i) {
+				// And store it in our internal dictionary
+				AgiWord *w = new AgiWord;
+				w->word = myStrndup(str, k);
+				w->id = fp.readUint16BE();
+				_game.words[i].push_back(w);
+			}
+
+			k = fp.readByte();
 
 			// Are there more words with an already known prefix?
-			if (!(k = fp.readByte()))
+			// WORKAROUND: We only break after already seeing words with the
+			// right prefix, for the SQ0 words starting with digits filed under
+			// 'a'. See above comment and bug #3615061.
+			if (k == 0 && str[0] >= 'a' + i)
 				break;
 		}
 	}

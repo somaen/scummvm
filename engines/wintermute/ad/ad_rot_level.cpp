@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -53,7 +53,7 @@ AdRotLevel::~AdRotLevel() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdRotLevel::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdRotLevel::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -82,7 +82,7 @@ TOKEN_DEF(ROTATION)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdRotLevel::loadBuffer(byte *buffer, bool complete) {
+bool AdRotLevel::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ROTATION_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -91,33 +91,33 @@ bool AdRotLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ROTATION_LEVEL) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ROTATION_LEVEL) {
 			_gameRef->LOG(0, "'ROTATION_LEVEL' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_X:
-			parser.scanStr((char *)params, "%d", &_posX);
+			parser.scanStr(params, "%d", &_posX);
 			break;
 
 		case TOKEN_ROTATION: {
 			int i;
-			parser.scanStr((char *)params, "%d", &i);
+			parser.scanStr(params, "%d", &i);
 			_rotation = (float)i;
 		}
 		break;

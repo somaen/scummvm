@@ -1,5 +1,5 @@
 MODULE := engines/wintermute
- 
+
 MODULE_OBJS := \
 	ad/ad_actor.o \
 	ad/ad_entity.o \
@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	base/gfx/osystem/base_surface_osystem.o \
 	base/gfx/osystem/base_render_osystem.o \
 	base/gfx/osystem/render_ticket.o \
+	base/gfx/osystem/dirty_rect_container.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \
 	base/particles/part_force.o \
@@ -116,14 +117,14 @@ MODULE_OBJS := \
 	debugger.o \
 	wintermute.o \
 	persistent.o
- 
+
 MODULE_DIRS += \
 	engines/wintermute
- 
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_WINTERMUTE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
- 
-# Include common rules 
+
+# Include common rules
 include $(srcdir)/rules.mk

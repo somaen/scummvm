@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef TESTBED_CONFIG_H
@@ -113,7 +114,7 @@ private:
 
 class TestbedInteractionDialog : public GUI::Dialog {
 public:
-	TestbedInteractionDialog(uint x, uint y, uint w, uint h) : GUI::Dialog(x, y, w, h) {}
+	TestbedInteractionDialog(uint x, uint y, uint w, uint h) : GUI::Dialog(x, y, w, h), _xOffset(0), _yOffset(0) {}
 	~TestbedInteractionDialog() {}
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);

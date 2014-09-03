@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/algorithm.h"
@@ -131,6 +132,30 @@ const Surface Surface::getSubArea(const Common::Rect &area) const {
 	subSurface.pixels = const_cast<void *>(getBasePtr(area.left, area.top));
 	subSurface.format = format;
 	return subSurface;
+}
+
+void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
+	assert(buffer);
+
+	assert(destX >= 0 && destX < w);
+	assert(destY >= 0 && destY < h);
+	assert(height > 0 && destY + height <= h);
+	assert(width > 0 && destX + width <= w);
+
+	// Copy buffer data to internal buffer
+	const byte *src = (const byte *)buffer;
+	byte *dst = (byte *)getBasePtr(destX, destY);
+	for (int i = 0; i < height; i++) {
+		memcpy(dst, src, width * format.bytesPerPixel);
+		src += srcPitch;
+		dst += pitch;
+	}
+}
+
+void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
+	assert(srcSurface.format == format);
+
+	copyRectToSurface(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height());
 }
 
 void Surface::hLine(int x, int y, int x2, uint32 color) {

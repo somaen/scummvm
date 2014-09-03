@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -67,7 +67,7 @@ uint Region::create(REGION_TYPE type) {
 
 uint Region::create(InputPersistenceBlock &reader, uint handle) {
 	// Read type
-	uint type;
+	uint32 type;
 	reader.read(type);
 
 	// Depending on the type, create a new BS_Region or BS_WalkRegion object
@@ -299,22 +299,22 @@ bool Region::isLineOfSight(const Vertex &a, const Vertex &b) const {
 bool Region::persist(OutputPersistenceBlock &writer) {
 	bool Result = true;
 
-	writer.write(static_cast<uint>(_type));
+	writer.write(static_cast<uint32>(_type));
 	writer.write(_valid);
-	writer.write(_position.x);
-	writer.write(_position.y);
+	writer.write((int32)_position.x);
+	writer.write((int32)_position.y);
 
-	writer.write(_polygons.size());
+	writer.write((uint32)_polygons.size());
 	Common::Array<Polygon>::iterator It = _polygons.begin();
 	while (It != _polygons.end()) {
 		Result &= It->persist(writer);
 		++It;
 	}
 
-	writer.write(_boundingBox.left);
-	writer.write(_boundingBox.top);
-	writer.write(_boundingBox.right);
-	writer.write(_boundingBox.bottom);
+	writer.write((int32)_boundingBox.left);
+	writer.write((int32)_boundingBox.top);
+	writer.write((int32)_boundingBox.right);
+	writer.write((int32)_boundingBox.bottom);
 
 	return Result;
 }
@@ -325,7 +325,7 @@ bool Region::unpersist(InputPersistenceBlock &reader) {
 	reader.read(_position.y);
 
 	_polygons.clear();
-	uint PolygonCount;
+	uint32 PolygonCount;
 	reader.read(PolygonCount);
 	for (uint i = 0; i < PolygonCount; ++i) {
 		_polygons.push_back(Polygon(reader));

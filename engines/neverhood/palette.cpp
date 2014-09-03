@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -66,6 +66,11 @@ void Palette::init() {
 	_status = 0;
 	_palette = new byte[1024];
 	_basePalette = new byte[1024];
+	_palCounter = 0;
+	_fadeToR = 0;
+	_fadeToG = 0;
+	_fadeToB = 0;
+	_fadeStep = 0;
 }
 
 void Palette::usePalette() {
@@ -114,7 +119,7 @@ void Palette::startFadeToBlack(int counter) {
 	_fadeToG = 0;
 	_fadeToB = 0;
 	_palCounter = counter;
-	_fadeStep = 255 / counter;
+	_fadeStep = calculateFadeStep(counter);
 	_status = 1;
 }
 
@@ -126,7 +131,7 @@ void Palette::startFadeToWhite(int counter) {
 	_fadeToG = 255;
 	_fadeToB = 255;
 	_palCounter = counter;
-	_fadeStep = 255 / counter;
+	_fadeStep = calculateFadeStep(counter);
 	_status = 1;
 }
 
@@ -135,7 +140,7 @@ void Palette::startFadeToPalette(int counter) {
 	if (counter == 0)
 		counter = 1;
 	_palCounter = counter;
-	_fadeStep = 255 / counter;
+	_fadeStep = calculateFadeStep(counter);
 	_status = 2;
 }
 
@@ -196,6 +201,13 @@ void Palette::fadeColor(byte *rgb, byte toR, byte toG, byte toB) {
 	FADE(rgb[1], toG);
 	FADE(rgb[2], toB);
 	#undef FADE
+}
+
+int Palette::calculateFadeStep(int counter) {
+	int fadeStep = 255 / counter;
+	if (255 % counter)
+		fadeStep++;
+	return fadeStep;
 }
 
 } // End of namespace Neverhood

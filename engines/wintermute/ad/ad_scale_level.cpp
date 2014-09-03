@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -54,7 +54,7 @@ float AdScaleLevel::getScale() const {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScaleLevel::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdScaleLevel::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -83,7 +83,7 @@ TOKEN_DEF(SCALE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdScaleLevel::loadBuffer(byte *buffer, bool complete) {
+bool AdScaleLevel::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCALE_LEVEL)
 	TOKEN_TABLE(TEMPLATE)
@@ -92,33 +92,33 @@ bool AdScaleLevel::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCALE_LEVEL) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SCALE_LEVEL) {
 			_gameRef->LOG(0, "'SCALE_LEVEL' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_Y:
-			parser.scanStr((char *)params, "%d", &_posY);
+			parser.scanStr(params, "%d", &_posY);
 			break;
 
 		case TOKEN_SCALE: {
 			int i;
-			parser.scanStr((char *)params, "%d", &i);
+			parser.scanStr(params, "%d", &i);
 			_scale = (float)i;
 		}
 		break;

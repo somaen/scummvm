@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1722,9 +1722,10 @@ int KyraEngine_LoK::handleBeadState() {
 			_screen->addBitBlitRect(_beadState1.x, _beadState1.y, _beadState1.width2, _beadState1.height);
 
 			++_beadState1.tableIndex;
-			if (_beadState1.tableIndex > 24)
+			if (_beadState1.tableIndex > 24) {
 				_beadState1.tableIndex = 0;
 				_unkEndSeqVar4 = 1;
+			}
 			if (_system->getMillis() > _beadStateTimer2 && _malcolmFlag == 7 && !_unkAmuletVar && !_text->printed()) {
 				snd_playSoundEffect(0x0B);
 				if (_currentCharacter->x1 > 233 && _currentCharacter->x1 < 305 && _currentCharacter->y1 > 85 && _currentCharacter->y1 < 105 &&

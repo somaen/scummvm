@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,6 +31,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/gameloader.h"
 
 #include "fullpipe/constants.h"
 
@@ -82,8 +83,11 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
 
 	if (scene) {
-		_gameLoader->loadScene(scene);
-		_gameLoader->gotoScene(scene, TrubaLeft);
+		_gameLoader->loadScene(726);
+		_gameLoader->gotoScene(726, TrubaLeft);
+
+		if (scene != 726)
+			_gameLoader->preloadScene(726, getSceneEntrance(scene));
 	} else {
 		if (_flgPlayIntro) {
 			_gameLoader->loadScene(SC_INTRO1);
@@ -115,25 +119,25 @@ bool GameProject::load(MfcArchive &file) {
 	_headerFilename = 0;
 	_field_10 = 12;
 
-	g_fullpipe->_gameProjectVersion = file.readUint32LE();
-	g_fullpipe->_pictureScale = file.readUint16LE();
-	g_fullpipe->_scrollSpeed = file.readUint32LE();
+	g_fp->_gameProjectVersion = file.readUint32LE();
+	g_fp->_pictureScale = file.readUint16LE();
+	g_fp->_scrollSpeed = file.readUint32LE();
 
 	_headerFilename = file.readPascalString();
 
-	debug(1, "_gameProjectVersion = %d", g_fullpipe->_gameProjectVersion);
-	debug(1, "_pictureScale = %d", g_fullpipe->_pictureScale);
-	debug(1, "_scrollSpeed = %d", g_fullpipe->_scrollSpeed);
+	debug(1, "_gameProjectVersion = %d", g_fp->_gameProjectVersion);
+	debug(1, "_pictureScale = %d", g_fp->_pictureScale);
+	debug(1, "_scrollSpeed = %d", g_fp->_scrollSpeed);
 	debug(1, "_headerFilename = %s", _headerFilename);
 
 	_sceneTagList = new SceneTagList();
 
 	_sceneTagList->load(file);
 
-	if (g_fullpipe->_gameProjectVersion >= 3)
+	if (g_fp->_gameProjectVersion >= 3)
 		_field_4 = file.readUint32LE();
 
-	if (g_fullpipe->_gameProjectVersion >= 5) {
+	if (g_fp->_gameProjectVersion >= 5) {
 		file.readUint32LE();
 		file.readUint32LE();
 	}
@@ -143,6 +147,8 @@ bool GameProject::load(MfcArchive &file) {
 
 GameProject::~GameProject() {
 	free(_headerFilename);
+
+	delete _sceneTagList;
 }
 
 GameVar::GameVar() {
@@ -154,6 +160,10 @@ GameVar::GameVar() {
 	_varType = 0;
 	_value.floatValue = 0;
 	_varName = 0;
+}
+
+GameVar::~GameVar() {
+	warning("STUB: GameVar::~GameVar()");
 }
 
 bool GameVar::load(MfcArchive &file) {

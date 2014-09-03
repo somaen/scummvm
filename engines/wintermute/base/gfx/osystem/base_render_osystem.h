@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,10 +34,17 @@
 #include "graphics/surface.h"
 #include "common/list.h"
 #include "engines/wintermute/graphics/transform_struct.h"
+#define NO_DEBUG_RECTS 0
+#define DEBUG_RECTS_OUTLINE 1
+#define DEBUG_RECTS_BLACKOUT 2
+#define DEBUG_RECTS NO_DEBUG_RECTS
+
 
 namespace Wintermute {
 class BaseSurfaceOSystem;
 class RenderTicket;
+class DirtyRectContainer;
+
 /**
  * A 2D-renderer implementation for WME.
  * This renderer makes use of a "ticket"-system, where all draw-calls
@@ -62,6 +69,8 @@ public:
 	BaseRenderOSystem(BaseGame *inGame);
 	~BaseRenderOSystem();
 
+	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
+
 	Common::String getName() const;
 
 	bool initRenderer(int width, int height, bool windowed) override;
@@ -79,11 +88,16 @@ public:
 	void invalidateTicket(RenderTicket *renderTicket);
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
 	/**
-	 * Insert a ticket into the queue, adding a dirty rect if it's
-	 * new, or out-of-order from last draw from the ticket.
-	 * param renderTicket the ticket to be added.
+	 * Insert a new ticket into the queue, adding a dirty rect
+	 * @param renderTicket the ticket to be added.
 	 */
 	void drawFromTicket(RenderTicket *renderTicket);
+	/**
+	 * Re-insert an existing ticket into the queue, adding a dirty rect
+	 * out-of-order from last draw from the ticket.
+	 * @param ticket iterator pointing to the ticket to be added.
+	 */
+	void drawFromQueuedTicket(const RenderQueueIterator &ticket);
 
 	bool setViewport(int left, int top, int right, int bottom) override;
 	bool setViewport(Rect32 *rect) override { return BaseRenderer::setViewport(rect); }
@@ -104,7 +118,6 @@ public:
 	virtual bool endSpriteBatch() override;
 	void endSaveLoad();
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform);
-	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
 	BaseSurface *createSurface() override;
 private:
 	/**
@@ -120,14 +133,13 @@ private:
 	void drawFromSurface(RenderTicket *ticket);
 	// Dirty-rects:
 	void drawFromSurface(RenderTicket *ticket, Common::Rect *dstRect, Common::Rect *clipRect);
-	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
-	Common::Rect *_dirtyRect;
+
+	DirtyRectContainer *_dirtyRects;
+
 	Common::List<RenderTicket *> _renderQueue;
-	RenderQueueIterator _lastAddedTicket;
-	RenderTicket *_previousTicket;
 
 	bool _needsFlip;
-	uint32 _drawNum; ///< The global number of the current draw-operation.
+	RenderQueueIterator _lastFrameIter;
 	Common::Rect _renderRect;
 	Graphics::Surface *_renderSurface;
 	Graphics::Surface *_blankSurface;
@@ -138,15 +150,19 @@ private:
 	int _borderBottom;
 
 	bool _disableDirtyRects;
-	uint32 _tempDisableDirtyRects;
-	bool _spriteBatch;
-	uint32 _batchNum;
 	float _ratioX;
 	float _ratioY;
-	uint32 _colorMod;
 	uint32 _clearColor;
 
 	bool _skipThisFrame;
+
+#ifdef DEBUG_RECTS 
+	static const int kDebugColor = 0xFF00FF00;
+	Common::Array<Common::Rect> _oldOptimized;
+#endif
+
+
+	int _lastScreenChangeID; // previous value of OSystem::getScreenChangeID()
 };
 
 } // End of namespace Wintermute

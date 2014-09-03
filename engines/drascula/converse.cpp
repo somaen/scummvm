@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -168,19 +168,19 @@ void DrasculaEngine::converse(int index) {
 	// delete stream;
 
 	if (currentChapter == 2 && !strcmp(fileName, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
-		strcpy(phrase3, _text[405]);
+		Common::strlcpy(phrase3, _text[405], 128);
 		strcpy(sound3, "405.als");
 		answer3 = 31;
 	}
 
 	if (currentChapter == 6 && !strcmp(fileName, "op_12.cal") && flags[7] == 1) {
-		strcpy(phrase3, _text[273]);
+		Common::strlcpy(phrase3, _text[273], 128);
 		strcpy(sound3, "273.als");
 		answer3 = 14;
 	}
 
 	if (currentChapter == 6 && !strcmp(fileName, "op_12.cal") && flags[10] == 1) {
-		strcpy(phrase3, _text[274]);
+		Common::strlcpy(phrase3, _text[274], 128);
 		strcpy(sound3, "274.als");
 		answer3 = 15;
 	}

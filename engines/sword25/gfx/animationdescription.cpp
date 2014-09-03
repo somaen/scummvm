@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -36,7 +36,7 @@
 namespace Sword25 {
 
 bool AnimationDescription::persist(OutputPersistenceBlock &writer) {
-	writer.write(static_cast<uint>(_animationType));
+	writer.write(static_cast<uint32>(_animationType));
 	writer.write(_FPS);
 	writer.write(_millisPerFrame);
 	writer.write(_scalingAllowed);
@@ -47,7 +47,7 @@ bool AnimationDescription::persist(OutputPersistenceBlock &writer) {
 }
 
 bool AnimationDescription::unpersist(InputPersistenceBlock &reader) {
-	uint animationType;
+	uint32 animationType;
 	reader.read(animationType);
 	_animationType = static_cast<Animation::ANIMATION_TYPES>(animationType);
 	reader.read(_FPS);
