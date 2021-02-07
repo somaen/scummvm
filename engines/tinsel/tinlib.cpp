@@ -4207,6 +4207,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%08X)", mapping.name, pp[0]);
 		break;
+	case 18:
+		mapping = NoirMapping{"BACKGROUND", BACKGROUND, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 28:
 		mapping = NoirMapping{"CDCHANGESCENE", CDCHANGESCENE, 1};
 		pp -= mapping.numArgs - 1;
