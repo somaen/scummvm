@@ -4180,6 +4180,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 	// this is convenient for debug.
 	NoirMapping mapping;
 	switch (libCode) {
+	case 28:
+		mapping = NoirMapping{"CDCHANGESCENE", CDCHANGESCENE, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 153:
 		mapping = NoirMapping{"SETSYSTEMVAR", SETSYSTEMVAR, 2};
 		pp -= mapping.numArgs - 1;
