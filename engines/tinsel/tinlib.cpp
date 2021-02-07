@@ -4190,6 +4190,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 45:
+		mapping = NoirMapping{"DECLARELANGUAGE", DECLARELANGUAGE, 3};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2]);
+		break;
 	case 46:
 		mapping = NoirMapping{"DECLEAD", DECLEAD, 1};
 		pp -= mapping.numArgs - 1;
