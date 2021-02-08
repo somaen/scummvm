@@ -661,9 +661,9 @@ static void WrtAll(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClippi
 	}
 
 	for (int y = 0; y < pObj->height; ++y) {
-		Common::copy(srcP, srcP + pObj->width, destP);
-		srcP += objWidth;
-		destP += SCREEN_WIDTH;
+		Common::copy(srcP, srcP + pObj->width * 2, destP);
+		srcP += objWidth*2;
+		destP += (TinselV3?SCREEN_WIDTH*2:SCREEN_WIDTH);
 	}
 }
 

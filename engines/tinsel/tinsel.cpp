@@ -1023,9 +1023,20 @@ Common::Error TinselEngine::run() {
 
 	// Initialize backend
 	if (getGameID() == GID_NOIR) {
-		initGraphics(640, 480);
+		Graphics::PixelFormat px = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+		Common::List<Graphics::PixelFormat> tryModes = _system->getSupportedFormats();
+		for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
+			warning("%s", px.toString().c_str());
+			if (*g == px) {
+				tryModes.clear();
+				tryModes.push_back(px);
+				break;
+			}
+		}
 
-		_screenSurface.create(640, 432, Graphics::PixelFormat::createFormatCLUT8());
+		initGraphics(640, 480, tryModes);
+
+		_screenSurface.create(640, 480, px);
 	} else if (getGameID() == GID_DW2) {
 #ifndef DW2_EXACT_SIZE
 		initGraphics(640, 480);

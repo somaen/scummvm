@@ -4286,6 +4286,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
+	case 167:
+		mapping = NoirMapping{"OP167", ZZZZZZ, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 197:
 		mapping = NoirMapping{"WAITTIME", WAITTIME, 2};
 		pp -= mapping.numArgs - 1;

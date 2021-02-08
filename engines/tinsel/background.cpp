@@ -262,7 +262,9 @@ void Background::DrawBackgnd() {
 	}
 
 	// transfer any new palettes to the video DAC
-	PalettesToVideoDAC();
+	if (!TinselV3) {
+		PalettesToVideoDAC();
+	}
 
 	// update the screen within the clipping rectangles
 	for (RectList::const_iterator r = clipRects.begin(); r != clipRects.end(); ++r) {

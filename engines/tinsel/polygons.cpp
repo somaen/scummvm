@@ -282,6 +282,12 @@ void Poly::nextPoly() {
 		// Skip to the last 4 bytes of the record for the hScript value
 		_pData = pRecord + 0x62C;
 
+	// Hackery from the Kerbox-repos, we need to re-disassemble this logic to figure out where the added data is
+	if (TinselV3) {
+		nextLong(_pData);
+		nextLong(_pData);
+	}
+
 	hScript = nextLong(_pData);
 }
 
@@ -1830,6 +1836,7 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 		Poly ptp(_vm->_handle->LockMem(ph));
 
 		for (int i = 0; i < numPoly; ++i, ++ptp) {
+			warning("POLYGON: %d/%d: %d", i, numPoly, ptp.getType());
 			switch (ptp.getType()) {
 			case POLY_PATH:
 				InitPath(ptp, false, i, bRestart);
