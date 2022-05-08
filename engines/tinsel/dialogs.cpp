@@ -756,7 +756,6 @@ Dialogs::Dialogs() {
 	memset(_configStrings, 0, sizeof(_configStrings));
 
 	_invObjects = nullptr;
-	_numObjects = 0;
 	_invFilms = nullptr;
 	_noLanguage = false;
 
@@ -843,6 +842,7 @@ Dialogs::Dialogs() {
 }
 
 Dialogs::~Dialogs() {
+	delete _invObjects;
 	if (_objArray[0] != NULL) {
 		DumpObjArray();
 		DumpDobjArray();
@@ -1068,42 +1068,42 @@ void Dialogs::DumpObjArray() {
  * i.e. Image data and Glitter code.
  */
 INV_OBJECT *Dialogs::GetInvObject(int id) {
-	INV_OBJECT *pObject = _invObjects;
-
-	for (int i = 0; i < _numObjects; i++, pObject++) {
-		if (pObject->id == id)
-			return pObject;
+	auto object = _invObjects->GetInvObject(id);
+	if (!object) {
+		error("GetInvObject(%d): Trying to manipulate undefined inventory icon", id);
 	}
+	return object;
+}
 
-	error("GetInvObject(%d): Trying to manipulate undefined inventory icon", id);
+/**
+ * Convert item ID number to pointer to item's compiled data
+ * i.e. Image data and Glitter code.
+ */
+INV_OBJECT_T3 *Dialogs::GetInvObjectT3(int id) {
+	auto object = _invObjects->GetInvObjectT3(id);
+	if (!object) {
+		error("GetInvObject(%d): Trying to manipulate undefined inventory icon", id);
+	}
+	return object;
 }
 
 /**
  * Returns true if the given id represents a valid inventory object
  */
 bool Dialogs::GetIsInvObject(int id) {
-	INV_OBJECT *pObject = _invObjects;
-
-	for (int i = 0; i < _numObjects; i++, pObject++) {
-		if (pObject->id == id)
-			return true;
-	}
-
-	return false;
+	int index = _invObjects->GetObjectIndexIfExists(id);
+	return index != -1;
 }
 
 /**
  * Convert item ID number to index.
  */
 int Dialogs::GetObjectIndex(int id) {
-	INV_OBJECT *pObject = _invObjects;
-
-	for (int i = 0; i < _numObjects; i++, pObject++) {
-		if (pObject->id == id)
-			return i;
+	int index = _invObjects->GetObjectIndexIfExists(id);
+	if (index == -1) {
+		error("GetObjectIndex(%d): Trying to manipulate undefined inventory icon", id);
 	}
-
-	error("GetObjectIndex(%d): Trying to manipulate undefined inventory icon", id);
+	return index;
 }
 
 /**
@@ -4978,7 +4978,7 @@ void Dialogs::syncInvInfo(Common::Serializer &s) {
 	}
 
 	if (TinselVersion >= 2) {
-		for (int i = 0; i < _numObjects; ++i)
+		for (int i = 0; i < _invObjects->NumObjects(); ++i)
 			s.syncAsUint32LE(_invFilms[i]);
 		s.syncAsUint32LE(_heldFilm);
 	}
@@ -4994,45 +4994,48 @@ void Dialogs::syncInvInfo(Common::Serializer &s) {
  */
 // Note: the SCHANDLE type here has been changed to a void*
 void Dialogs::RegisterIcons(void *cptr, int num) {
-	_numObjects = num;
-	_invObjects = (INV_OBJECT *)cptr;
+	int numObjects = num;
+	INV_OBJECT *invObjects = (INV_OBJECT *)cptr;
 
 	if (TinselVersion == 0) {
 		// In Tinsel 0, the INV_OBJECT structure doesn't have an attributes field, so we
 		// need to 'unpack' the source structures into the standard Tinsel v1/v2 format
-		MEM_NODE *node = MemoryAllocFixed(_numObjects * sizeof(INV_OBJECT));
+		MEM_NODE *node = MemoryAllocFixed(numObjects * sizeof(INV_OBJECT));
 		assert(node);
-		_invObjects = (INV_OBJECT *)MemoryDeref(node);
-		assert(_invObjects);
+		invObjects = (INV_OBJECT *)MemoryDeref(node);
+		assert(invObjects);
 		byte *srcP = (byte *)cptr;
-		INV_OBJECT *destP = _invObjects;
+		INV_OBJECT *destP = invObjects;
 
 		for (int i = 0; i < num; ++i, ++destP, srcP += 12) {
 			memmove(destP, srcP, 12);
 			destP->attribute = 0;
 		}
+		_invObjects = InstantiateInventoryObjects(invObjects, numObjects);
 	} else if (TinselVersion >= 2) {
+		_invObjects = InstantiateInventoryObjects(invObjects, numObjects);
 		if (_invFilms == NULL) {
 			// First time - allocate memory
-			MEM_NODE *node = MemoryAllocFixed(_numObjects * sizeof(SCNHANDLE));
+			MEM_NODE *node = MemoryAllocFixed(numObjects * sizeof(SCNHANDLE));
 			assert(node);
 			_invFilms = (SCNHANDLE *)MemoryDeref(node);
 			if (_invFilms == NULL)
 				error(NO_MEM, "inventory scripts");
-			memset(_invFilms, 0, _numObjects * sizeof(SCNHANDLE));
+			memset(_invFilms, 0, numObjects * sizeof(SCNHANDLE));
 		}
 
 		// Add defined permanent conversation icons
 		// and store all the films separately
-		int i;
-		INV_OBJECT *pio;
-		for (i = 0, pio = _invObjects; i < _numObjects; i++, pio++) {
+		for (int i = 0; i < numObjects; i++) {
+			INV_OBJECT *pio = _invObjects->GetObjectByIndex(i);
 			if (pio->attribute & PERMACONV)
 				PermaConvIcon(pio->id, pio->attribute & CONVENDITEM);
 
 			_invFilms[i] = pio->hIconFilm;
 		}
 	}
+
+
 }
 
 /**
