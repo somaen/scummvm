@@ -27,12 +27,22 @@
 
 #include "common/hash-str.h"
 
+#include "common/formats/json.h"
 #include "common/gui_options.h" // Keep it here, so detection tables can refer to them
 
 namespace Common {
 class Error;
 class FSList;
 }
+
+struct EnumDecl {
+	const char *name;
+	uint value;
+};
+
+#define ENUM_DECL(x) {#x, x}
+#define ENUM_DECL_END {nullptr, 0}
+
 /**
  * @defgroup engines_advdetector Advanced Detector
  * @ingroup engines
@@ -52,6 +62,10 @@ struct ADGameFileDescription {
 	uint16 fileType;      ///< Optional. Not used during detection, only by engines.
 	const char *md5;      ///< MD5 of (the beginning of) the described file. Optional. Set to NULL to ignore.
 	int64 fileSize;       ///< Size of the described file. Set to -1 to ignore.
+
+	Common::JSONValue* toJSON() const;
+	static ADGameFileDescription fromJSON(const Common::JSONObject &object);
+	bool isEmpty() const { return fileName == nullptr; }
 };
 
 /**
@@ -170,6 +184,11 @@ struct ADGameDescription {
 	 * or have MIDI controls in a game that only supports digital music.
 	 */
 	const char *guiOptions;
+
+	Common::JSONValue* toJSON(const EnumDecl *gameFlags) const;
+	static Common::JSONValue* toJSONArray(const ADGameDescription *array, const EnumDecl *gameFlags);
+	static ADGameDescription fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object);
+	static ADGameDescription* fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array);
 };
 
 /**
