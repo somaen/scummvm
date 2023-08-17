@@ -25,8 +25,14 @@
 
 #include "stark/detection.h"
 #include "stark/debug.h"
+#include "stark/detection.h"
 
 namespace Stark {
+
+static EnumDecl g_adgfGameFlagNames[] = {
+	ENUM_DECL(GF_MISSING_EXE_RESOURCES),
+	ENUM_DECL_END
+};
 
 static const PlainGameDescriptor starkGames[] = {
 	{ "tlj", "The Longest Journey" },
@@ -389,9 +395,9 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class StarkMetaEngineDetection : public AdvancedMetaEngineDetection {
+class StarkMetaEngineDetection : public SerializedMetaEngineDetection {
 public:
-	StarkMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), starkGames) {
+	StarkMetaEngineDetection() : SerializedMetaEngineDetection("stark_detection.json", g_adgfGameFlagNames, gameDescriptions, sizeof(ADGameDescription), starkGames) {
 		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING, GAMEOPTION_FONT_ANTIALIASING);
 	}
 
