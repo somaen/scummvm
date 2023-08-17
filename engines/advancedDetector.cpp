@@ -91,11 +91,12 @@ Common::JSONValue* ADGameDescription::toJSONArray(const ADGameDescription* array
 	return new Common::JSONValue(jsonArray);
 }
 
-ADGameDescription *ADGameDescription::fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array) {
-	ADGameDescription *descriptions = new ADGameDescription[array.size()]{};
+Common::Array<ADGameDescription> ADGameDescription::fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array) {
+	Common::Array<ADGameDescription> descriptions;
+	descriptions.reserve(array.size());
 	int index = 0;
 	for (auto &el : array) {
-		descriptions[index++] = ADGameDescription::fromJSON(gameFlags, el->asObject());
+		descriptions.push_back(ADGameDescription::fromJSON(gameFlags, el->asObject()));
 	}
 	return descriptions;
 }
@@ -1314,4 +1315,55 @@ bool AdvancedMetaEngineBase::checkExtendedSaves(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
 		(f == kSavesSupportPlayTime);
+}
+
+Common::JSONValue* jsonFromStream(Common::SeekableReadStream &stream) {
+	int streamSize = stream.size();
+	char *jsonData = new char[streamSize + 1]{};
+	stream.read(jsonData, streamSize);
+	auto parsedJson = Common::JSON::parse(jsonData);
+	delete[] jsonData;
+
+	return parsedJson;
+}
+
+SerializedMetaEngineDetection::SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const ADGameDescription* descs, uint descItemSize, const PlainGameDescriptor *gameIds)
+	: AdvancedMetaEngineDetection<ADGameDescription>(descs, gameIds), _gameFlagNames(gameFlags) {
+	auto jsonFile = SearchMan.createReadStreamForMember(jsonName);
+	if (!jsonFile) {
+		// This is mostly useful as a transition path, as we will conveniently dump all the existing
+		// detection entries to a JSON file if none exists, to streamline the transitioning.
+
+		// So, to start moving an engines detection to JSON, change the superclass to be this one, and then
+		// the first launch should assist with creating the requisite data.
+		warning("JSON-file %s does not exist, creating a dump of the hardcoded entries and erroring out", jsonName);
+		_descriptions = (ADGameDescription*)descs;
+		dumpDescriptors(jsonName);
+		// We could alternatively just use the existing hardcoded entries, but whoever is editing the code
+		// has signalled an intent to transition at least some entries to JSON, so lets error out so that
+		// retrying with JSON-ified data is faster.
+		error("JSON file has been dumped, relaunch to use it");
+		return;
+	}
+	auto parsedJson = jsonFromStream(*jsonFile);
+	delete jsonFile;
+
+	auto loadedDescs = ADGameDescription::fromJSONArray(gameFlags, parsedJson->asArray());
+
+	ADGameDescription *descriptors = new ADGameDescription[loadedDescs.size()];
+	for (int i = 0; i < loadedDescs.size(); i++) {
+		descriptors[i] = loadedDescs[i];
+	}
+	// TODO: Merge this with any hardcoded descriptors (from "descs")
+	_descriptions = descriptors;
+	_gameDescriptors = (byte*)descriptors;
+}
+
+void SerializedMetaEngineDetection::dumpDescriptors(const char *jsonName) {
+	Common::DumpFile dump;
+	dump.open(jsonName);
+	auto jsonIfiedDescriptions = ADGameDescription::toJSONArray(_descriptions, _gameFlagNames);
+	auto str = jsonIfiedDescriptions->stringify(true);
+	dump.writeString(str);
+	dump.close();
 }

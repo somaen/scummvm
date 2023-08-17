@@ -231,7 +231,7 @@ struct ADGameDescription {
 	Common::JSONValue* toJSON(const EnumDecl *gameFlags) const;
 	static Common::JSONValue* toJSONArray(const ADGameDescription *array, const EnumDecl *gameFlags);
 	static ADGameDescription fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object);
-	static ADGameDescription* fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array);
+	static Common::Array<ADGameDescription> fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array);
 
 	/**
 	 * Calculates the size needed to store all pointed data
@@ -641,6 +641,19 @@ protected:
 		}
 		return err;
 	}
+};
+
+class SerializedMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+private:
+	ADGameDescription *_descriptions;
+	const EnumDecl *_gameFlagNames;
+public:
+	SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const ADGameDescription* descs, uint descItemSize, const PlainGameDescriptor *gameIds);
+	~SerializedMetaEngineDetection() {
+		delete[] _gameDescriptors;
+	}
+
+	void dumpDescriptors(const char *jsonName);
 };
 
 /**
