@@ -310,6 +310,7 @@ public:
 
 private:
 	byte *_buffer;
+	static Common::Array<ADGameDescription> fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array);
 };
 
 /**
@@ -617,6 +618,19 @@ protected:
 	bool cleanupPirated(ADDetectedGames &matched) const;
 
 	friend class FileMapArchive;
+};
+
+class SerializedMetaEngineDetection : public AdvancedMetaEngineDetection {
+private:
+	ADGameDescription *_descriptions;
+	const EnumDecl *_gameFlagNames;
+public:
+	SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const void* descs, uint descItemSize, const PlainGameDescriptor *gameIds);
+	~SerializedMetaEngineDetection() {
+		delete[] _gameDescriptors;
+	}
+
+	void dumpDescriptors(const char *jsonName);
 };
 
 template<class Descriptor>
