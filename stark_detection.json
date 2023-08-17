@@ -1,0 +1,285 @@
+[
+  {
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":485,"fileType":0,"md5":"5b5a1f1dd2297d9ce0d3d12216d5d2c5","fileName":"chapters.ini"
+      },{
+        "fileSize":95744,"fileType":0,"md5":"2a68bd64e71635c74a5c6bb172ec1cb1","fileName":"game.exe"
+      }
+    ],"gameId":"tlj","flags":[
+      "GF_MISSING_EXE_RESOURCES"
+    ],"platform":"windows","language":"en","extra":"Steam"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":485,"fileType":0,"md5":"5b5a1f1dd2297d9ce0d3d12216d5d2c5","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"en","extra":"DVD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":485,"fileType":0,"md5":"5b5a1f1dd2297d9ce0d3d12216d5d2c5","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"en","extra":"GOG.com"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":98,"fileType":0,"md5":"97abc1bb9239dee4c208e533f3c97e1c","fileName":"x.xarc"
+      },{
+        "fileSize":485,"fileType":0,"md5":"5b5a1f1dd2297d9ce0d3d12216d5d2c5","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      "ADGF_DEMO"
+    ],"platform":"windows","language":"en","extra":"Old Demo"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":98,"fileType":0,"md5":"61093bcd499b386ed5c0345c52f48909","fileName":"x.xarc"
+      },{
+        "fileSize":485,"fileType":0,"md5":"5b5a1f1dd2297d9ce0d3d12216d5d2c5","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      "ADGF_DEMO"
+    ],"platform":"windows","language":"en","extra":"v1.61 Demo"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":484,"fileType":0,"md5":"547f0b9c04c00d330b60eed6e8d24732","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"cs","extra":"4 CD build 142"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":98,"fileType":0,"md5":"97abc1bb9239dee4c208e533f3c97e1c","fileName":"x.xarc"
+      },{
+        "fileSize":506,"fileType":0,"md5":"e54f6370dca06496069790840409cf95","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      "ADGF_DEMO"
+    ],"platform":"windows","language":"fr","extra":"Demo"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":98,"fileType":0,"md5":"97abc1bb9239dee4c208e533f3c97e1c","fileName":"x.xarc"
+      },{
+        "fileSize":473,"fileType":0,"md5":"f358f604abd1aa1476ed05d6d271ac70","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      "ADGF_DEMO"
+    ],"platform":"windows","language":"nb","extra":"Demo"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":473,"fileType":0,"md5":"f358f604abd1aa1476ed05d6d271ac70","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"nb","extra":"4 CD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":473,"fileType":0,"md5":"f358f604abd1aa1476ed05d6d271ac70","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"nb","extra":"DVD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":515,"fileType":0,"md5":"e4611d143a87b263d8d7a54edc7e7cd7","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"de","extra":"DVD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":515,"fileType":0,"md5":"e4611d143a87b263d8d7a54edc7e7cd7","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"de","extra":"4 CD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":498,"fileType":0,"md5":"9a81ea4e6f5b84511dd4e56d04a64e2e","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"it","extra":"DVD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":498,"fileType":0,"md5":"9a81ea4e6f5b84511dd4e56d04a64e2e","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"it","extra":"4 CD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":508,"fileType":0,"md5":"c8dadd9a3b41640734d6213e89cd5635","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"nl","extra":"4 CD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":525,"fileType":0,"md5":"3640df6d536b186bff228337284d9631","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"es","extra":"4 CD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":506,"fileType":0,"md5":"e54f6370dca06496069790840409cf95","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"fr","extra":"2 CD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":506,"fileType":0,"md5":"e54f6370dca06496069790840409cf95","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"fr","extra":"4 CD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":98,"fileType":0,"md5":"97abc1bb9239dee4c208e533f3c97e1c","fileName":"x.xarc"
+      },{
+        "fileSize":462,"fileType":0,"md5":"f6a2007300209492b7b90b4c0467832d","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      "ADGF_DEMO"
+    ],"platform":"windows","language":"se","extra":"Demo"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":462,"fileType":0,"md5":"f6a2007300209492b7b90b4c0467832d","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"se","extra":"4 CD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":462,"fileType":0,"md5":"f6a2007300209492b7b90b4c0467832d","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"se","extra":"DVD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":499,"fileType":0,"md5":"6abc5c38e6e31face4b675355b117620","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"pl","extra":"4 CD"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":2904,"fileType":0,"md5":"6c6c388f757adcc49e7f33b0b2cccf96","fileName":"x.xarc"
+      },{
+        "fileSize":252,"fileType":0,"md5":"6ee43a176a5eb94153c2d813261c3226","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      "ADGF_UNSUPPORTED","ADGF_DEMO"
+    ],"platform":"windows","language":"pl","extra":"Missing game code"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":486,"fileType":0,"md5":"740b97b94e97ed11f064f5fa125ebee1","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"ru","extra":"2 CD\/Fargus"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":406,"fileType":0,"md5":"8e08025c89575d2573c2edf0daa1cb34","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      "ADGF_UNSTABLE"
+    ],"platform":"windows","language":"ru","extra":"2 CD\/7Wolf"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":409,"fileType":0,"md5":"17510546145f6f574702094dca436a8d","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      "ADGF_UNSTABLE"
+    ],"platform":"windows","language":"ru","extra":"Triada"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"a0559457126caadab0cadac02d35f26f","fileName":"x.xarc"
+      },{
+        "fileSize":451,"fileType":0,"md5":"790b51a88b5493bff5168a77738e0e84","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"hu","extra":"Fanmade"
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":451,"fileType":0,"md5":"790b51a88b5493bff5168a77738e0e84","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      
+    ],"platform":"windows","language":"hu","extra":"Fanmade"
+  }
+]
