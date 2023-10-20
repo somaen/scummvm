@@ -92,6 +92,18 @@ struct ADGameFileDescription {
 	const char *md5;      ///< MD5 of (the beginning of) the described file. Optional. Set to NULL to ignore.
 	uint32 fileSize;      ///< Size of the described file. Set to AD_NO_SIZE to ignore.
 
+	bool operator==(const ADGameFileDescription &other) const {
+		bool equal = true;
+		equal &= strcmp(fileName, other.fileName) == 0;
+		equal &= fileType == other.fileType;
+		equal &= strcmp(md5, other.md5) == 0;
+		equal &= fileSize == other.fileSize;
+		return equal;
+	}
+	Common::JSONValue* toJSON() const;
+	static ADGameFileDescription fromJSON(const Common::JSONObject &object);
+	bool isEmpty() const { return fileName == nullptr; }
+
 	uint32 sizeBuffer() const {
 		uint32 ret = 0;
 		ret += ADDynamicDescription::strSizeBuffer(fileName);
@@ -104,10 +116,6 @@ struct ADGameFileDescription {
 		buffer = ADDynamicDescription::strToBuffer(buffer, md5);
 		return buffer;
 	}
-
-	Common::JSONValue* toJSON() const;
-	static ADGameFileDescription fromJSON(const Common::JSONObject &object);
-	bool isEmpty() const { return fileName == nullptr; }
 };
 
 #define AD_NO_SIZE ((uint32)-1)
@@ -229,6 +237,19 @@ struct ADGameDescription {
 	 */
 	const char *guiOptions;
 
+	bool operator==(const ADGameDescription &other) const {
+		bool equal = true;
+		equal &= strcmp(gameId, other.gameId) == 0;
+		equal &= strcmp(extra, other.extra) == 0;
+		equal &= language == other.language;
+		equal &= platform == other.platform;
+		for (int i = 0; i < 14; i++) {
+			equal &= filesDescriptions[i] == other.filesDescriptions[i];
+		}
+		equal &= flags == other.flags;
+		equal &= strcmp(guiOptions, other.guiOptions) == 0;
+		return equal;
+	}
 	Common::JSONValue* toJSON(const EnumDecl *gameFlags) const;
 	static ADGameDescription fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object);
 	constexpr bool isEmpty() const { return gameId == nullptr; }
@@ -311,6 +332,44 @@ public:
 
 private:
 	byte *_buffer;
+};
+
+/**
+ * Wrapper for ADGameDescription to allow storing some descriptive data that we formerly stored in
+ * comments alongside the inline detection entries. The point of this is largely to allow us to
+ * retain this information in JSON (de)-serialization.
+ *
+ * A typical replacement (when not using macros for the ADGameDescription) is something like:
+ * (\s)// (.*)\n(\s+)// (.*)\n(\s+[^}]+})
+ * \1DescribedADGameDescription(\n\1"\2",\n\3"\4",\n\5)
+ */
+struct DescribedADGameDescription {
+	/**
+	 * The struct intentionally has the descriptive items last, so that they can be skipped when iterating,
+	 * but the regular form for the inline entries is a comment or two above each entry, so to make search/replace
+	 * easier, we have this order in the constructor
+	 */
+	constexpr DescribedADGameDescription(const char *desc1, const char *desc2, ADGameDescription gameDesc) : gameDescription(gameDesc), description1(desc1), description2(desc2) {}
+	DescribedADGameDescription() = default;
+	ADGameDescription gameDescription;
+	// Comments that further describe the variant
+	const char *description1;
+	const char *description2;
+
+	bool operator==(const DescribedADGameDescription &other) const {
+		bool equal = true;
+		equal &= strcmp(description1, other.description1) == 0;
+		equal &= strcmp(description2, other.description2) == 0;
+		equal &= gameDescription == other.gameDescription;
+		return equal;
+	}
+	bool operator!=(const DescribedADGameDescription &other) const {
+		return !(*this == other);
+	}
+	Common::JSONValue* toJSON(const EnumDecl *gameFlags) const;
+	static DescribedADGameDescription fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object);
+	static Common::Array<DescribedADGameDescription> fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array);
+	static Common::JSONValue* toJSONArray(const DescribedADGameDescription *array, const EnumDecl *gameFlags);
 };
 
 /**
@@ -663,6 +722,9 @@ template<class DescriptorType>
 class SerializedMetaEngineDetection : public AdvancedMetaEngineDetection<DescriptorType> {
 private:
 	const EnumDecl *_gameFlagNames;
+	DescribedADGameDescription *_descriptions2;
+	DescribedADGameDescription *loadFromJson(const char *jsonName, const EnumDecl *gameFlags);
+	bool compareAgainstJson(DescribedADGameDescription *descs, const char *jsonName, const EnumDecl *gameFlags);
 public:
 	SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const DescriptorType* descs, const PlainGameDescriptor *gameIds) :
 		AdvancedMetaEngineDetection<DescriptorType>(descs, gameIds), _gameFlagNames(gameFlags) {

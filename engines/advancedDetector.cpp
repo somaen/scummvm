@@ -104,6 +104,56 @@ Common::Array<const char*> getFlags(const EnumDecl *flagNameMapping, const uint3
 	return flagNames;
 }
 
+Common::JSONValue* ADGameDescription::toJSONArray(const ADGameDescription* array, const EnumDecl *flagNames) {
+	Common::JSONArray jsonArray;
+	for (; array->gameId; array++) {
+		jsonArray.push_back(array->toJSON(flagNames));
+	}
+	return new Common::JSONValue(jsonArray);
+}
+
+Common::Array<ADGameDescription> ADGameDescription::fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array) {
+	Common::Array<ADGameDescription> descriptions;
+	descriptions.reserve(array.size());
+	int index = 0;
+	for (auto &el : array) {
+		descriptions.push_back(ADGameDescription::fromJSON(gameFlags, el->asObject()));
+	}
+	return descriptions;
+}
+
+Common::JSONValue* DescribedADGameDescription::toJSONArray(const DescribedADGameDescription* array, const EnumDecl *flagNames) {
+	Common::JSONArray jsonArray;
+	for (; array->gameDescription.gameId; array++) {
+		jsonArray.push_back(array->toJSON(flagNames));
+	}
+	return new Common::JSONValue(jsonArray);
+}
+
+Common::Array<DescribedADGameDescription> DescribedADGameDescription::fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array) {
+	Common::Array<DescribedADGameDescription> descriptions;
+	descriptions.reserve(array.size());
+	int index = 0;
+	for (auto &el : array) {
+		auto object = el->asObject();
+		auto description = ADGameDescription::fromJSON(gameFlags, object);
+		auto notes = object["notes"]->asArray();
+		// TODO: Parse notes
+		descriptions.push_back(DescribedADGameDescription("", "", description));
+	}
+	return descriptions;
+}
+
+Common::JSONValue* DescribedADGameDescription::toJSON(const EnumDecl *gameFlags) const {
+	auto description = gameDescription.toJSON(gameFlags)->asObject();
+	Common::JSONArray notes;
+	notes.push_back(new Common::JSONValue(description1));
+	notes.push_back(new Common::JSONValue(description2));
+	// TODO: This will put this in last.
+	description["notes"] = new Common::JSONValue(notes);
+	return new Common::JSONValue(description);
+}
+
 Common::JSONValue* ADGameDescription::toJSON(const EnumDecl *gameFlags) const {
 	Common::JSONObject description;
 	description["gameId"] = new Common::JSONValue(gameId);
@@ -135,6 +185,15 @@ const char* cloneString(const Common::String &str) {
 	const auto clone = new char[str.size() + 1]{};
 	Common::strlcpy(clone, str.c_str(), str.size() + 1);
 	return clone;
+}
+
+DescribedADGameDescription DescribedADGameDescription::fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object) {
+	ADGameDescription desc = ADGameDescription::fromJSON(gameFlags, object);
+	auto notes = object["notes"]->asArray();
+	auto note1 = notes[0]->asString();
+	auto note2 = notes[1]->asString();
+	// TODO: This is unsafe, as the lifetime of the strings are not properly handled.
+	return DescribedADGameDescription(note1.c_str(), note2.c_str(), desc);
 }
 
 ADGameDescription ADGameDescription::fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object) {
@@ -1330,4 +1389,84 @@ Common::JSONValue* jsonFromStream(Common::SeekableReadStream &stream) {
 	return parsedJson;
 }
 
+DescribedADGameDescription *SerializedMetaEngineDetection::loadFromJson(const char *jsonName, const EnumDecl *gameFlags) {
+	auto jsonFile = SearchMan.createReadStreamForMember(jsonName);
+	if (!jsonFile) {
+		return nullptr;
+	}
+	auto parsedJson = jsonFromStream(*jsonFile);
+	delete jsonFile;
 
+	auto loadedDescs = DescribedADGameDescription::fromJSONArray(gameFlags, parsedJson->asArray());
+
+	auto *descriptors = new DescribedADGameDescription[loadedDescs.size()];
+	for (int i = 0; i < loadedDescs.size(); i++) {
+		descriptors[i] = loadedDescs[i];
+	}
+	return descriptors;
+}
+
+bool SerializedMetaEngineDetection::compareAgainstJson(DescribedADGameDescription *descs, const char *jsonName, const EnumDecl *gameFlags) {
+	auto loadedDescriptors = loadFromJson(jsonName, gameFlags);
+	if (!loadedDescriptors) {
+		return false;
+	}
+	int numDescs = 0;
+	const DescribedADGameDescription endItem{"", "", AD_TABLE_END_MARKER};
+	while (descs[numDescs].gameDescription.gameId != nullptr) { // TODO: Better counting
+		if (loadedDescriptors[numDescs].gameDescription.gameId != nullptr) {
+			error("Fewer ADGameDescriptors in JSON", numDescs);
+			return false;
+		}
+		if (loadedDescriptors[numDescs] != descs[numDescs]) {
+			error("Mismatch between loaded and JSON version of ADGameDescriptor at index %d", numDescs);
+		}
+		numDescs++;
+	}
+	warning("Compared %d descriptions without mismatch", numDescs);
+	return true;
+}
+
+SerializedMetaEngineDetection::SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const DescribedADGameDescription* descs, uint descItemSize, const PlainGameDescriptor *gameIds)
+	: AdvancedMetaEngineDetection(descs, descItemSize, gameIds), _gameFlagNames(gameFlags) {
+	auto loadedDescriptors = loadFromJson(jsonName, gameFlags);
+	if (!loadedDescriptors) {
+		// This is mostly useful as a transition path, as we will conveniently dump all the existing
+		// detection entries to a JSON file if none exists, to streamline the transitioning.
+
+		// So, to start moving an engines detection to JSON, change the superclass to be this one, and then
+		// the first launch should assist with creating the requisite data.
+		warning("JSON-file %s does not exist, creating a dump of the hardcoded entries and erroring out", jsonName);
+		int numDescs = 0;
+		auto descPtr = descs;
+		const DescribedADGameDescription endItem{"", "", AD_TABLE_END_MARKER};
+		while (descs[numDescs].gameDescription.gameId != nullptr) { // TODO: Better counting
+			numDescs++;
+		}
+		_descriptions = new DescribedADGameDescription[numDescs];
+		for (int i = 0; i < numDescs; i++) {
+			_descriptions[i] = descs[i];
+		}
+		dumpDescriptors(jsonName);
+		compareAgainstJson(_descriptions, jsonName, gameFlags);
+
+		// We could alternatively just use the existing hardcoded entries, but whoever is editing the code
+		// has signalled an intent to transition at least some entries to JSON, so lets error out so that
+		// retrying with JSON-ified data is faster.
+		error("JSON file has been dumped, relaunch to use it");
+		return;
+	}
+
+	warning("TODO: Merge the deserialized descriptors with any hardcoded descriptors (from \"descs\")");
+	_descriptions = loadedDescriptors;
+	_gameDescriptors = (byte*)loadedDescriptors;
+}
+
+void SerializedMetaEngineDetection::dumpDescriptors(const char *jsonName) {
+	Common::DumpFile dump;
+	dump.open(jsonName);
+	auto jsonIfiedDescriptions = DescribedADGameDescription::toJSONArray(_descriptions, _gameFlagNames);
+	auto str = jsonIfiedDescriptions->stringify(true);
+	dump.writeString(str);
+	dump.close();
+}
