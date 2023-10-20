@@ -10,7 +10,9 @@
       }
     ],"gameId":"tlj","flags":[
       "GF_MISSING_EXE_RESOURCES"
-    ],"platform":"windows","language":"en","extra":"Steam"
+    ],"platform":"windows","language":"en","extra":"Steam","notes":[
+      "The Longest Journey","English Steam (game.exe missing valid 147.bmp resource for dialog boxes background)"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -20,7 +22,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"en","extra":"DVD"
+    ],"platform":"windows","language":"en","extra":"DVD","notes":[
+      "The Longest Journey","English DVD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -30,7 +34,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"en","extra":"GOG.com"
+    ],"platform":"windows","language":"en","extra":"GOG.com","notes":[
+      "The Longest Journey","GOG edition"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -40,7 +46,9 @@
       }
     ],"gameId":"tlj","flags":[
       "ADGF_DEMO"
-    ],"platform":"windows","language":"en","extra":"Old Demo"
+    ],"platform":"windows","language":"en","extra":"Old Demo","notes":[
+      "The Longest Journey","English Old Demo"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -50,7 +58,9 @@
       }
     ],"gameId":"tlj","flags":[
       "ADGF_DEMO"
-    ],"platform":"windows","language":"en","extra":"v1.61 Demo"
+    ],"platform":"windows","language":"en","extra":"v1.61 Demo","notes":[
+      "The Longest Journey","English v1.61 Demo"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -60,7 +70,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"cs","extra":"4 CD build 142"
+    ],"platform":"windows","language":"cs","extra":"4 CD build 142","notes":[
+      "The Longest Journey","Czech 4CD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -70,7 +82,9 @@
       }
     ],"gameId":"tlj","flags":[
       "ADGF_DEMO"
-    ],"platform":"windows","language":"fr","extra":"Demo"
+    ],"platform":"windows","language":"fr","extra":"Demo","notes":[
+      "The Longest Journey","French Demo"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -80,7 +94,9 @@
       }
     ],"gameId":"tlj","flags":[
       "ADGF_DEMO"
-    ],"platform":"windows","language":"nb","extra":"Demo"
+    ],"platform":"windows","language":"nb","extra":"Demo","notes":[
+      "The Longest Journey","Norwegian Demo"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -90,7 +106,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"nb","extra":"4 CD"
+    ],"platform":"windows","language":"nb","extra":"4 CD","notes":[
+      "The Longest Journey","Norwegian 4 CD version - supplied by L0ngcat"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -100,7 +118,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"nb","extra":"DVD"
+    ],"platform":"windows","language":"nb","extra":"DVD","notes":[
+      "The Longest Journey","Norwegian DLC-edition (DVD?)"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -110,7 +130,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"de","extra":"DVD"
+    ],"platform":"windows","language":"de","extra":"DVD","notes":[
+      "The Longest Journey","German DVD version supplied by Vorph on the forums"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -120,7 +142,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"de","extra":"4 CD"
+    ],"platform":"windows","language":"de","extra":"4 CD","notes":[
+      "The Longest Journey","German 4CD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -130,7 +154,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"it","extra":"DVD"
+    ],"platform":"windows","language":"it","extra":"DVD","notes":[
+      "The Longest Journey","Italian DVD version"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -140,7 +166,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"it","extra":"4 CD"
+    ],"platform":"windows","language":"it","extra":"4 CD","notes":[
+      "The Longest Journey","Italian 4CD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -150,7 +178,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"nl","extra":"4 CD"
+    ],"platform":"windows","language":"nl","extra":"4 CD","notes":[
+      "The Longest Journey","Dutch 4CD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -160,7 +190,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"es","extra":"4 CD"
+    ],"platform":"windows","language":"es","extra":"4 CD","notes":[
+      "The Longest Journey","Spanish 4CD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -170,7 +202,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"fr","extra":"2 CD"
+    ],"platform":"windows","language":"fr","extra":"2 CD","notes":[
+      "The Longest Journey","French 2CD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -180,7 +214,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"fr","extra":"4 CD"
+    ],"platform":"windows","language":"fr","extra":"4 CD","notes":[
+      "The Longest Journey","French 4CD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -190,7 +226,9 @@
       }
     ],"gameId":"tlj","flags":[
       "ADGF_DEMO"
-    ],"platform":"windows","language":"se","extra":"Demo"
+    ],"platform":"windows","language":"se","extra":"Demo","notes":[
+      "The Longest Journey","Swedish Demo"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -200,7 +238,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"se","extra":"4 CD"
+    ],"platform":"windows","language":"se","extra":"4 CD","notes":[
+      "The Longest Journey","Swedish 4CD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -210,7 +250,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"se","extra":"DVD"
+    ],"platform":"windows","language":"se","extra":"DVD","notes":[
+      "The Longest Journey","Swedish DVD Nordic Special Edition - supplied by L0ngcat"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -220,7 +262,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"pl","extra":"4 CD"
+    ],"platform":"windows","language":"pl","extra":"4 CD","notes":[
+      "The Longest Journey","Polish 4CD"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -230,7 +274,9 @@
       }
     ],"gameId":"tlj","flags":[
       "ADGF_UNSUPPORTED","ADGF_DEMO"
-    ],"platform":"windows","language":"pl","extra":"Missing game code"
+    ],"platform":"windows","language":"pl","extra":"Missing game code","notes":[
+      "The Longest Journey","Polish Demo."
+    ]
   },{
     "filesDescriptions":[
       {
@@ -240,7 +286,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"ru","extra":"2 CD\/Fargus"
+    ],"platform":"windows","language":"ru","extra":"2 CD\/Fargus","notes":[
+      "The Longest Journey","Russian 2CD by 1C"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -250,7 +298,9 @@
       }
     ],"gameId":"tlj","flags":[
       "ADGF_UNSTABLE"
-    ],"platform":"windows","language":"ru","extra":"2 CD\/7Wolf"
+    ],"platform":"windows","language":"ru","extra":"2 CD\/7Wolf","notes":[
+      "The Longest Journey","Russian 2CD by 7Wolf"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -260,7 +310,9 @@
       }
     ],"gameId":"tlj","flags":[
       "ADGF_UNSTABLE"
-    ],"platform":"windows","language":"ru","extra":"Triada"
+    ],"platform":"windows","language":"ru","extra":"Triada","notes":[
+      "The Longest Journey","Russian by Triada"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -270,7 +322,9 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"hu","extra":"Fanmade"
+    ],"platform":"windows","language":"hu","extra":"Fanmade","notes":[
+      "The Longest Journey","Hungarian fan-made"
+    ]
   },{
     "filesDescriptions":[
       {
@@ -280,6 +334,20 @@
       }
     ],"gameId":"tlj","flags":[
       
-    ],"platform":"windows","language":"hu","extra":"Fanmade"
+    ],"platform":"windows","language":"hu","extra":"Fanmade","notes":[
+      "The Longest Journey","Hungarian fan-made applied to German DVD version"
+    ]
+  },{
+    "filesDescriptions":[
+      {
+        "fileSize":3032,"fileType":0,"md5":"de8327850d7bba90b690b141eaa23f61","fileName":"x.xarc"
+      },{
+        "fileSize":500,"fileType":0,"md5":"da19240d49f714a27da2054caadc0057","fileName":"chapters.ini"
+      }
+    ],"gameId":"tlj","flags":[
+      "ADGF_UNSTABLE"
+    ],"platform":"ios","language":"en","extra":"Remastered","notes":[
+      "The Longest Journey","iOS - v1.0.7 - provided by Aeryl on Discord"
+    ]
   }
 ]
