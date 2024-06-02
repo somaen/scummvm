@@ -72,7 +72,7 @@ uint32 parseFlag(const EnumDecl *flagNameMapping, const Common::String &str) {
 	return ADGF_NO_FLAGS;
 }
 
-Common::Array<const char*> getFlags(const EnumDecl *flagNameMapping, uint32 flag) {
+Common::Array<const char*> getFlags(const EnumDecl *flagNameMapping, const uint32 flag) {
 	Common::Array<const char*> flagNames;
 	int i = 0;
 	while (flagNameMapping[i].name != nullptr) {
@@ -94,9 +94,8 @@ Common::JSONValue* ADGameDescription::toJSONArray(const ADGameDescription* array
 Common::Array<ADGameDescription> ADGameDescription::fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array) {
 	Common::Array<ADGameDescription> descriptions;
 	descriptions.reserve(array.size());
-	int index = 0;
 	for (auto &el : array) {
-		descriptions.push_back(ADGameDescription::fromJSON(gameFlags, el->asObject()));
+		descriptions.push_back(fromJSON(gameFlags, el->asObject()));
 	}
 	return descriptions;
 }
@@ -106,21 +105,21 @@ Common::JSONValue* ADGameDescription::toJSON(const EnumDecl *gameFlags) const {
 	description["gameId"] = new Common::JSONValue(gameId);
 	description["extra"] = new Common::JSONValue(extra);
 	Common::JSONArray filesDescriptionsJson;
-	for (int i = 0; i < 14; i++) {
-		if (filesDescriptions[i].isEmpty())
+	for (const auto &filesDescription : filesDescriptions) {
+		if (filesDescription.isEmpty())
 			break;
-		filesDescriptionsJson.push_back(filesDescriptions[i].toJSON());
+		filesDescriptionsJson.push_back(filesDescription.toJSON());
 	}
 	description["filesDescriptions"] = new Common::JSONValue(filesDescriptionsJson);
  	description["language"] = new Common::JSONValue(Common::getLanguageCode(language));
 	description["platform"] = new Common::JSONValue(Common::getPlatformCode(platform));
 	auto stringifiedFlags = getFlags(gameFlags, flags);
 	Common::JSONArray flagArray;
-	for (auto flag : stringifiedFlags) {
+	for (const auto flag : stringifiedFlags) {
 		flagArray.push_back(new Common::JSONValue(flag));
 	}
 	stringifiedFlags = getFlags(g_adgfFlagNames, flags);
-	for (auto flag : stringifiedFlags) {
+	for (const auto flag : stringifiedFlags) {
 		flagArray.push_back(new Common::JSONValue(flag));
 	}
 	description["flags"] = new Common::JSONValue(flagArray);
@@ -129,7 +128,7 @@ Common::JSONValue* ADGameDescription::toJSON(const EnumDecl *gameFlags) const {
 }
 
 const char* cloneString(const Common::String &str) {
-	char *clone = new char[str.size() + 1]{};
+	const auto clone = new char[str.size() + 1]{};
 	Common::strlcpy(clone, str.c_str(), str.size() + 1);
 	return clone;
 }
@@ -138,13 +137,13 @@ ADGameDescription ADGameDescription::fromJSON(const EnumDecl *gameFlags, const C
 	ADGameDescription desc;
 	desc.gameId = cloneString(object["gameId"]->asString());
 	desc.extra = cloneString(object["extra"]->asString());
-	auto filesDecriptionsValue = object["filesDescriptions"];
+	const auto filesDecriptionsValue = object["filesDescriptions"];
 	if (!filesDecriptionsValue->isArray()) {
 		error("Expected filesDescriptions to be array");
 	}
 	auto filesDescriptionsArray = filesDecriptionsValue->asArray();
-	for (int i = 0; i < filesDescriptionsArray.size(); i++) {
-		auto filesDescJson = filesDescriptionsArray[i];
+	for (uint i = 0; i < filesDescriptionsArray.size(); i++) {
+		const auto filesDescJson = filesDescriptionsArray[i];
 		if (!filesDescJson->isObject()) {
 			error("Expected filesDescriptions[%d] to be an object", i);
 		}
@@ -155,7 +154,7 @@ ADGameDescription ADGameDescription::fromJSON(const EnumDecl *gameFlags, const C
 	desc.platform = Common::parsePlatform(object["platform"]->asString());// = new Common::JSONValue(Common::getPlatformCode(platform));
 	auto flagArray = object["flags"]->asArray();
 	desc.flags = 0;
-	for (auto flag : flagArray) {
+	for (const auto flag : flagArray) {
 		auto strFlag = flag->asString();
 		desc.flags |= parseFlag(gameFlags, strFlag) | parseFlag(g_adgfFlagNames, strFlag);
 	}
@@ -166,16 +165,16 @@ ADGameDescription ADGameDescription::fromJSON(const EnumDecl *gameFlags, const C
 Common::JSONValue* ADGameFileDescription::toJSON() const {
 	Common::JSONObject description;
 	description["fileName"] = new Common::JSONValue(fileName);
-	description["fileType"] = new Common::JSONValue((long long int)fileType);
+	description["fileType"] = new Common::JSONValue(static_cast<long long int>(fileType));
 	description["md5"] = new Common::JSONValue(md5);
-	description["fileSize"] = new Common::JSONValue((long long int)fileSize);
+	description["fileSize"] = new Common::JSONValue(static_cast<long long int>(fileSize));
 	return new Common::JSONValue(description);
 }
 
 ADGameFileDescription ADGameFileDescription::fromJSON(const Common::JSONObject &object) {
 	ADGameFileDescription desc;
 	desc.fileName = cloneString(object["fileName"]->asString());
-	desc.fileType = object["fileType"]->asIntegerNumber();
+	desc.fileType = static_cast<uint16>(object["fileType"]->asIntegerNumber());
 	desc.md5 = cloneString(object["md5"]->asString());
 	desc.fileSize = object["fileSize"]->asIntegerNumber();
 	return desc;
@@ -1351,7 +1350,7 @@ SerializedMetaEngineDetection::SerializedMetaEngineDetection(const char *jsonNam
 	auto loadedDescs = ADGameDescription::fromJSONArray(gameFlags, parsedJson->asArray());
 
 	ADGameDescription *descriptors = new ADGameDescription[loadedDescs.size()];
-	for (int i = 0; i < loadedDescs.size(); i++) {
+	for (uint i = 0; i < loadedDescs.size(); i++) {
 		descriptors[i] = loadedDescs[i];
 	}
 	// TODO: Merge this with any hardcoded descriptors (from "descs")
