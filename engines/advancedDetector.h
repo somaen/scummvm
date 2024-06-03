@@ -229,7 +229,6 @@ struct ADGameDescription {
 	const char *guiOptions;
 
 	Common::JSONValue* toJSON(const EnumDecl *gameFlags) const;
-	static Common::JSONValue* toJSONArray(const ADGameDescription *array, const EnumDecl *gameFlags);
 	static ADGameDescription fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object);
 	static Common::Array<ADGameDescription> fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array);
 

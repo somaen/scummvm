@@ -85,14 +85,6 @@ Common::Array<const char*> getFlags(const EnumDecl *flagNameMapping, const uint3
 	return flagNames;
 }
 
-Common::JSONValue* ADGameDescription::toJSONArray(const ADGameDescription* array, const EnumDecl *flagNames) {
-	Common::JSONArray jsonArray;
-	for (; array->gameId; array++) {
-		jsonArray.push_back(array->toJSON(flagNames));
-	}
-	return new Common::JSONValue(jsonArray);
-}
-
 Common::Array<ADGameDescription> ADGameDescription::fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array) {
 	Common::Array<ADGameDescription> descriptions;
 	descriptions.reserve(array.size());
@@ -117,10 +109,6 @@ Common::JSONValue* ADGameDescription::toJSON(const EnumDecl *gameFlags) const {
 	description["platform"] = new Common::JSONValue(Common::getPlatformCode(platform));
 	auto stringifiedFlags = getFlags(gameFlags, flags);
 	Common::JSONArray flagArray;
-	for (const auto flag : stringifiedFlags) {
-		flagArray.push_back(new Common::JSONValue(flag));
-	}
-	stringifiedFlags = getFlags(g_adgfFlagNames, flags);
 	for (const auto flag : stringifiedFlags) {
 		flagArray.push_back(new Common::JSONValue(flag));
 	}
