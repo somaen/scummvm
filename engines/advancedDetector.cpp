@@ -65,17 +65,24 @@ EnumDecl g_adgfFlagNames[] = {
 };
 
 uint32 parseFlag(const EnumDecl *flagNameMapping, const Common::String &str) {
-	int i = 0;
-	while (flagNameMapping[i].name != nullptr) {
-		if (flagNameMapping[i].name == str)
-			return flagNameMapping[i].value;
-		i++;
+	if(flagNameMapping) {
+		int i = 0;
+		while (flagNameMapping[i].name != nullptr) {
+			if (flagNameMapping[i].name == str)
+				return flagNameMapping[i].value;
+			i++;
+		}
 	}
 	return ADGF_NO_FLAGS;
 }
 
 Common::Array<const char*> getFlags(const EnumDecl *flagNameMapping, const uint32 flag) {
 	Common::Array<const char*> flagNames;
+
+	if(!flagNameMapping) {
+		return flagNames;
+	}
+
 	int i = 0;
 	while (flagNameMapping[i].name != nullptr) {
 		if (flagNameMapping[i].value & flag)
@@ -109,6 +116,10 @@ Common::JSONValue* ADGameDescription::toJSON(const EnumDecl *gameFlags) const {
 	description["platform"] = new Common::JSONValue(Common::getPlatformCode(platform));
 	auto stringifiedFlags = getFlags(gameFlags, flags);
 	Common::JSONArray flagArray;
+	for (const auto flag : stringifiedFlags) {
+		flagArray.push_back(new Common::JSONValue(flag));
+	}
+	stringifiedFlags = getFlags(g_adgfFlagNames, flags);
 	for (const auto flag : stringifiedFlags) {
 		flagArray.push_back(new Common::JSONValue(flag));
 	}
@@ -1317,7 +1328,7 @@ Common::JSONValue* jsonFromStream(Common::SeekableReadStream &stream) {
 }
 
 SerializedMetaEngineDetection::SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const ADGameDescription* descs, uint descItemSize, const PlainGameDescriptor *gameIds)
-	: AdvancedMetaEngineDetection<ADGameDescription>(descs, gameIds) {
+	: AdvancedMetaEngineDetection<ADGameDescription>(descs, gameIds), _gameFlagNames(gameFlags) {
 
 	if (gameFlags == nullptr) {
 		_gameFlagNames = g_adgfFlagNames;
