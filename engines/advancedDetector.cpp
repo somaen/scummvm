@@ -39,6 +39,8 @@
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "engines/advancedDetector.h"
+
+#include "audio/softsynth/opl/dosbox.h"
 #include "engines/obsolete.h"
 
 EnumDecl g_adgfFlagNames[] = {
@@ -1343,33 +1345,40 @@ SerializedMetaEngineDetection::SerializedMetaEngineDetection(const char *jsonNam
 		// So, to start moving an engines detection to JSON, change the superclass to be this one, and then
 		// the first launch should assist with creating the requisite data.
 		warning("JSON-file %s does not exist, creating a dump of the hardcoded entries and erroring out", jsonName);
-		_descriptions = (ADGameDescription*)descs;
 		dumpDescriptors(jsonName);
 		// We could alternatively just use the existing hardcoded entries, but whoever is editing the code
 		// has signalled an intent to transition at least some entries to JSON, so lets error out so that
 		// retrying with JSON-ified data is faster.
 		error("JSON file has been dumped, relaunch to use it");
-		return;
 	}
+
 	auto parsedJson = jsonFromStream(*jsonFile);
 	delete jsonFile;
 
-	auto loadedDescs = ADGameDescription::fromJSONArray(gameFlags, parsedJson->asArray());
+	auto loadedDescs = ADGameDescription::fromJSONArray(_gameFlagNames, parsedJson->asArray());
 
-	ADGameDescription *descriptors = new ADGameDescription[loadedDescs.size()];
+	auto descriptors = new ADGameDescription[loadedDescs.size()];
 	for (uint i = 0; i < loadedDescs.size(); i++) {
 		descriptors[i] = loadedDescs[i];
 	}
-	// TODO: Merge this with any hardcoded descriptors (from "descs")
-	_descriptions = descriptors;
-	_gameDescriptors = (byte*)descriptors;
+	_gameDescriptors = reinterpret_cast<byte *>(descriptors);
 }
 
 void SerializedMetaEngineDetection::dumpDescriptors(const char *jsonName) {
 	Common::DumpFile dump;
 	dump.open(jsonName);
-	auto jsonIfiedDescriptions = ADGameDescription::toJSONArray(_descriptions, _gameFlagNames);
-	auto str = jsonIfiedDescriptions->stringify(true);
+
+	Common::JSONArray jsonArray;
+
+	for (const byte* descPtr = _gameDescriptors; reinterpret_cast<const ADGameDescription *>(descPtr)->gameId != nullptr; descPtr += _descItemSize) {
+		const auto g = reinterpret_cast<const ADGameDescription *>(descPtr);
+		auto gJson = g->toJSON(_gameFlagNames);
+		jsonArray.push_back(gJson);
+	}
+
+	const auto jsonValue = new Common::JSONValue(jsonArray);
+	const auto str = jsonValue->stringify(true);
+
 	dump.writeString(str);
 	dump.close();
 }

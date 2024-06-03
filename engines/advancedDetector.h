@@ -645,13 +645,9 @@ protected:
 
 class SerializedMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 private:
-	ADGameDescription *_descriptions;
 	const EnumDecl *_gameFlagNames;
 public:
 	SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const ADGameDescription* descs, uint descItemSize, const PlainGameDescriptor *gameIds);
-	~SerializedMetaEngineDetection() {
-		delete[] _gameDescriptors;
-	}
 
 	void dumpDescriptors(const char *jsonName);
 };
