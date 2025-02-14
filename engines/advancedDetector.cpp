@@ -1429,7 +1429,7 @@ bool SerializedMetaEngineDetection::compareAgainstJson(DescribedADGameDescriptio
 }
 
 SerializedMetaEngineDetection::SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const DescribedADGameDescription* descs, uint descItemSize, const PlainGameDescriptor *gameIds)
-	: AdvancedMetaEngineDetection(descs, descItemSize, gameIds), _gameFlagNames(gameFlags) {
+	: AdvancedMetaEngineDetectionBase(descs, descItemSize, gameIds), _gameFlagNames(gameFlags) {
 	auto loadedDescriptors = loadFromJson(jsonName, gameFlags);
 	if (!loadedDescriptors) {
 		// This is mostly useful as a transition path, as we will conveniently dump all the existing

@@ -252,7 +252,7 @@ struct ADGameDescription {
 	Common::JSONValue* toJSON(const EnumDecl *gameFlags) const;
 	static Common::JSONValue* toJSONArray(const ADGameDescription *array, const EnumDecl *gameFlags);
 	static ADGameDescription fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object);
-	static ADGameDescription* fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array);
+	static Common::Array<ADGameDescription> fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array);
 
 	/**
 	 * Calculates the size needed to store all pointed data
@@ -679,7 +679,7 @@ protected:
 	friend class FileMapArchive;
 };
 
-class SerializedMetaEngineDetection : public AdvancedMetaEngineDetection {
+class SerializedMetaEngineDetection : public AdvancedMetaEngineDetectionBase {
 private:
 	DescribedADGameDescription *_descriptions;
 	const EnumDecl *_gameFlagNames;
@@ -808,7 +808,7 @@ template<class Descriptor>
 class AdvancedMetaEngine : public AdvancedMetaEngineBase {
 protected:
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const Descriptor *desc) const = 0;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const void *desc) const override final {
+	Common::Error createInstance(OSystem *syst, Engine **engine, const void *desc) const override {
 		return createInstance(syst, engine, static_cast<const Descriptor *>(desc));
 	}
 
