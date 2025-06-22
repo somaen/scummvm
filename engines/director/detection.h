@@ -39,6 +39,10 @@ struct DirectorGameDescription {
 
 	DirectorGameGID gameGID;
 	uint16 version;
+
+	Common::JSONValue* toJSON(const EnumDecl *gameFlags) const;
+	static DirectorGameDescription fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object);
+	constexpr bool isEmpty() { return desc.isEmpty(); }
 };
 
 extern const char *const directoryGlobs[];

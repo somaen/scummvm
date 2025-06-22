@@ -81,13 +81,29 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
+Common::JSONValue* Director::DirectorGameDescription::toJSON(const EnumDecl *gameFlags) const {
+	Common::JSONObject description;
+	description["desc"] = this->desc.toJSON(gameFlags);
+	description["gameGID"] = new Common::JSONValue(""); // TODO!
+	description["version"] = new Common::JSONValue((long long int)version);
+	return new Common::JSONValue(description);
+}
+
+Director::DirectorGameDescription Director::DirectorGameDescription::fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object) {
+	Director::DirectorGameDescription desc;
+	//desc.desc.fromJSON(gameFlags, object["desc"]->asObject());
+	desc.gameGID = GID_GENERIC; // TODO!
+	desc.version = object["version"]->asIntegerNumber();
+	return desc;
+}
+
 class DirectorMetaEngineDetection : public SerializedMetaEngineDetection<Director::DirectorGameDescription> {
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _customTarget;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _fallback_blacklisted_names;
 
 public:
-	DirectorMetaEngineDetection() : SerializedMetaEngineDetection("director_detection.json", nullptr, Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
+	DirectorMetaEngineDetection() : SerializedMetaEngineDetection("director_detection.json", nullptr, Director::gameDescriptions, directorGames) {
 		_maxScanDepth = 5;
 		_directoryGlobs = Director::directoryGlobs;
 		_flags = kADFlagMatchFullPaths | kADFlagCanPlayUnknownVariants;

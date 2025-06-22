@@ -64,6 +64,14 @@ EnumDecl g_adgfFlagNames[] = {
 	ENUM_DECL_END
 };
 
+const EnumDecl* resolveGameFlagNames(const EnumDecl* engineSpecific) {
+	if (engineSpecific != nullptr) {
+		return engineSpecific;
+	} else {
+		return g_adgfFlagNames;
+	}
+}
+
 uint32 parseFlag(const EnumDecl *flagNameMapping, const Common::String &str) {
 	if(flagNameMapping) {
 		int i = 0;
@@ -74,6 +82,10 @@ uint32 parseFlag(const EnumDecl *flagNameMapping, const Common::String &str) {
 		}
 	}
 	return ADGF_NO_FLAGS;
+}
+
+uint32 parseAdgfFlags(const Common::String &str) {
+	return parseFlag(g_adgfFlagNames, str);
 }
 
 Common::Array<const char*> getFlags(const EnumDecl *flagNameMapping, const uint32 flag) {
@@ -90,15 +102,6 @@ Common::Array<const char*> getFlags(const EnumDecl *flagNameMapping, const uint3
 		i++;
 	}
 	return flagNames;
-}
-
-Common::Array<ADGameDescription> ADGameDescription::fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array) {
-	Common::Array<ADGameDescription> descriptions;
-	descriptions.reserve(array.size());
-	for (auto &el : array) {
-		descriptions.push_back(fromJSON(gameFlags, el->asObject()));
-	}
-	return descriptions;
 }
 
 Common::JSONValue* ADGameDescription::toJSON(const EnumDecl *gameFlags) const {
@@ -1327,57 +1330,4 @@ Common::JSONValue* jsonFromStream(Common::SeekableReadStream &stream) {
 	return parsedJson;
 }
 
-SerializedMetaEngineDetection::SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const ADGameDescription* descs, uint descItemSize, const PlainGameDescriptor *gameIds)
-	: AdvancedMetaEngineDetection<ADGameDescription>(descs, gameIds), _gameFlagNames(gameFlags) {
 
-	if (gameFlags == nullptr) {
-		_gameFlagNames = g_adgfFlagNames;
-	} else {
-		_gameFlagNames = gameFlags;
-	}
-
-	auto jsonFile = SearchMan.createReadStreamForMember(jsonName);
-	if (!jsonFile) {
-		// This is mostly useful as a transition path, as we will conveniently dump all the existing
-		// detection entries to a JSON file if none exists, to streamline the transitioning.
-
-		// So, to start moving an engines detection to JSON, change the superclass to be this one, and then
-		// the first launch should assist with creating the requisite data.
-		warning("JSON-file %s does not exist, creating a dump of the hardcoded entries and erroring out", jsonName);
-		dumpDescriptors(jsonName);
-		// We could alternatively just use the existing hardcoded entries, but whoever is editing the code
-		// has signalled an intent to transition at least some entries to JSON, so lets error out so that
-		// retrying with JSON-ified data is faster.
-		error("JSON file has been dumped, relaunch to use it");
-	}
-
-	auto parsedJson = jsonFromStream(*jsonFile);
-	delete jsonFile;
-
-	auto loadedDescs = ADGameDescription::fromJSONArray(_gameFlagNames, parsedJson->asArray());
-
-	auto descriptors = new ADGameDescription[loadedDescs.size()];
-	for (uint i = 0; i < loadedDescs.size(); i++) {
-		descriptors[i] = loadedDescs[i];
-	}
-	_gameDescriptors = reinterpret_cast<byte *>(descriptors);
-}
-
-void SerializedMetaEngineDetection::dumpDescriptors(const char *jsonName) {
-	Common::DumpFile dump;
-	dump.open(jsonName);
-
-	Common::JSONArray jsonArray;
-
-	for (const byte* descPtr = _gameDescriptors; reinterpret_cast<const ADGameDescription *>(descPtr)->gameId != nullptr; descPtr += _descItemSize) {
-		const auto g = reinterpret_cast<const ADGameDescription *>(descPtr);
-		auto gJson = g->toJSON(_gameFlagNames);
-		jsonArray.push_back(gJson);
-	}
-
-	const auto jsonValue = new Common::JSONValue(jsonArray);
-	const auto str = jsonValue->stringify(true);
-
-	dump.writeString(str);
-	dump.close();
-}

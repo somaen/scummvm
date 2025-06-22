@@ -25,6 +25,7 @@
 #include "engines/metaengine.h"
 #include "engines/engine.h"
 
+#include "common/file.h"
 #include "common/hash-str.h"
 
 #include "common/formats/json.h"
@@ -230,7 +231,7 @@ struct ADGameDescription {
 
 	Common::JSONValue* toJSON(const EnumDecl *gameFlags) const;
 	static ADGameDescription fromJSON(const EnumDecl *gameFlags, const Common::JSONObject &object);
-	static Common::Array<ADGameDescription> fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array);
+	constexpr bool isEmpty() const { return gameId == nullptr; }
 
 	/**
 	 * Calculates the size needed to store all pointed data
@@ -642,13 +643,80 @@ protected:
 	}
 };
 
-class SerializedMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+// TODO: Cleanup these helpers
+Common::JSONValue* jsonFromStream(Common::SeekableReadStream &stream);
+const EnumDecl* resolveGameFlagNames(const EnumDecl* engineSpecific);
+uint32 parseFlag(const EnumDecl *flagNameMapping, const Common::String &str);
+uint32 parseAdgfFlags(const Common::String &str);
+
+template<typename T>
+Common::Array<T> fromJSONArray(const EnumDecl *gameFlags, const Common::JSONArray &array) {
+	Common::Array<T> descriptions;
+	descriptions.reserve(array.size());
+	for (auto &el : array) {
+		descriptions.push_back(T::fromJSON(gameFlags, el->asObject()));
+	}
+	return descriptions;
+}
+
+template<class DescriptorType>
+class SerializedMetaEngineDetection : public AdvancedMetaEngineDetection<DescriptorType> {
 private:
 	const EnumDecl *_gameFlagNames;
 public:
-	SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const ADGameDescription* descs, uint descItemSize, const PlainGameDescriptor *gameIds);
+	SerializedMetaEngineDetection(const char *jsonName, const EnumDecl *gameFlags, const DescriptorType* descs, const PlainGameDescriptor *gameIds) :
+		AdvancedMetaEngineDetection<DescriptorType>(descs, gameIds), _gameFlagNames(gameFlags) {
+		_gameFlagNames = resolveGameFlagNames(gameFlags);
 
-	void dumpDescriptors(const char *jsonName);
+		auto jsonFile = SearchMan.createReadStreamForMember(jsonName);
+		if (!jsonFile) {
+			// This is mostly useful as a transition path, as we will conveniently dump all the existing
+			// detection entries to a JSON file if none exists, to streamline the transitioning.
+
+			// So, to start moving an engines detection to JSON, change the superclass to be this one, and then
+			// the first launch should assist with creating the requisite data.
+			warning("JSON-file %s does not exist, creating a dump of the hardcoded entries and erroring out", jsonName);
+			dumpDescriptors(jsonName);
+			// We could alternatively just use the existing hardcoded entries, but whoever is editing the code
+			// has signalled an intent to transition at least some entries to JSON, so lets error out so that
+			// retrying with JSON-ified data is faster.
+			error("JSON file has been dumped, relaunch to use it");
+		}
+
+		auto parsedJson = jsonFromStream(*jsonFile);
+		delete jsonFile;
+
+		auto loadedDescs = fromJSONArray<DescriptorType>(_gameFlagNames, parsedJson->asArray());
+
+		auto descriptors = new DescriptorType[loadedDescs.size()];
+		for (uint i = 0; i < loadedDescs.size(); i++) {
+			descriptors[i] = loadedDescs[i];
+		}
+
+		AdvancedMetaEngineDetection<DescriptorType>::_gameDescriptors = reinterpret_cast<byte *>(descriptors);
+	}
+
+	const DescriptorType *gameDescs() const {
+		return reinterpret_cast<const DescriptorType *>(AdvancedMetaEngineDetection<DescriptorType>::_gameDescriptors);
+	}
+
+	void dumpDescriptors(const char *jsonName) {
+		Common::DumpFile dump;
+		dump.open(jsonName);
+
+		Common::JSONArray jsonArray;
+
+		for (const DescriptorType* descPtr = gameDescs(); !descPtr->isEmpty(); descPtr++) {
+			auto gJson = descPtr->toJSON(_gameFlagNames);
+			jsonArray.push_back(gJson);
+		}
+
+		const auto jsonValue = new Common::JSONValue(jsonArray);
+		const auto str = jsonValue->stringify(true);
+
+		dump.writeString(str);
+		dump.close();
+	}
 };
 
 /**
