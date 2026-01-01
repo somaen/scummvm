@@ -48,6 +48,7 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/ordered_hashmap.h"
 #include "common/hash-str.h"
 #include "common/memstream.h"
 #include "common/str.h"
@@ -81,7 +82,7 @@ namespace Common {
 // Custom types
 class JSONValue;
 typedef Array<JSONValue*> JSONArray;
-typedef HashMap<String, JSONValue*> JSONObject;
+typedef OrderedHashMap<String, JSONValue*> JSONObject;
 
 class JSON;
 
